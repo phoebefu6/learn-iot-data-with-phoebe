@@ -465,26 +465,26 @@
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Harrow Lane's analyst reports that the sensor file passed every check: no nulls, no duplicate keys, every value in range. What is the right reading for a leader?</p>
-      <div class="qopt">A · The data is ready for modelling</div>
-      <div class="qopt">B · The checks found what they look for; they cannot see silent channels, drift, or where the information sits in time, and in FD001 seven channels never move and most of the exhaust rise comes in the last three tenths of life</div>
-      <div class="qopt">C · The data must have been tampered with, since real data always has nulls</div>
-      <q class="qwhy">Warehouse checks test structure. A sensor row can be structurally perfect and still drifted, silent or concentrated in the last few tenths of a life. The simulated rows really do have no nulls; that is not evidence of tampering.</q>
+      <button class="qopt" type="button">A · The data is ready for modelling</button>
+      <button class="qopt" type="button">B · The checks found what they look for; they cannot see silent channels, drift, or where the information sits in time, and in FD001 seven channels never move and most of the exhaust rise comes in the last three tenths of life</button>
+      <button class="qopt" type="button">C · The data must have been tampered with, since real data always has nulls</button>
+      <p class="qwhy">Warehouse checks test structure. A sensor row can be structurally perfect and still drifted, silent or concentrated in the last few tenths of a life. The simulated rows really do have no nulls; that is not evidence of tampering.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Seven of the 21 channels in FD001 never move. What should the team conclude?</p>
-      <div class="qopt">A · Those sensors are broken and should be replaced</div>
-      <div class="qopt">B · Those channels are useless in every dataset and can be dropped everywhere</div>
-      <div class="qopt">C · Under FD001's single sea-level operating condition they carry no information; they may matter in data with several operating conditions, so drop them here and write down why</div>
-      <q class="qwhy">Inlet conditions and demanded speeds are constant when the engine runs at one condition. That says nothing about the probes and nothing about other subsets, which the readme describes as six conditions.</q>
+      <button class="qopt" type="button">A · Those sensors are broken and should be replaced</button>
+      <button class="qopt" type="button">B · Those channels are useless in every dataset and can be dropped everywhere</button>
+      <button class="qopt" type="button">C · Under FD001's single sea-level operating condition they carry no information; they may matter in data with several operating conditions, so drop them here and write down why</button>
+      <p class="qwhy">Inlet conditions and demanded speeds are constant when the engine runs at one condition. That says nothing about the probes and nothing about other subsets, which the readme describes as six conditions.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">Why does it matter that 96.4 percent of readings in the last tenth of life are in the hottest fifth of all readings, against 0.8 percent in the first tenth?</p>
-      <div class="qopt">A · Because any device that drops out under heat will remove the end-of-life rows first, which are the rows a remaining-life model most needs</div>
-      <div class="qopt">B · Because the hot readings are errors and should be removed</div>
-      <div class="qopt">C · Because it proves every engine fails at the same temperature</div>
-      <q class="qwhy">The hot rows are the signal, not the noise. Starting temperatures vary by engine, so no single temperature marks failure. The point is where in time the evidence sits, and therefore what missing data would cost.</q>
+      <button class="qopt" type="button">A · Because any device that drops out under heat will remove the end-of-life rows first, which are the rows a remaining-life model most needs</button>
+      <button class="qopt" type="button">B · Because the hot readings are errors and should be removed</button>
+      <button class="qopt" type="button">C · Because it proves every engine fails at the same temperature</button>
+      <p class="qwhy">The hot rows are the signal, not the noise. Starting temperatures vary by engine, so no single temperature marks failure. The point is where in time the evidence sits, and therefore what missing data would cost.</p>
     </div>
 
     <div class="quiz-score"></div>

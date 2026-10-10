@@ -625,26 +625,26 @@
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Harrow Lane's analyst says the exhaust feed is 85 percent complete and proposes dropping the rows with gaps, because "15 percent is small". What should a leader ask first?</p>
-      <div class="qopt">A · Whether 15 percent is under the usual threshold for acceptable missing data</div>
-      <div class="qopt">B · Which tool the team will use to fill the gaps instead</div>
-      <div class="qopt">C · When the readings go missing, and whether the reason depends on the reading itself, such as a probe that quits when it runs hot</div>
-      <q class="qwhy">The size of a gap never says whether it may be ignored; the reason does. If the probe quits on hot cycles, the missing 15 percent is the end of each engine's life, and dropping it is a claim Rubin's conditions do not support.</q>
+      <button class="qopt" type="button">A · Whether 15 percent is under the usual threshold for acceptable missing data</button>
+      <button class="qopt" type="button">B · Which tool the team will use to fill the gaps instead</button>
+      <button class="qopt" type="button">C · When the readings go missing, and whether the reason depends on the reading itself, such as a probe that quits when it runs hot</button>
+      <p class="qwhy">The size of a gap never says whether it may be ignored; the reason does. If the probe quits on hot cycles, the missing 15 percent is the end of each engine's life, and dropping it is a claim Rubin's conditions do not support.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">On Harrow Lane's bench, after the planted dropout and deletion, RMSE moves from 23.64 to 24.89 and the asymmetric score from 3,366 to 4,656. What is the right reading?</p>
-      <div class="qopt">A · Square error barely notices that the estimates slid late; the score, which punishes late harder, prices it. Report both, with the bias</div>
-      <div class="qopt">B · The dropout is harmless, since RMSE moved only about 5 percent</div>
-      <div class="qopt">C · The score is unreliable, since it disagrees with RMSE</div>
-      <q class="qwhy">The mean error went from +1.4 to +4.7 cycles. A late slide of a few cycles adds little to square error but a lot to an exponential score that divides a late miss by 10 and an early one by 13. Both numbers are honest; they answer different questions.</q>
+      <button class="qopt" type="button">A · Square error barely notices that the estimates slid late; the score, which punishes late harder, prices it. Report both, with the bias</button>
+      <button class="qopt" type="button">B · The dropout is harmless, since RMSE moved only about 5 percent</button>
+      <button class="qopt" type="button">C · The score is unreliable, since it disagrees with RMSE</button>
+      <p class="qwhy">The mean error went from +1.4 to +4.7 cycles. A late slide of a few cycles adds little to square error but a lot to an exponential score that divides a late miss by 10 and an early one by 13. Both numbers are honest; they answer different questions.</p>
     </div>
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Why does dropping the rows with gaps make a failing engine look healthier?</p>
-      <div class="qopt">A · Because deletion adds random noise, which averages out to a healthier reading</div>
-      <div class="qopt">B · Because the hot readings are the ones that vanished, so the newest row left is older and cooler, and the model reads it as today</div>
-      <div class="qopt">C · Because the model was fitted on different engines from the ones it is tested on</div>
-      <q class="qwhy">The planted rule removes only hot readings, and hot readings live near the end of life. After the drop the model's "latest" view of the engine is a cooler moment from earlier, so it predicts more life than is left.</q>
+      <button class="qopt" type="button">A · Because deletion adds random noise, which averages out to a healthier reading</button>
+      <button class="qopt" type="button">B · Because the hot readings are the ones that vanished, so the newest row left is older and cooler, and the model reads it as today</button>
+      <button class="qopt" type="button">C · Because the model was fitted on different engines from the ones it is tested on</button>
+      <p class="qwhy">The planted rule removes only hot readings, and hot readings live near the end of life. After the drop the model's "latest" view of the engine is a cooler moment from earlier, so it predicts more life than is left.</p>
     </div>
 
     <div class="quiz-score"></div>

@@ -468,26 +468,26 @@ var b = IOT.ladder(IOT_SAMPLE, { seed: 42, only: ["smooth", "cap130Smooth"] });
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Why do many FD001 models hold the remaining-life label flat at 125 early in life?</p>
-      <div class="qopt">A · Because no engine in the file has more than 125 cycles left</div>
-      <div class="qopt">B · Because early in life the channels cannot separate a long remaining life from a short one, and 125 sits just under the shortest training life of 128, so every engine starts on the flat part</div>
-      <div class="qopt">C · Because the NASA readme specifies 125 as the target</div>
-      <q class="qwhy">Engine 69 has 361 cycles left at cycle 1, so A is false, and the readme gives no target at all. The cap removes the part of the label no sensor can support; 125 is tied to the 128-cycle minimum by one paper, and other papers use 130.</q>
+      <button class="qopt" type="button">A · Because no engine in the file has more than 125 cycles left</button>
+      <button class="qopt" type="button">B · Because early in life the channels cannot separate a long remaining life from a short one, and 125 sits just under the shortest training life of 128, so every engine starts on the flat part</button>
+      <button class="qopt" type="button">C · Because the NASA readme specifies 125 as the target</button>
+      <p class="qwhy">Engine 69 has 361 cycles left at cycle 1, so A is false, and the readme gives no target at all. The cap removes the part of the label no sensor can support; 125 is tied to the 128-cycle minimum by one paper, and other papers use 130.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">At seed 2008 the smoothed rung prints 23.64 / 3,366 with cap 125 and 23.70 / 3,622 with cap 130. What follows?</p>
-      <div class="qopt">A · 125 is the correct cap for FD001</div>
-      <div class="qopt">B · The papers that use 130 made a mistake</div>
-      <div class="qopt">C · On this bench at this seed 125 does a little better; at seed 42 130 wins on both numbers, so the cap is a modelling choice to test and report, not a law</div>
-      <q class="qwhy">One seed is one draw of held-out engines. At seeds 1 and 7, 125 wins again; at seed 42, 130 does (21.89 / 2,453 against 22.32 / 2,562). A convention gets printed beside its alternative, never crowned.</q>
+      <button class="qopt" type="button">A · 125 is the correct cap for FD001</button>
+      <button class="qopt" type="button">B · The papers that use 130 made a mistake</button>
+      <button class="qopt" type="button">C · On this bench at this seed 125 does a little better; at seed 42 130 wins on both numbers, so the cap is a modelling choice to test and report, not a law</button>
+      <p class="qwhy">One seed is one draw of held-out engines. At seeds 1 and 7, 125 wins again; at seed 42, 130 does (21.89 / 2,453 against 22.32 / 2,562). A convention gets printed beside its alternative, never crowned.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">The floor's summed score is 305,167; the uncapped linear fit's is 28,557. Which reading is right?</p>
-      <div class="qopt">A · Six units from two long-lived engines carry 79.5 percent of the floor's sum; a sum of exponentials is ruled by its worst few units, so look at the units before trusting the total</div>
-      <div class="qopt">B · The floor is about ten times worse on every engine</div>
-      <div class="qopt">C · A linear fit on the sensors always beats the floor</div>
-      <q class="qwhy">The floor's total is mostly engines 69 and 96, written off at 0 to 14 cycles while 140 to 150 remained. And C fails on the bench itself: at seed 7 the uncapped fit is worse than the floor on RMSE.</q>
+      <button class="qopt" type="button">A · Six units from two long-lived engines carry 79.5 percent of the floor's sum; a sum of exponentials is ruled by its worst few units, so look at the units before trusting the total</button>
+      <button class="qopt" type="button">B · The floor is about ten times worse on every engine</button>
+      <button class="qopt" type="button">C · A linear fit on the sensors always beats the floor</button>
+      <p class="qwhy">The floor's total is mostly engines 69 and 96, written off at 0 to 14 cycles while 140 to 150 remained. And C fails on the bench itself: at seed 7 the uncapped fit is worse than the floor on RMSE.</p>
     </div>
 
     <div class="quiz-score"></div>

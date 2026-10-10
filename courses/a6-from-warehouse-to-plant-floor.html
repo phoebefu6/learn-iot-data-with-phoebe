@@ -640,26 +640,26 @@
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Harrow Lane's engineer hire proposes sending every channel at full rate to the cloud, because storage is cheap. Which column of the transfer map does that habit belong in?</p>
-      <div class="qopt">A · Carries over: more data always makes a better model, so send all of it</div>
-      <div class="qopt">B · Must unlearn: in the constructed budget the cloud path takes 490 ms against a 500 ms deadline, 10 ms of slack, while the edge path takes 140 ms; the cost was never only the bytes</div>
-      <div class="qopt">C · Must learn: the deadline does not matter once the data is stored</div>
-      <q class="qwhy">Pipeline skills carry over; "send everything" does not. Time between the sample and the decision is the budget the cloud path spends, and one slow round trip erases 10 ms. The numbers are constructed arithmetic, not a measurement of any link.</q>
+      <button class="qopt" type="button">A · Carries over: more data always makes a better model, so send all of it</button>
+      <button class="qopt" type="button">B · Must unlearn: in the constructed budget the cloud path takes 490 ms against a 500 ms deadline, 10 ms of slack, while the edge path takes 140 ms; the cost was never only the bytes</button>
+      <button class="qopt" type="button">C · Must learn: the deadline does not matter once the data is stored</button>
+      <p class="qwhy">Pipeline skills carry over; "send everything" does not. Time between the sample and the decision is the budget the cloud path spends, and one slow round trip erases 10 ms. The numbers are constructed arithmetic, not a measurement of any link.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Which warehouse skill is worth more on a sensor feed than where it was learned?</p>
-      <div class="qopt">A · Dropping incomplete rows before modelling, for a clean table</div>
-      <div class="qopt">B · Reporting one error figure as the headline</div>
-      <div class="qopt">C · Profiling every column before modelling it, turned into channel triage: flat, noisy or drifting, with the reason written down</div>
-      <q class="qwhy">Dropping rows with gaps removes the hottest, latest readings and leans the forecast late. One error figure cannot see which side of the failure a prediction lands. Profiling is the warehouse habit a sensor feed needs most, pointed at new questions.</q>
+      <button class="qopt" type="button">A · Dropping incomplete rows before modelling, for a clean table</button>
+      <button class="qopt" type="button">B · Reporting one error figure as the headline</button>
+      <button class="qopt" type="button">C · Profiling every column before modelling it, turned into channel triage: flat, noisy or drifting, with the reason written down</button>
+      <p class="qwhy">Dropping rows with gaps removes the hottest, latest readings and leans the forecast late. One error figure cannot see which side of the failure a prediction lands. Profiling is the warehouse habit a sensor feed needs most, pointed at new questions.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">A scientist drafts a 90-day reading plan. Which plan matches the ladder?</p>
-      <div class="qopt">A · Free sources marked official or not: NASA's data set 6 and the paper in its zip, NIST IR 8259A and SP 800-213 from NIST's own site, arXiv author copies, the PHM Society's open proceedings; Heimes 2008 noted as reported and not free</div>
-      <div class="qopt">B · Start with whichever paper reports the lowest error on FD001, whatever its cap or its score's lean</div>
-      <div class="qopt">C · Read only summaries of the papers, since the originals say the same thing</div>
-      <q class="qwhy">The ladder is free and says which copy is official. A lowest-error league table mixes caps of 125 and 130, scores leaning either way and different test protocols, so its numbers are not comparable. A summary is not the official copy, and on this data the printed equation and the figure of the same paper disagree.</q>
+      <button class="qopt" type="button">A · Free sources marked official or not: NASA's data set 6 and the paper in its zip, NIST IR 8259A and SP 800-213 from NIST's own site, arXiv author copies, the PHM Society's open proceedings; Heimes 2008 noted as reported and not free</button>
+      <button class="qopt" type="button">B · Start with whichever paper reports the lowest error on FD001, whatever its cap or its score's lean</button>
+      <button class="qopt" type="button">C · Read only summaries of the papers, since the originals say the same thing</button>
+      <p class="qwhy">The ladder is free and says which copy is official. A lowest-error league table mixes caps of 125 and 130, scores leaning either way and different test protocols, so its numbers are not comparable. A summary is not the official copy, and on this data the printed equation and the figure of the same paper disagree.</p>
     </div>
 
     <div class="quiz-score"></div>

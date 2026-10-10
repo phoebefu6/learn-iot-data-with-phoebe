@@ -447,26 +447,26 @@ var rul = u.cyc.map(function (c) { return u.n - c; });
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Where does the remaining-useful-life label for a training row come from?</p>
-      <div class="qopt">A · A target column in the training file</div>
-      <div class="qopt">B · The health index, which is included as column 26</div>
-      <div class="qopt">C · The cycle count: life minus cycle, which can be computed only because every training engine ran to failure</div>
-      <q class="qwhy">The file has no target column and the health index was never given out. The label is derived, and the derivation depends on the failure being in the file, which is exactly what the test set withholds.</q>
+      <button class="qopt" type="button">A · A target column in the training file</button>
+      <button class="qopt" type="button">B · The health index, which is included as column 26</button>
+      <button class="qopt" type="button">C · The cycle count: life minus cycle, which can be computed only because every training engine ran to failure</button>
+      <p class="qwhy">The file has no target column and the health index was never given out. The label is derived, and the derivation depends on the failure being in the file, which is exactly what the test set withholds.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">Sensor 6 (P15, bypass-duct pressure) takes only the values 21.60 and 21.61 across 20,631 FD001 rows. What is the right treatment?</p>
-      <div class="qopt">A · Drop it from FD001 models and record it as near-constant under one operating condition, without concluding anything about other subsets</div>
-      <div class="qopt">B · Keep it, since two values make it a useful binary feature</div>
-      <div class="qopt">C · Flag the probe as faulty</div>
-      <q class="qwhy">Two values a hundredth apart is resolution, not information. Nothing says the probe failed. And in the six-condition subsets the bypass pressure moves with the regime, so "flat here" must not become "drop everywhere".</q>
+      <button class="qopt" type="button">A · Drop it from FD001 models and record it as near-constant under one operating condition, without concluding anything about other subsets</button>
+      <button class="qopt" type="button">B · Keep it, since two values make it a useful binary feature</button>
+      <button class="qopt" type="button">C · Flag the probe as faulty</button>
+      <p class="qwhy">Two values a hundredth apart is resolution, not information. Nothing says the probe failed. And in the six-condition subsets the bypass pressure moves with the regime, so "flat here" must not become "drop everywhere".</p>
     </div>
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">The fleet-average model scores a root mean square error of 45.61 cycles on the 300 held-out cut points. What is that number for?</p>
-      <div class="qopt">A · Comparing with published FD001 test-set results</div>
-      <div class="qopt">B · A floor: any model that uses the sensors has to beat it on the same cut points, or the sensors added nothing</div>
-      <div class="qopt">C · Proving the data is too noisy to model</div>
-      <q class="qwhy">The held-out engines are a seeded stand-in for the test set, so the number is not comparable to published results. Its job is to be the score of knowing nothing about the engine but its age.</q>
+      <button class="qopt" type="button">A · Comparing with published FD001 test-set results</button>
+      <button class="qopt" type="button">B · A floor: any model that uses the sensors has to beat it on the same cut points, or the sensors added nothing</button>
+      <button class="qopt" type="button">C · Proving the data is too noisy to model</button>
+      <p class="qwhy">The held-out engines are a seeded stand-in for the test set, so the number is not comparable to published results. Its job is to be the score of knowing nothing about the engine but its age.</p>
     </div>
 
     <div class="quiz-score"></div>

@@ -651,26 +651,26 @@ function drift(ch) {
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Nf_dmd, the demanded fan speed, never moves across the FD001 training rows. What is the best explanation?</p>
-      <div class="qopt">A · The probe failed early in every engine</div>
-      <div class="qopt">B · It records a command, not the engine's response, and in FD001's one fixed operating condition the command never changes</div>
-      <div class="qopt">C · The shipped sample's quantisation rounded its movement away</div>
-      <q class="qwhy">A demanded speed is a setpoint. The measured fan speeds, Nf and NRf, do move. And the flat seven were flat in the original file: they are listed, not shipped, so quantisation never touched them.</q>
+      <button class="qopt" type="button">A · The probe failed early in every engine</button>
+      <button class="qopt" type="button">B · It records a command, not the engine's response, and in FD001's one fixed operating condition the command never changes</button>
+      <button class="qopt" type="button">C · The shipped sample's quantisation rounded its movement away</button>
+      <p class="qwhy">A demanded speed is a setpoint. The measured fan speeds, Nf and NRf, do move. And the flat seven were flat in the original file: they are listed, not shipped, so quantisation never touched them.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Nc (s9) has r -0.390 and noise share 0.19. Ps30 (s11) has r -0.696 and noise share 0.38. What follows?</p>
-      <div class="qopt">A · Drop Nc: it has the second weakest r of the fourteen</div>
-      <div class="qopt">B · Nc is the noisier channel of the two</div>
-      <div class="qopt">C · Nc moves smoothly but not along one straight line the whole fleet shares, so r undersells it; look at its drift before deciding</div>
-      <q class="qwhy">A lower noise share means a smoother trend, so Nc is the smoother of the two. A weak pooled r with a smooth trace is the signature of movement a single straight line cannot describe, such as engines starting at different levels or moving in different directions near the end.</q>
+      <button class="qopt" type="button">A · Drop Nc: it has the second weakest r of the fourteen</button>
+      <button class="qopt" type="button">B · Nc is the noisier channel of the two</button>
+      <button class="qopt" type="button">C · Nc moves smoothly but not along one straight line the whole fleet shares, so r undersells it; look at its drift before deciding</button>
+      <p class="qwhy">A lower noise share means a smoother trend, so Nc is the smoother of the two. A weak pooled r with a smooth trace is the signature of movement a single straight line cannot describe, such as engines starting at different levels or moving in different directions near the end.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">Tonight's T50 drift (fleet mean 1402.57 in the first tenth of life, 1425.04 in the last) and a pipeline drift alert share a word. What is tonight's drift?</p>
-      <div class="qopt">A · The engine wearing, read faithfully through a probe: the signal a remaining-life model is meant to learn from</div>
-      <div class="qopt">B · A table's distribution shifting because something upstream in the pipeline changed</div>
-      <div class="qopt">C · Two channels' clocks slipping apart, so their readings no longer line up</div>
-      <q class="qwhy">B is pipeline drift, taught in the data observability sessions; C is clock skew, from session 2. Here the drift is in the physical sensor, and a monitor that alarmed on it would alarm on the very thing being predicted.</q>
+      <button class="qopt" type="button">A · The engine wearing, read faithfully through a probe: the signal a remaining-life model is meant to learn from</button>
+      <button class="qopt" type="button">B · A table's distribution shifting because something upstream in the pipeline changed</button>
+      <button class="qopt" type="button">C · Two channels' clocks slipping apart, so their readings no longer line up</button>
+      <p class="qwhy">B is pipeline drift, taught in the data observability sessions; C is clock skew, from session 2. Here the drift is in the physical sensor, and a monitor that alarmed on it would alarm on the very thing being predicted.</p>
     </div>
 
     <div class="quiz-score"></div>

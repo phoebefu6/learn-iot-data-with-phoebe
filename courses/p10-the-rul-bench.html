@@ -445,26 +445,26 @@
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">The dropout button moves the top rung's RMSE from 23.64 to 24.89 and its asymmetric score from 3,366 to 4,656. Why does the score move so much more?</p>
-      <div class="qopt">A · Because the score is computed on fewer units after the dropout</div>
-      <div class="qopt">B · Because the dropout shifts predictions late (bias +1.4 to +4.7), and the asymmetric score punishes late errors on a steeper exponential than early ones, while RMSE treats both sides alike</div>
-      <div class="qopt">C · Because the score is more sensitive to noise than RMSE</div>
-      <q class="qwhy">Both numbers are on the same 300 units. What changed is the direction of the errors: removing the hot end of life makes engines look healthier, so remaining life is over-predicted. Late errors divide by 10 in the exponent, early by 13.</q>
+      <button class="qopt" type="button">A · Because the score is computed on fewer units after the dropout</button>
+      <button class="qopt" type="button">B · Because the dropout shifts predictions late (bias +1.4 to +4.7), and the asymmetric score punishes late errors on a steeper exponential than early ones, while RMSE treats both sides alike</button>
+      <button class="qopt" type="button">C · Because the score is more sensitive to noise than RMSE</button>
+      <p class="qwhy">Both numbers are on the same 300 units. What changed is the direction of the errors: removing the hot end of life makes engines look healthier, so remaining life is over-predicted. Late errors divide by 10 in the exponent, early by 13.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">A colleague swaps the lag-free smoother for a trailing mean of the same 10 values "because it is simpler". What does the bench say?</p>
-      <div class="qopt">A · Worse on both numbers (24.88 and 4,171 against 23.64 and 3,366), because a trailing mean reports where a one-way degrading signal was about five cycles ago, which is always healthier, so it leans late</div>
-      <div class="qopt">B · Identical, since both use the same 10 values</div>
-      <div class="qopt">C · Better, because averaging always reduces error</div>
-      <q class="qwhy">Same window, different estimator. On a signal that only moves one way, lag is bias, and here the bias is in the expensive direction (+4.3 against +1.4).</q>
+      <button class="qopt" type="button">A · Worse on both numbers (24.88 and 4,171 against 23.64 and 3,366), because a trailing mean reports where a one-way degrading signal was about five cycles ago, which is always healthier, so it leans late</button>
+      <button class="qopt" type="button">B · Identical, since both use the same 10 values</button>
+      <button class="qopt" type="button">C · Better, because averaging always reduces error</button>
+      <p class="qwhy">Same window, different estimator. On a signal that only moves one way, lag is bias, and here the bias is in the expensive direction (+4.3 against +1.4).</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">What does the break button (shuffle cycle order inside each engine) prove?</p>
-      <div class="qopt">A · That the model is overfitting</div>
-      <div class="qopt">B · That the cap is too low</div>
-      <div class="qopt">C · That the bench measures the link between readings and time to failure: remove it and the top rung falls to 40.41 and 46,145, near the floor, so the clean numbers are not an artefact of the code</div>
-      <q class="qwhy">Everything except the time order is held fixed. A bench that scored similarly with time destroyed would be measuring something else. This one collapses, which is what gives its other numbers their meaning.</q>
+      <button class="qopt" type="button">A · That the model is overfitting</button>
+      <button class="qopt" type="button">B · That the cap is too low</button>
+      <button class="qopt" type="button">C · That the bench measures the link between readings and time to failure: remove it and the top rung falls to 40.41 and 46,145, near the floor, so the clean numbers are not an artefact of the code</button>
+      <p class="qwhy">Everything except the time order is held fixed. A bench that scored similarly with time destroyed would be measuring something else. This one collapses, which is what gives its other numbers their meaning.</p>
     </div>
 
     <div class="quiz-score"></div>

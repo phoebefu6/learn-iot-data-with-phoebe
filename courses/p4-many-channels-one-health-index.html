@@ -507,26 +507,26 @@ var early = r.cuts.filter(function (c, i) { return c.rul &gt; 125 &amp;&amp; r.h
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Why are the channels standardised, with mean and spread from the training engines only, before they are weighted?</p>
-      <div class="qopt">A · Standardising removes the cycle-to-cycle noise from each channel</div>
-      <div class="qopt">B · So a weight means "per standard deviation" on every channel alike, and the held-out engines never shape the ruler they are measured with</div>
-      <div class="qopt">C · Least squares cannot be fitted to values in rpm or psia</div>
-      <q class="qwhy">Noise in standard deviations is the same noise, and least squares fits raw values happily, with weights that mostly measure units. The training-only ruler is what keeps the held-out score honest.</q>
+      <button class="qopt" type="button">A · Standardising removes the cycle-to-cycle noise from each channel</button>
+      <button class="qopt" type="button">B · So a weight means "per standard deviation" on every channel alike, and the held-out engines never shape the ruler they are measured with</button>
+      <button class="qopt" type="button">C · Least squares cannot be fitted to values in rpm or psia</button>
+      <p class="qwhy">Noise in standard deviations is the same noise, and least squares fits raw values happily, with weights that mostly measure units. The training-only ruler is what keeps the held-out score honest.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">On 300 held-out cut points, rung 2 (health index, label capped at 125) scores 24.00 and 3,542; rung 1 (same channels, raw label) scores 30.50 and 28,557. What earned the gain?</p>
-      <div class="qopt">A · Squeezing fourteen channels into one number filtered out their noise</div>
-      <div class="qopt">B · The index uses fewer channels than rung 1</div>
-      <div class="qopt">C · The capped label and the 0 to 125 clamp: dividing the target by 125 rescales every weight and changes no prediction, so "being an index" adds nothing on its own</div>
-      <q class="qwhy">Both rungs see the same fourteen channels, and nothing in the three moves smooths noise. What changed is the target and the ceiling; one visible effect is that all 49 cut points above 125 are now predicted early, the cheaper side of the score.</q>
+      <button class="qopt" type="button">A · Squeezing fourteen channels into one number filtered out their noise</button>
+      <button class="qopt" type="button">B · The index uses fewer channels than rung 1</button>
+      <button class="qopt" type="button">C · The capped label and the 0 to 125 clamp: dividing the target by 125 rescales every weight and changes no prediction, so "being an index" adds nothing on its own</button>
+      <p class="qwhy">Both rungs see the same fourteen channels, and nothing in the three moves smooths noise. What changed is the target and the ceiling; one visible effect is that all 49 cut points above 125 are now predicted early, the cheaper side of the score.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">What was the health index in the PHM08 simulation, and who had it?</p>
-      <div class="qopt">A · The lowest of four normalised operability margins, 1 healthy and 0 failed; the simulation stopped at 0, and participants were not given it</div>
-      <div class="qopt">B · A weighted sum of the 21 sensors, shipped as column 26 of the file</div>
-      <div class="qopt">C · The remaining useful life divided by 125</div>
-      <q class="qwhy">The paper's index is physical and was kept back so that participants had to infer it. A weighted sum of sensors fitted to a capped label is one way of inferring it, not the thing itself.</q>
+      <button class="qopt" type="button">A · The lowest of four normalised operability margins, 1 healthy and 0 failed; the simulation stopped at 0, and participants were not given it</button>
+      <button class="qopt" type="button">B · A weighted sum of the 21 sensors, shipped as column 26 of the file</button>
+      <button class="qopt" type="button">C · The remaining useful life divided by 125</button>
+      <p class="qwhy">The paper's index is physical and was kept back so that participants had to infer it. A weighted sum of sensors fitted to a capped label is one way of inferring it, not the thing itself.</p>
     </div>
 
     <div class="quiz-score"></div>

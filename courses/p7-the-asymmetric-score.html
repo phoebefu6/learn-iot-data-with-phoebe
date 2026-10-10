@@ -594,26 +594,26 @@ IOT.selfTest("swapScore").checks.filter(function (c) { return !c.pass; }).map(fu
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">A colleague's scoring function returns 3.66 for d = +20 and 6.39 for d = -20. What do you conclude?</p>
-      <div class="qopt">A · It is the published score, correctly implemented</div>
-      <div class="qopt">B · It follows eq. 11 as printed, taken literally: early costs more, the opposite of Figure 9 and the prose; its numbers are not comparable with the bench's until that is stated</div>
-      <div class="qopt">C · It is broken and every number it produced should be discarded</div>
-      <q class="qwhy">Under the figure and the prose, +20 costs 6.39 and -20 costs 3.66. This function has them the other way round, which is the printed pairing read literally. It is a different score, not necessarily a wrong one (the same paper says the preference can be tuned), so the fix is to name the reading, not to throw the work away.</q>
+      <button class="qopt" type="button">A · It is the published score, correctly implemented</button>
+      <button class="qopt" type="button">B · It follows eq. 11 as printed, taken literally: early costs more, the opposite of Figure 9 and the prose; its numbers are not comparable with the bench's until that is stated</button>
+      <button class="qopt" type="button">C · It is broken and every number it produced should be discarded</button>
+      <p class="qwhy">Under the figure and the prose, +20 costs 6.39 and -20 costs 3.66. This function has them the other way round, which is the printed pairing read literally. It is a different score, not necessarily a wrong one (the same paper says the preference can be tuned), so the fix is to name the reading, not to throw the work away.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">The mean-life baseline's summed score is 305,167 on 300 units under test. Which description is right?</p>
-      <div class="qopt">A · Six units from two long-lived engines, 69 and 96, predicted to fail almost at once when 140 to 150 cycles remain, carry 79.5 percent of it</div>
-      <div class="qopt">B · It is late on most units, and late is punished harder</div>
-      <div class="qopt">C · Every unit costs about 1,017, the score per unit</div>
-      <q class="qwhy">The baseline leans early (43 percent late, bias -12.1). Its huge misses are false alarms on two engines that outlive the 200.37-cycle average. A sum of exponentials is ruled by its worst few units, so the per-unit average describes almost none of them.</q>
+      <button class="qopt" type="button">A · Six units from two long-lived engines, 69 and 96, predicted to fail almost at once when 140 to 150 cycles remain, carry 79.5 percent of it</button>
+      <button class="qopt" type="button">B · It is late on most units, and late is punished harder</button>
+      <button class="qopt" type="button">C · Every unit costs about 1,017, the score per unit</button>
+      <p class="qwhy">The baseline leans early (43 percent late, bias -12.1). Its huge misses are false alarms on two engines that outlive the 200.37-cycle average. A sum of exponentials is ruled by its worst few units, so the per-unit average describes almost none of them.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">With the two constants swapped, the planted dropout scores 4,316 and the clean rung 3 scores 5,002. What is the right reading?</p>
-      <div class="qopt">A · The dropout rung is the better model and should ship</div>
-      <div class="qopt">B · RMSE is the broken number, since it did not change</div>
-      <div class="qopt">C · The lean picked the winner: the dropout pushes estimates late, and a score that charges late gently rewards that; RMSE (23.64 against 24.89) and the bias (+1.4 against +4.7) show nothing improved, so state the lean with every score</div>
-      <q class="qwhy">Swapping the constants changes what is being rewarded, not how good the estimates are. RMSE has no side, so it does not move. The late shift the dropout causes is cheap under the swapped reading and expensive under the published one; which reading you report is a decision, and it decides the ranking.</q>
+      <button class="qopt" type="button">A · The dropout rung is the better model and should ship</button>
+      <button class="qopt" type="button">B · RMSE is the broken number, since it did not change</button>
+      <button class="qopt" type="button">C · The lean picked the winner: the dropout pushes estimates late, and a score that charges late gently rewards that; RMSE (23.64 against 24.89) and the bias (+1.4 against +4.7) show nothing improved, so state the lean with every score</button>
+      <p class="qwhy">Swapping the constants changes what is being rewarded, not how good the estimates are. RMSE has no side, so it does not move. The late shift the dropout causes is cheap under the swapped reading and expensive under the published one; which reading you report is a decision, and it decides the ranking.</p>
     </div>
 
     <div class="quiz-score"></div>

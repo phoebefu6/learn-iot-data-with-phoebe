@@ -561,26 +561,26 @@ mine.forEach(function (v, i) {
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">A teammate proposes keeping hourly averages instead of 15-minute readings "so we can't see when people are home". On the constructed Flat 4B trace, what does the measurement say?</p>
-      <div class="qopt">A · It works: hourly averages blur the trace, so the threshold rule can no longer find the leave time</div>
-      <div class="qopt">B · It barely helps: at 1 hour the same rule reads 92.9 percent of slots right and the leave time within 30 minutes on 13 of 14 days, so on this trace hourly coarsening is not a privacy stop</div>
-      <div class="qopt">C · It makes things worse for the household because hourly data is more accurate than 15-minute data</div>
-      <q class="qwhy">The absence lasts hours; an hourly average cannot hide something longer than itself. Averaging even smoothed some quiet awake slots, which is why the hourly leave time is within 30 minutes on one more day. The leave time only went on most days at 4 hours.</q>
+      <button class="qopt" type="button">A · It works: hourly averages blur the trace, so the threshold rule can no longer find the leave time</button>
+      <button class="qopt" type="button">B · It barely helps: at 1 hour the same rule reads 92.9 percent of slots right and the leave time within 30 minutes on 13 of 14 days, so on this trace hourly coarsening is not a privacy stop</button>
+      <button class="qopt" type="button">C · It makes things worse for the household because hourly data is more accurate than 15-minute data</button>
+      <p class="qwhy">The absence lasts hours; an hourly average cannot hide something longer than itself. Averaging even smoothed some quiet awake slots, which is why the hourly leave time is within 30 minutes on one more day. The leave time only went on most days at 4 hours.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">At 4-hour resolution the rule still reads 82.5 percent of slots right. How should a practitioner read that number?</p>
-      <div class="qopt">A · As a privacy failure: 82.5 percent is close to 93.0, so the routine is still exposed</div>
-      <div class="qopt">B · As proof that coarsening does not matter</div>
-      <div class="qopt">C · Against its floor: guessing "out" every slot scores 68.2 percent, and the leave time is within 30 minutes on only 2 of 14 days, so measure the specific inference you fear rather than a slot score</div>
-      <q class="qwhy">A slot score is inflated by the many easy night and empty-day slots. The inference that matters, when the flat stands empty, mostly disappears at 4 hours. And the measurement holds for this rule only; a cleverer detector could read more.</q>
+      <button class="qopt" type="button">A · As a privacy failure: 82.5 percent is close to 93.0, so the routine is still exposed</button>
+      <button class="qopt" type="button">B · As proof that coarsening does not matter</button>
+      <button class="qopt" type="button">C · Against its floor: guessing "out" every slot scores 68.2 percent, and the leave time is within 30 minutes on only 2 of 14 days, so measure the specific inference you fear rather than a slot score</button>
+      <p class="qwhy">A slot score is inflated by the many easy night and empty-day slots. The inference that matters, when the flat stands empty, mostly disappears at 4 hours. And the measurement holds for this rule only; a cleverer detector could read more.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">The Flat 4B team decides to run the rule on a device in the home and send only its answer and a daily total. Which statement is right?</p>
-      <div class="qopt">A · The 15-minute trace no longer crosses the home's wall, at the cost of device compute, updates and a rule nobody outside can audit; it does not settle whether everyone in the home agreed, which the team asks first and the law sessions answer</div>
-      <div class="qopt">B · Running on the device means consent is no longer needed from anyone</div>
-      <div class="qopt">C · The account holder's tick now covers everyone, because the data stays in their home</div>
-      <q class="qwhy">On-device inference moves where the trace lives; it does not change who the inference is about. The household is not a user, and one tick does not stretch over the others. The legal question is not answered here.</q>
+      <button class="qopt" type="button">A · The 15-minute trace no longer crosses the home's wall, at the cost of device compute, updates and a rule nobody outside can audit; it does not settle whether everyone in the home agreed, which the team asks first and the law sessions answer</button>
+      <button class="qopt" type="button">B · Running on the device means consent is no longer needed from anyone</button>
+      <button class="qopt" type="button">C · The account holder's tick now covers everyone, because the data stays in their home</button>
+      <p class="qwhy">On-device inference moves where the trace lives; it does not change who the inference is about. The household is not a user, and one tick does not stretch over the others. The legal question is not answered here.</p>
     </div>
 
     <div class="quiz-score"></div>

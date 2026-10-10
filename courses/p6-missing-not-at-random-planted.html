@@ -536,26 +536,26 @@ function avg(v) { return v.reduce(function (s, x) { return s + x; }, 0) / v.leng
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Which property of the planted rule makes the dropout missing not at random, in Rubin's sense?</p>
-      <div class="qopt">A · It removes 14.9 percent of the rows, which is more than most teams tolerate</div>
-      <div class="qopt">B · Whether a T50 reading vanishes depends on the value of that reading itself, which the analyst no longer holds once it is gone</div>
-      <div class="qopt">C · It uses a seeded draw, so the rows that vanish are not truly random</div>
-      <q class="qwhy">Size is not the test, and a seeded draw is still a random draw. Rubin's weakest general conditions for ignoring the missing-data process start from missing at random; a rule that reads the missing value itself is outside them, and because heat lives at the end of life, the holes land there.</q>
+      <button class="qopt" type="button">A · It removes 14.9 percent of the rows, which is more than most teams tolerate</button>
+      <button class="qopt" type="button">B · Whether a T50 reading vanishes depends on the value of that reading itself, which the analyst no longer holds once it is gone</button>
+      <button class="qopt" type="button">C · It uses a seeded draw, so the rows that vanish are not truly random</button>
+      <p class="qwhy">Size is not the test, and a seeded draw is still a random draw. Rubin's weakest general conditions for ignoring the missing-data process start from missing at random; a rule that reads the missing value itself is outside them, and because heat lives at the end of life, the holes land there.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">After the plant and the drop, RMSE moves 23.64 to 24.89 and the summed score 3,366 to 4,656, on 300 cut points. Your review deck shows only RMSE. What do you add beside it?</p>
-      <div class="qopt">A · Nothing; a 5 percent change is within normal variation</div>
-      <div class="qopt">B · A larger test set, since 300 units cannot separate the two runs</div>
-      <div class="qopt">C · The bias (+1.4 to +4.7 cycles) and the asymmetric score: the drop pushed estimates late, which square error barely registers and the score prices</div>
-      <q class="qwhy">Both runs use the same 300 cut points and the same model, so the difference is the drop. On every seed tried the dropout rung is worse on both numbers and later in bias. A late slide of a few cycles adds little to squared error and a lot to a score that divides a late miss by 10 and an early one by 13.</q>
+      <button class="qopt" type="button">A · Nothing; a 5 percent change is within normal variation</button>
+      <button class="qopt" type="button">B · A larger test set, since 300 units cannot separate the two runs</button>
+      <button class="qopt" type="button">C · The bias (+1.4 to +4.7 cycles) and the asymmetric score: the drop pushed estimates late, which square error barely registers and the score prices</button>
+      <p class="qwhy">Both runs use the same 300 cut points and the same model, so the difference is the drop. On every seed tried the dropout rung is worse on both numbers and later in bias. A late slide of a few cycles adds little to squared error and a lot to a score that divides a late miss by 10 and an early one by 13.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">In the widget, removing about the same number of rows at random barely moves the bias, while removing the hot ones pushes it late. What does that show?</p>
-      <div class="qopt">A · The damage comes from which rows go, not how many: the hole is the same size and the mechanism is not</div>
-      <div class="qopt">B · Deleting rows at random is always safe</div>
-      <div class="qopt">C · The model is overfitted to the training engines</div>
-      <q class="qwhy">The comparison holds the count fixed and changes only the reason, so the difference is the reason. "Always safe" overreaches: the at-random row is exploration on one model at one seed, not a law, and it is not a canon figure.</q>
+      <button class="qopt" type="button">A · The damage comes from which rows go, not how many: the hole is the same size and the mechanism is not</button>
+      <button class="qopt" type="button">B · Deleting rows at random is always safe</button>
+      <button class="qopt" type="button">C · The model is overfitted to the training engines</button>
+      <p class="qwhy">The comparison holds the count fixed and changes only the reason, so the difference is the reason. "Always safe" overreaches: the at-random row is exploration on one model at one seed, not a law, and it is not a canon figure.</p>
     </div>
 
     <div class="quiz-score"></div>

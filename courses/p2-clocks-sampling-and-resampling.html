@@ -600,26 +600,26 @@ var wrong = pr.a.filter(function (v, k) { return (v &gt; 2.5) !== (pr.b[k] &gt; 
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">A 9 Hz vibration is logged 10 times a second. The readings show a slow 1 Hz wave. What happened?</p>
-      <div class="qopt">A · The vibration slowed down during the recording</div>
-      <div class="qopt">B · The wave is faster than half the reading rate, so it folds back as a slower wave that is not in the signal</div>
-      <div class="qopt">C · The noise added a 1 Hz component</div>
-      <q class="qwhy">The limit at 10 readings a second is 5 Hz. A 9 Hz wave sits 1 Hz from the rate, so the readings line up along a 1 Hz wave. Every reading is genuine; the wave they trace is not.</q>
+      <button class="qopt" type="button">A · The vibration slowed down during the recording</button>
+      <button class="qopt" type="button">B · The wave is faster than half the reading rate, so it folds back as a slower wave that is not in the signal</button>
+      <button class="qopt" type="button">C · The noise added a 1 Hz component</button>
+      <p class="qwhy">The limit at 10 readings a second is 5 Hz. A 9 Hz wave sits 1 Hz from the rate, so the readings line up along a 1 Hz wave. Every reading is genuine; the wave they trace is not.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">Channel B's device clock runs 0.3 seconds ahead of channel A's, and both are read 10 times a second. What is the right first fix before joining them?</p>
-      <div class="qopt">A · Find an event both channels saw, measure the slide that lines it up, shift B's stamps by it, then join</div>
-      <div class="qopt">B · Resample both to one reading a second so the offset disappears inside each bucket</div>
-      <div class="qopt">C · Drop the joined rows where the two channels disagree</div>
-      <q class="qwhy">Coarser buckets hide the offset but still split the event across buckets wrongly. Dropping the disagreeing rows deletes exactly the rows around the event, the ones anyone cares about.</q>
+      <button class="qopt" type="button">A · Find an event both channels saw, measure the slide that lines it up, shift B's stamps by it, then join</button>
+      <button class="qopt" type="button">B · Resample both to one reading a second so the offset disappears inside each bucket</button>
+      <button class="qopt" type="button">C · Drop the joined rows where the two channels disagree</button>
+      <p class="qwhy">Coarser buckets hide the offset but still split the event across buckets wrongly. Dropping the disagreeing rows deletes exactly the rows around the event, the ones anyone cares about.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">You stretch 40 readings at 10 a second onto a grid of 100 a second with straight lines and get 391 rows. How many did the sensor measure?</p>
-      <div class="qopt">A · All 391, since every row has a value</div>
-      <div class="qopt">B · 351</div>
-      <div class="qopt">C · 40; the other 351 were drawn by the line and should be flagged as filled in</div>
-      <q class="qwhy">Upsampling adds rows, never readings. The 351 in-between values are a guess, and the real signal may have done something quite different between ticks.</q>
+      <button class="qopt" type="button">A · All 391, since every row has a value</button>
+      <button class="qopt" type="button">B · 351</button>
+      <button class="qopt" type="button">C · 40; the other 351 were drawn by the line and should be flagged as filled in</button>
+      <p class="qwhy">Upsampling adds rows, never readings. The 351 in-between values are a guess, and the real signal may have done something quite different between ticks.</p>
     </div>
 
     <div class="quiz-score"></div>

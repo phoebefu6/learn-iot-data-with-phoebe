@@ -504,26 +504,26 @@ while (IOT.edgeBudget({ linkLatencyMs: L + 1 }).cloudMeetsDeadline) L++;
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">The constructed raw stream is 179,200 bit/s, 9.0 percent of a 2,000 kbit/s link. What does that number settle?</p>
-      <div class="qopt">A · That every decision should run at the far end, since the readings all fit</div>
-      <div class="qopt">B · Only that the link can carry the readings; it says nothing about whether a 500 ms decision can afford the round trip</div>
-      <div class="qopt">C · That summarising on the device is never worth doing at this size</div>
-      <q class="qwhy">Bandwidth and latency are separate budgets. The bits fit with room to spare, while the cloud path makes the deadline by only 10 ms. A design can pass the first budget and fail the second.</q>
+      <button class="qopt" type="button">A · That every decision should run at the far end, since the readings all fit</button>
+      <button class="qopt" type="button">B · Only that the link can carry the readings; it says nothing about whether a 500 ms decision can afford the round trip</button>
+      <button class="qopt" type="button">C · That summarising on the device is never worth doing at this size</button>
+      <p class="qwhy">Bandwidth and latency are separate budgets. The bits fit with room to spare, while the cloud path makes the deadline by only 10 ms. A design can pass the first budget and fail the second.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">Summarising on the device (four numbers a channel a minute) cuts the traffic 150 times. What does it cost?</p>
-      <div class="qopt">A · The raw readings: any later question that needs the shape inside a minute, a short spike, or a feature nobody designed for can no longer be asked</div>
-      <div class="qopt">B · Nothing, because the mean is kept</div>
-      <div class="qopt">C · Accuracy of the per-minute mean</div>
-      <q class="qwhy">The summary is exactly as accurate as it claims; it is silent about everything it did not keep. 600 readings a channel a minute become 4 numbers, and the choice of those 4 decides which questions the data can answer next year.</q>
+      <button class="qopt" type="button">A · The raw readings: any later question that needs the shape inside a minute, a short spike, or a feature nobody designed for can no longer be asked</button>
+      <button class="qopt" type="button">B · Nothing, because the mean is kept</button>
+      <button class="qopt" type="button">C · Accuracy of the per-minute mean</button>
+      <p class="qwhy">The summary is exactly as accurate as it claims; it is silent about everything it did not keep. 600 readings a channel a minute become 4 numbers, and the choice of those 4 decides which questions the data can answer next year.</p>
     </div>
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">The cloud path adds up to 490 ms against a 500 ms deadline. What is the right reading?</p>
-      <div class="qopt">A · It meets the deadline, so the stop decision can run in the cloud</div>
-      <div class="qopt">B · Move every decision, including the weekly maintenance plan, onto the devices</div>
-      <div class="qopt">C · It meets with 10 ms of slack that five extra milliseconds each way erases; the stop decision belongs on the device, while fleet-wide questions with no tight deadline can stay at the far end</div>
-      <q class="qwhy">A budget built from typical values has to survive the bad day. The deadline decides where a decision lives; decisions that need the whole fleet and can wait are better made where the whole fleet's data meets.</q>
+      <button class="qopt" type="button">A · It meets the deadline, so the stop decision can run in the cloud</button>
+      <button class="qopt" type="button">B · Move every decision, including the weekly maintenance plan, onto the devices</button>
+      <button class="qopt" type="button">C · It meets with 10 ms of slack that five extra milliseconds each way erases; the stop decision belongs on the device, while fleet-wide questions with no tight deadline can stay at the far end</button>
+      <p class="qwhy">A budget built from typical values has to survive the bad day. The deadline decides where a decision lives; decisions that need the whole fleet and can wait are better made where the whole fleet's data meets.</p>
     </div>
 
     <div class="quiz-score"></div>

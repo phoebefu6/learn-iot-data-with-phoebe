@@ -510,26 +510,26 @@
 
     <div class="quiz-q" data-answer="2">
       <p class="qtext">Harrow Lane's retail data team proposes splitting the 20,631 rows of the fleet at random into training and test. What is the right objection?</p>
-      <div class="qopt">A · None; a random split is the standard way to avoid bias</div>
-      <div class="qopt">B · A random split is fine as long as the test set is large enough</div>
-      <div class="qopt">C · Cycles of the same engine would land on both sides, so the model is marked on engines it has already seen; split by whole engine, as the bench does with 70 training and 30 held-out engines</div>
-      <q class="qwhy">The unit is the engine, not the row. Each engine carries its own unknown initial wear, so its cycles are not interchangeable with another engine's. A large test set full of seen engines is still a flattering test.</q>
+      <button class="qopt" type="button">A · None; a random split is the standard way to avoid bias</button>
+      <button class="qopt" type="button">B · A random split is fine as long as the test set is large enough</button>
+      <button class="qopt" type="button">C · Cycles of the same engine would land on both sides, so the model is marked on engines it has already seen; split by whole engine, as the bench does with 70 training and 30 held-out engines</button>
+      <p class="qwhy">The unit is the engine, not the row. Each engine carries its own unknown initial wear, so its cycles are not interchangeable with another engine's. A large test set full of seen engines is still a flattering test.</p>
     </div>
 
     <div class="quiz-q" data-answer="0">
       <p class="qtext">The planner starts pulling every engine the model flags. A year later the team retrains on the shop's own maintenance log. What has happened to the data?</p>
-      <div class="qopt">A · The pulled engines never failed, so their outcomes are unknown; the failures that remain in the log are mostly the model's misses, and the new model learns from a dataset its own decisions shaped</div>
-      <div class="qopt">B · Nothing; a failure is a failure, and the log is as good as before</div>
-      <div class="qopt">C · The log now has more failures than before, because maintenance adds wear</div>
-      <q class="qwhy">Acting on a prediction removes the outcome it predicted. FD001 runs every engine to failure only because it is a simulation; a maintained fleet's log is censored by the maintenance itself.</q>
+      <button class="qopt" type="button">A · The pulled engines never failed, so their outcomes are unknown; the failures that remain in the log are mostly the model's misses, and the new model learns from a dataset its own decisions shaped</button>
+      <button class="qopt" type="button">B · Nothing; a failure is a failure, and the log is as good as before</button>
+      <button class="qopt" type="button">C · The log now has more failures than before, because maintenance adds wear</button>
+      <p class="qwhy">Acting on a prediction removes the outcome it predicted. FD001 runs every engine to failure only because it is a simulation; a maintained fleet's log is censored by the maintenance itself.</p>
     </div>
 
     <div class="quiz-q" data-answer="1">
       <p class="qtext">Shuffling cycle order inside each engine takes the bench's top rung from RMSE 23.64 to 40.41, and its score from 3,366 to 46,145 under the late-is-worse lean. What should a leader take from it?</p>
-      <div class="qopt">A · The model is broken and should be scrapped</div>
-      <div class="qopt">B · The bench measures time: with everything else held fixed, destroying the order collapses both numbers, so an evaluation that ignores time order is testing something else</div>
-      <div class="qopt">C · RMSE is the better number, because it moved less than the score</div>
-      <q class="qwhy">The shuffle is a deliberate break that proves the bench's numbers depend on degradation over time. The score moves more because it is exponential and leans on lateness; that is a property of the lean, not evidence that either number is better.</q>
+      <button class="qopt" type="button">A · The model is broken and should be scrapped</button>
+      <button class="qopt" type="button">B · The bench measures time: with everything else held fixed, destroying the order collapses both numbers, so an evaluation that ignores time order is testing something else</button>
+      <button class="qopt" type="button">C · RMSE is the better number, because it moved less than the score</button>
+      <p class="qwhy">The shuffle is a deliberate break that proves the bench's numbers depend on degradation over time. The score moves more because it is exponential and leans on lateness; that is a property of the lean, not evidence that either number is better.</p>
     </div>
 
     <div class="quiz-score"></div>
