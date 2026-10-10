@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 2 of 10. Sampling rate and the half-rate limit, cycle count versus wall clock, skew between device clocks, and what resampling up and down does to a signal. Built on a constructed signal you can change in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Clocks, sampling and resampling - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 2 of 10. A 9 Hz wave read 10 times a second shows up as a 1 Hz wave that was never there. Clocks, skew and resampling on a constructed signal.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p2-clocks-sampling-and-resampling.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Clocks, sampling and resampling - learn iot data with phoebe">
+<meta name="twitter:description" content="Every sensor row carries a clock. Read it before you join, resample or model anything.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 2 · Clocks, sampling and resampling - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 2 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 2 of 10</div>
+    <h1>Clocks, sampling <span class="accent">and resampling</span></h1>
+    <p class="sub">A warehouse timestamp says when somebody did something. A sensor timestamp says when a device, on its own clock, decided to take a reading. Tonight is about that clock: how often it reads, what it can and cannot see at that rate, what happens when two devices disagree about the time, and what you change when you squeeze a signal into fewer rows or stretch it into more. Everything is built on a constructed signal, so you can see the truth beside the readings and change the settings yourself.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Foundations</span>
+      <span class="chip audience">Analysts and engineers new to sensor data</span>
+      <span class="chip audience">Anyone who has joined two logs on a timestamp</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:2">0-3 · Welcome</span>
+      <span class="a2" style="flex:5">3-19 · Clocks and skew</span>
+      <span class="a3" style="flex:3">19-29 · Resampling</span>
+      <span class="a4" style="flex:5">29-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's analyst asks what time it is</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is NASA's 100 simulated engines. Last session its analyst found that the file counts time in cycles, not seconds. This week the planners want two things from her: engine wear expressed in weeks, because they plan in weeks, and a join between two logs from a constructed test stand whose devices each keep their own clock. Both requests run into the same question before any model does: whose clock is this, and how often did it read?</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The half-rate limit, and the ability to predict where a too-fast wave will reappear when it is read too slowly. Why a cycle count is not a clock, and the assumption you must write down to turn one into weeks. The two ways device clocks go wrong, a fixed offset and a drift, and how to find an offset from an event both channels saw. What a row means after you resample down (an instant, a mean or a max) and what it does not mean after you resample up. And a console session on a constructed signal where every one of those is a number you print yourself.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why clocks come before channels<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every later session works on readings: which channels move, how they combine into a health index, how far ahead a failure can be seen. Each of those quietly assumes that two readings with the same time on them were taken at the same moment, and that the gaps between readings are small enough to see what the machine did. Neither is guaranteed by a sensor. Both are decided by a clock you did not choose.</p>
+        <p>The streaming sessions already teach what happens when readings arrive late or out of order, and how to group them into windows. Tonight stays one step earlier, at the device: what the clock wrote down in the first place.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Reading (sample).</strong> One value a sensor reported at one instant, or over one short interval.</li>
+          <li><strong>Sampling rate.</strong> Readings per second. The gap between readings is one over the rate.</li>
+          <li><strong>Half-rate limit.</strong> The fastest wave a fixed rate can show as itself: half the rate. Often called the Nyquist limit.</li>
+          <li><strong>Alias.</strong> A wave faster than the limit that shows up in the readings as a slower wave that was never there.</li>
+          <li><strong>Wall clock.</strong> Seconds, minutes, dates. What a planner, a calendar or a maintenance log uses.</li>
+          <li><strong>Cycle.</strong> An operational cycle of the engine. FD001 counts time this way and never in seconds.</li>
+          <li><strong>Skew.</strong> Two clocks disagreeing about the same instant. A fixed offset if it stays the same, drift if it grows.</li>
+          <li><strong>Resampling.</strong> Moving a signal onto a different grid of times: down to fewer rows, or up to more.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers sampling rate and cycle versus wall clock</span>
+      <h2>Two ways to count time</h2>
+      <span class="tag concept">8 min live</span>
+    </div>
+    <p class="lede">A logger reads its sensor on a fixed tick: so many readings per second, by the wall clock. A run-to-failure file like FD001 does something else. It keeps one row per engine per operational cycle and numbers the cycles 1, 2, 3, with no seconds anywhere. The figure draws both, and the place where they part. It is a general picture of a logger, not a claim about how NASA's simulation produced each cycle's values; the file does not say.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn sketch of two ways to count time. Top: a sensor dot feeding a wall-clock timeline with evenly spaced ticks, one reading per tick. Middle: four operational cycles drawn as blocks of different widths; dashed lines from the cycle boundaries up to the timeline land between ticks. Bottom: each cycle becomes one row of the file, holding unit, cycle and 24 values. A copper box says there is no wall-clock column: how many seconds a cycle lasts is not in the file. A note says a rate per hour, a join to a clock-stamped log, or cycles left expressed in weeks all need an assumption the file does not hold.">
+        <defs>
+          <filter id="ip2aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip2aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip2aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip2aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip2aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip2aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip2aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip2aH" x="30" y="26">ONE SENSOR, TWO WAYS TO COUNT TIME</text>
+
+        <g filter="url(#ip2aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- sensor dot feeding the timeline -->
+          <circle cx="190" cy="96" r="8" fill="#FFFFFF"/>
+          <path d="M190 104 L190 116"/>
+          <!-- wall-clock timeline with ticks every 20 px -->
+          <path d="M210 96 L850 96"/>
+          <path d="M210 88 L210 104 M230 88 L230 104 M250 88 L250 104 M270 88 L270 104 M290 88 L290 104 M310 88 L310 104 M330 88 L330 104 M350 88 L350 104 M370 88 L370 104 M390 88 L390 104 M410 88 L410 104 M430 88 L430 104 M450 88 L450 104 M470 88 L470 104 M490 88 L490 104 M510 88 L510 104 M530 88 L530 104 M550 88 L550 104 M570 88 L570 104 M590 88 L590 104 M610 88 L610 104 M630 88 L630 104 M650 88 L650 104 M670 88 L670 104 M690 88 L690 104 M710 88 L710 104 M730 88 L730 104 M750 88 L750 104 M770 88 L770 104 M790 88 L790 104 M810 88 L810 104 M830 88 L830 104 M850 88 L850 104" stroke-width="1.6"/>
+          <!-- cycle boundaries land between ticks -->
+          <path d="M363 160 L363 108 M577 160 L577 108 M695 160 L695 108" stroke="#93A86F" stroke-dasharray="5 5"/>
+          <!-- cycles of different lengths -->
+          <rect x="210" y="164" width="150" height="48" rx="6" transform="rotate(-0.6 285 188)" fill="#FFFFFF"/>
+          <rect x="366" y="164" width="208" height="48" rx="6" transform="rotate(0.5 470 188)" fill="#F3F7EA"/>
+          <rect x="580" y="164" width="112" height="48" rx="6" transform="rotate(-0.8 636 188)" fill="#FFFFFF"/>
+          <rect x="698" y="164" width="152" height="48" rx="6" transform="rotate(0.6 774 188)" fill="#F3F7EA"/>
+          <!-- one row per cycle -->
+          <path d="M285 216 L285 256" marker-end="url(#ip2aAr)"/>
+          <path d="M470 216 L470 256" marker-end="url(#ip2aAr)"/>
+          <path d="M636 216 L636 256" marker-end="url(#ip2aAr)"/>
+          <path d="M774 216 L774 256" marker-end="url(#ip2aAr)"/>
+          <rect x="233" y="262" width="104" height="32" rx="4" transform="rotate(0.8 285 278)" fill="url(#ip2aHc)"/>
+          <rect x="418" y="262" width="104" height="32" rx="4" transform="rotate(-0.6 470 278)" fill="url(#ip2aHc)"/>
+          <rect x="584" y="262" width="104" height="32" rx="4" transform="rotate(0.7 636 278)" fill="url(#ip2aHc)"/>
+          <rect x="722" y="262" width="104" height="32" rx="4" transform="rotate(-0.8 774 278)" fill="url(#ip2aHc)"/>
+          <!-- the missing column -->
+          <rect x="210" y="320" width="640" height="44" rx="6" transform="rotate(-0.3 530 342)" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ip2aL" x="30" y="90">Sample clock</text>
+        <text class="ip2aS" x="30" y="106">a reading every tick</text>
+        <text class="ip2aS" x="30" y="122">gap = 1 / rate</text>
+
+        <text class="ip2aL" x="30" y="182">Cycle count</text>
+        <text class="ip2aS" x="30" y="198">one row per cycle,</text>
+        <text class="ip2aS" x="30" y="214">any length in seconds</text>
+
+        <text class="ip2aL" x="285" y="193" text-anchor="middle">cycle 1</text>
+        <text class="ip2aL" x="470" y="193" text-anchor="middle">cycle 2</text>
+        <text class="ip2aL" x="636" y="193" text-anchor="middle">cycle 3</text>
+        <text class="ip2aL" x="774" y="193" text-anchor="middle">cycle 4</text>
+        <text class="ip2aA" x="378" y="140">boundaries fall between ticks</text>
+
+        <text class="ip2aL" x="30" y="274">The file</text>
+        <text class="ip2aS" x="30" y="290">unit, cycle, 24 values</text>
+        <text class="ip2aS" x="30" y="306">ticks to one value: not stated</text>
+
+        <text class="ip2aL" x="30" y="347">Missing</text>
+        <text class="ip2aB" x="226" y="347">No wall-clock column: how many seconds a cycle lasts is not in the file.</text>
+
+        <text class="ip2aN" x="30" y="388">So a rate per hour, a join to a clock-stamped log, or cycles left expressed in weeks all need an assumption</text>
+        <text class="ip2aN" x="30" y="406">the file does not hold: seconds per cycle, cycles per week. Whatever you assume, write it beside the result.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the ticks belong to the wall clock, the blocks to the engine, and nothing in the file ties one to the other.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Sampling rate and the half-rate limit<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A logger that reads 10 times a second leaves a gap of a tenth of a second between readings. Anything the machine does inside that gap is invisible. That is obvious for a spike that comes and goes between two ticks. It is less obvious, and more dangerous, for a steady vibration that repeats faster than the readings can follow.</p>
+        <p>The rule is short. A fixed rate can show a repeating wave as itself only if the wave is slower than half the rate. At 10 readings a second the limit is 5 cycles per second (5 Hz). A 9 Hz vibration is past it, and it does not disappear: it reappears as a slower wave. Its new speed is its distance to the nearest whole multiple of the rate, so 9 Hz read at 10 a second shows as 1 Hz, and at 12 a second as 3 Hz. Part 3 lets you watch it happen.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's constructed test stand reads a vibration probe and a temperature probe on the same logger, at the same rate, because that was the default. Temperature changes over minutes, so the rate is generous for it. Vibration repeats many times a second, so the same rate may be far too slow. One rate for every channel is a convenience, not a decision. The analyst's first question about any new channel is now: how fast can this thing change, and is the rate at least twice that?</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>A cycle is not a clock<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>FD001 is real public rows from NASA's simulation: the engines and their degradation are simulated with C-MAPSS, and every row is one engine at one operational cycle. Its time axis is the cycle count. There is no date, no hour and no duration column. That is fine for a model that predicts cycles left. It stops being fine the moment anyone asks for an answer on a calendar.</p>
+        <p>The planners want "weeks until this engine should come in". To get there the analyst has to multiply cycles left by an assumed number of weeks per cycle, which depends on how hard the engine is used and is not in the file. The arithmetic is trivial; the honesty is in labelling the result "cycles left, converted at an assumed utilisation" rather than presenting weeks as if the data had measured them.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Which clock stamped this row?<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A sensor row can carry several times and they are not the same thing. The device's own clock when it took the reading. The gateway's clock when it forwarded it. The database's clock when it stored it. A counter, like cycles, with no clock at all. Before any analysis, write down which one each time column is, and which device keeps it.</p>
+        <p>The difference between "when it happened" and "when it arrived", and what to do with readings that arrive late, is the subject of <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">the late-data session of the streaming track</a>. Here the question stops at the device: was its clock right?</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers skew between channels</span>
+      <h2>Two devices, two clocks, one event</h2>
+      <span class="tag concept">8 min live</span>
+    </div>
+    <p class="lede">Channels that come from different devices are stamped by different clocks. Join them on the timestamp and you are assuming those clocks agree. The figure shows a constructed case: both channels see the same step at the same true instant, but channel B's clock reads 0.3 seconds ahead, so it stamps the step 0.3 seconds later. A join on the stamps pairs the wrong readings for exactly the rows that matter most, the ones around the event.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 412" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn sketch of clock skew. Channel A, with a correct clock, steps up at the shared event. Channel B sees the same event, but its clock is 0.3 seconds ahead, so the step is stamped three readings later. A copper hatched band between the two marks the three joined rows where the channels disagree. Below, a two step fix: find the lag that lines the step up, here 3 readings or 0.3 seconds, then shift B's stamps and join. A line notes that a clock gaining a constructed 50 parts per million drifts 4.32 seconds a day, a skew that grows.">
+        <defs>
+          <filter id="ip2bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip2bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip2bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip2bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip2bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip2bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip2bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip2bH" x="30" y="26">TWO DEVICE CLOCKS, ONE EVENT (CONSTRUCTED, 10 READINGS A SECOND)</text>
+
+        <g filter="url(#ip2bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the rows a timestamp join gets wrong -->
+          <rect x="436" y="88" width="118" height="140" fill="url(#ip2bHc)" stroke="none"/>
+          <!-- the event -->
+          <path d="M444 86 L444 230" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- channel A trace and readings -->
+          <path d="M210 132 L444 132 L444 98 L850 98" stroke="#3F6212" stroke-width="2.4"/>
+          <circle cx="210" cy="132" r="3.5" fill="#1D2513"/><circle cx="250" cy="132" r="3.5" fill="#1D2513"/><circle cx="290" cy="132" r="3.5" fill="#1D2513"/><circle cx="330" cy="132" r="3.5" fill="#1D2513"/><circle cx="370" cy="132" r="3.5" fill="#1D2513"/><circle cx="410" cy="132" r="3.5" fill="#1D2513"/>
+          <circle cx="450" cy="98" r="3.5" fill="#1D2513"/><circle cx="490" cy="98" r="3.5" fill="#1D2513"/><circle cx="530" cy="98" r="3.5" fill="#1D2513"/><circle cx="570" cy="98" r="3.5" fill="#1D2513"/><circle cx="610" cy="98" r="3.5" fill="#1D2513"/><circle cx="650" cy="98" r="3.5" fill="#1D2513"/><circle cx="690" cy="98" r="3.5" fill="#1D2513"/><circle cx="730" cy="98" r="3.5" fill="#1D2513"/><circle cx="770" cy="98" r="3.5" fill="#1D2513"/><circle cx="810" cy="98" r="3.5" fill="#1D2513"/><circle cx="850" cy="98" r="3.5" fill="#1D2513"/>
+          <!-- the stamp shift -->
+          <path d="M450 156 L556 156" stroke="#9B4D45" marker-end="url(#ip2bAr)"/>
+          <!-- channel B trace and readings -->
+          <path d="M210 212 L564 212 L564 178 L850 178" stroke="#3F6212" stroke-width="2.4"/>
+          <circle cx="210" cy="212" r="3.5" fill="#1D2513"/><circle cx="250" cy="212" r="3.5" fill="#1D2513"/><circle cx="290" cy="212" r="3.5" fill="#1D2513"/><circle cx="330" cy="212" r="3.5" fill="#1D2513"/><circle cx="370" cy="212" r="3.5" fill="#1D2513"/><circle cx="410" cy="212" r="3.5" fill="#1D2513"/><circle cx="450" cy="212" r="3.5" fill="#1D2513"/><circle cx="490" cy="212" r="3.5" fill="#1D2513"/><circle cx="530" cy="212" r="3.5" fill="#1D2513"/>
+          <circle cx="570" cy="178" r="3.5" fill="#1D2513"/><circle cx="610" cy="178" r="3.5" fill="#1D2513"/><circle cx="650" cy="178" r="3.5" fill="#1D2513"/><circle cx="690" cy="178" r="3.5" fill="#1D2513"/><circle cx="730" cy="178" r="3.5" fill="#1D2513"/><circle cx="770" cy="178" r="3.5" fill="#1D2513"/><circle cx="810" cy="178" r="3.5" fill="#1D2513"/><circle cx="850" cy="178" r="3.5" fill="#1D2513"/>
+          <!-- clock doodle -->
+          <circle cx="172" cy="196" r="13" fill="#FFFFFF"/>
+          <path d="M172 196 L172 187 M172 196 L179 199" stroke-width="1.6"/>
+          <!-- the fix -->
+          <rect x="210" y="272" width="300" height="52" rx="6" transform="rotate(-0.5 360 298)" fill="#FFFFFF"/>
+          <rect x="550" y="272" width="300" height="52" rx="6" transform="rotate(0.5 700 298)" fill="#F3F7EA"/>
+          <path d="M514 298 L544 298" marker-end="url(#ip2bAr)"/>
+        </g>
+
+        <text class="ip2bB" x="444" y="78" text-anchor="middle">the shared event</text>
+        <text class="ip2bL" x="30" y="110">Channel A</text>
+        <text class="ip2bS" x="30" y="126">clock correct</text>
+        <text class="ip2bL" x="30" y="190">Channel B</text>
+        <text class="ip2bS" x="30" y="206">clock 0.3 s ahead</text>
+        <text class="ip2bS" x="576" y="160">stamped 0.3 s later</text>
+        <text class="ip2bB" x="495" y="250" text-anchor="middle">3 joined rows disagree</text>
+
+        <text class="ip2bL" x="30" y="302">The fix</text>
+        <text class="ip2bL" x="226" y="294">1. Find the lag that lines the step up</text>
+        <text class="ip2bS" x="226" y="312">here 3 readings apart, so 0.3 s</text>
+        <text class="ip2bL" x="566" y="294">2. Shift B's stamps, then join</text>
+        <text class="ip2bA" x="566" y="312">the step lines up and the rows agree</text>
+
+        <text class="ip2bS" x="30" y="352">A clock that gains a constructed 50 parts per million drifts 4.32 s a day: skew that grows, not one fixed offset.</text>
+
+        <text class="ip2bN" x="30" y="380">A timestamp join assumes the clocks agree. When they do not, it pairs a reading with its neighbour's, and the</text>
+        <text class="ip2bN" x="30" y="398">event seems to move. Align the clocks before the join; lateness and windows live in the streaming sessions.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper band is three rows long because the clocks disagree by three readings, and those three rows sit exactly on the event.</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Offset: a clock that is simply wrong<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>An offset is a fixed disagreement: device B is always 0.3 seconds ahead of device A. It is the easy case, because one number fixes it. Find an event both channels must have seen at the same true instant (a start, a step, a shutdown), slide one channel against the other until the event lines up, and the slide is the offset. In the constructed case that slide is 3 readings at 10 a second, so 0.3 seconds, and the build-along finds it with a dozen lines of code.</p>
+        <p>The cost of not fixing it is not spread evenly. Far from the event both channels are flat and an offset changes nothing. Around the event, which is the only place anyone is looking, the join pairs "after" on one channel with "before" on the other. Any feature built from both, a ratio, a difference, a correlation, is wrong there and right everywhere else, which is the hardest kind of error to notice.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst joined the constructed test stand's inlet and outlet loggers and computed outlet minus inlet. The difference spiked for a fraction of a second at every throttle step, and the planners asked whether that spike was a warning sign. It was the clocks. After she shifted one log by the lag that lined the throttle steps up, the spike vanished. The lesson she wrote on the wiki: a feature that only misbehaves at events is a clock problem until proven otherwise.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Drift: a clock that runs at the wrong speed<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Drift is a clock that ticks slightly too fast or too slow, so the disagreement grows. Take a constructed clock that gains 50 parts per million: after one day it is 86,400 times 0.00005, which is 4.32 seconds ahead. One offset measured in the morning is wrong by the evening. Drift needs either regular resynchronisation of the device clocks, or an offset estimated from shared events at several points and fitted as a line through time.</p>
+        <p>Drift also hides inside a single device. If a logger's clock runs fast, its "10 readings a second" are slightly more than 10 per true second. Over a short window nobody notices. Over a long one, every rate and every duration computed from the stamps carries the same small error.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Finding the lag from a shared event<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The build-along's lag finder slides channel B against channel A one reading at a time, from 10 readings back to 10 forward, and at each slide multiplies the overlapping readings pair by pair and averages the products. The slide with the largest average is the one where the two steps line up. It is the simplest form of cross-correlation, and it works because the event is large compared with the noise.</p>
+        <p>It fails quietly when there is no clear shared event, when the channels respond to the event with a real physical delay (heat takes time to travel; that delay is the machine, not the clock), or when the offset is larger than the range you search. Write down which event you used and why both channels must have seen it at once.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers resampling up and down, and aliasing</span>
+      <h2>Fewer rows, more rows, and a wave that was never there</h2>
+      <span class="tag concept">10 min live</span>
+    </div>
+    <p class="lede">Resampling moves a signal onto a different grid of times. Going down to fewer rows forces a choice about what each row now means. Going up to more rows adds rows but never adds readings. The figure shows both on a constructed signal, and the widget under it lets you change the rate and the method and see the result printed.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 384" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn sketch in two panels. Left, going down: a fast 9 Hz wave drawn in green over one second, read 10 times, once every tenth of a second; the 10 readings lie on a slow copper wave that completes one cycle per second, a 1 Hz wave that is not in the signal. Right, going up: four measured readings drawn as filled dots, with nine open dots on a straight line between each pair, and the true wave wiggling in green between them, far from the straight line. A box below says averaging each tenth of a second instead of reading an instant shrinks the false wave from 0.98 to 0.11, but also blunts a real 9 Hz wave read 20 times a second from 0.99 to 0.70, on the constructed signal at seed 2008.">
+        <defs>
+          <filter id="ip2cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip2cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip2cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip2cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip2cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip2cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip2cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip2cH" x="30" y="26">DOWN: TOO FEW READINGS FOLD A FAST WAVE</text>
+        <text class="ip2cH" x="460" y="26">UP: MORE ROWS, NO NEW READINGS</text>
+
+        <g filter="url(#ip2cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="44" width="400" height="150" rx="8" transform="rotate(-0.4 230 119)" fill="#FFFFFF"/>
+          <rect x="460" y="44" width="390" height="150" rx="8" transform="rotate(0.4 655 119)" fill="#FFFFFF"/>
+          <!-- left: the true 9 Hz wave over one second -->
+          <path d="M50.0 92.2 L51.0 87.8 L52.0 84.0 L53.0 81.2 L54.0 79.2 L55.0 78.1 L56.0 78.1 L57.0 79.0 L58.0 80.9 L59.0 83.8 L60.0 87.4 L61.0 91.8 L62.0 96.9 L63.0 102.4 L64.0 108.4 L65.0 114.6 L66.0 120.9 L67.0 127.1 L68.0 133.1 L69.0 138.7 L70.0 143.8 L71.0 148.2 L72.0 152.0 L73.0 154.8 L74.0 156.8 L75.0 157.9 L76.0 157.9 L77.0 157.0 L78.0 155.1 L79.0 152.2 L80.0 148.6 L81.0 144.2 L82.0 139.1 L83.0 133.6 L84.0 127.6 L85.0 121.4 L86.0 115.1 L87.0 108.9 L88.0 102.9 L89.0 97.3 L90.0 92.2 L91.0 87.8 L92.0 84.0 L93.0 81.2 L94.0 79.2 L95.0 78.1 L96.0 78.1 L97.0 79.0 L98.0 80.9 L99.0 83.8 L100.0 87.4 L101.0 91.8 L102.0 96.9 L103.0 102.4 L104.0 108.4 L105.0 114.6 L106.0 120.9 L107.0 127.1 L108.0 133.1 L109.0 138.7 L110.0 143.8 L111.0 148.2 L112.0 152.0 L113.0 154.8 L114.0 156.8 L115.0 157.9 L116.0 157.9 L117.0 157.0 L118.0 155.1 L119.0 152.2 L120.0 148.6 L121.0 144.2 L122.0 139.1 L123.0 133.6 L124.0 127.6 L125.0 121.4 L126.0 115.1 L127.0 108.9 L128.0 102.9 L129.0 97.3 L130.0 92.2 L131.0 87.8 L132.0 84.0 L133.0 81.2 L134.0 79.2 L135.0 78.1 L136.0 78.1 L137.0 79.0 L138.0 80.9 L139.0 83.8 L140.0 87.4 L141.0 91.8 L142.0 96.9 L143.0 102.4 L144.0 108.4 L145.0 114.6 L146.0 120.9 L147.0 127.1 L148.0 133.1 L149.0 138.7 L150.0 143.8 L151.0 148.2 L152.0 152.0 L153.0 154.8 L154.0 156.8 L155.0 157.9 L156.0 157.9 L157.0 157.0 L158.0 155.1 L159.0 152.2 L160.0 148.6 L161.0 144.2 L162.0 139.1 L163.0 133.6 L164.0 127.6 L165.0 121.4 L166.0 115.1 L167.0 108.9 L168.0 102.9 L169.0 97.3 L170.0 92.2 L171.0 87.8 L172.0 84.0 L173.0 81.2 L174.0 79.2 L175.0 78.1 L176.0 78.1 L177.0 79.0 L178.0 80.9 L179.0 83.8 L180.0 87.4 L181.0 91.8 L182.0 96.9 L183.0 102.4 L184.0 108.4 L185.0 114.6 L186.0 120.9 L187.0 127.1 L188.0 133.1 L189.0 138.7 L190.0 143.8 L191.0 148.2 L192.0 152.0 L193.0 154.8 L194.0 156.8 L195.0 157.9 L196.0 157.9 L197.0 157.0 L198.0 155.1 L199.0 152.2 L200.0 148.6 L201.0 144.2 L202.0 139.1 L203.0 133.6 L204.0 127.6 L205.0 121.4 L206.0 115.1 L207.0 108.9 L208.0 102.9 L209.0 97.3 L210.0 92.2 L211.0 87.8 L212.0 84.0 L213.0 81.2 L214.0 79.2 L215.0 78.1 L216.0 78.1 L217.0 79.0 L218.0 80.9 L219.0 83.8 L220.0 87.4 L221.0 91.8 L222.0 96.9 L223.0 102.4 L224.0 108.4 L225.0 114.6 L226.0 120.9 L227.0 127.1 L228.0 133.1 L229.0 138.7 L230.0 143.8 L231.0 148.2 L232.0 152.0 L233.0 154.8 L234.0 156.8 L235.0 157.9 L236.0 157.9 L237.0 157.0 L238.0 155.1 L239.0 152.2 L240.0 148.6 L241.0 144.2 L242.0 139.1 L243.0 133.6 L244.0 127.6 L245.0 121.4 L246.0 115.1 L247.0 108.9 L248.0 102.9 L249.0 97.3 L250.0 92.2 L251.0 87.8 L252.0 84.0 L253.0 81.2 L254.0 79.2 L255.0 78.1 L256.0 78.1 L257.0 79.0 L258.0 80.9 L259.0 83.8 L260.0 87.4 L261.0 91.8 L262.0 96.9 L263.0 102.4 L264.0 108.4 L265.0 114.6 L266.0 120.9 L267.0 127.1 L268.0 133.1 L269.0 138.7 L270.0 143.8 L271.0 148.2 L272.0 152.0 L273.0 154.8 L274.0 156.8 L275.0 157.9 L276.0 157.9 L277.0 157.0 L278.0 155.1 L279.0 152.2 L280.0 148.6 L281.0 144.2 L282.0 139.1 L283.0 133.6 L284.0 127.6 L285.0 121.4 L286.0 115.1 L287.0 108.9 L288.0 102.9 L289.0 97.3 L290.0 92.2 L291.0 87.8 L292.0 84.0 L293.0 81.2 L294.0 79.2 L295.0 78.1 L296.0 78.1 L297.0 79.0 L298.0 80.9 L299.0 83.8 L300.0 87.4 L301.0 91.8 L302.0 96.9 L303.0 102.4 L304.0 108.4 L305.0 114.6 L306.0 120.9 L307.0 127.1 L308.0 133.1 L309.0 138.7 L310.0 143.8 L311.0 148.2 L312.0 152.0 L313.0 154.8 L314.0 156.8 L315.0 157.9 L316.0 157.9 L317.0 157.0 L318.0 155.1 L319.0 152.2 L320.0 148.6 L321.0 144.2 L322.0 139.1 L323.0 133.6 L324.0 127.6 L325.0 121.4 L326.0 115.1 L327.0 108.9 L328.0 102.9 L329.0 97.3 L330.0 92.2 L331.0 87.8 L332.0 84.0 L333.0 81.2 L334.0 79.2 L335.0 78.1 L336.0 78.1 L337.0 79.0 L338.0 80.9 L339.0 83.8 L340.0 87.4 L341.0 91.8 L342.0 96.9 L343.0 102.4 L344.0 108.4 L345.0 114.6 L346.0 120.9 L347.0 127.1 L348.0 133.1 L349.0 138.7 L350.0 143.8 L351.0 148.2 L352.0 152.0 L353.0 154.8 L354.0 156.8 L355.0 157.9 L356.0 157.9 L357.0 157.0 L358.0 155.1 L359.0 152.2 L360.0 148.6 L361.0 144.2 L362.0 139.1 L363.0 133.6 L364.0 127.6 L365.0 121.4 L366.0 115.1 L367.0 108.9 L368.0 102.9 L369.0 97.3 L370.0 92.2 L371.0 87.8 L372.0 84.0 L373.0 81.2 L374.0 79.2 L375.0 78.1 L376.0 78.1 L377.0 79.0 L378.0 80.9 L379.0 83.8 L380.0 87.4 L381.0 91.8 L382.0 96.9 L383.0 102.4 L384.0 108.4 L385.0 114.6 L386.0 120.9 L387.0 127.1 L388.0 133.1 L389.0 138.7 L390.0 143.8 L391.0 148.2 L392.0 152.0 L393.0 154.8 L394.0 156.8 L395.0 157.9 L396.0 157.9 L397.0 157.0 L398.0 155.1 L399.0 152.2 L400.0 148.6 L401.0 144.2 L402.0 139.1 L403.0 133.6 L404.0 127.6 L405.0 121.4 L406.0 115.1 L407.0 108.9 L408.0 102.9 L409.0 97.3 L410.0 92.2" stroke="#93A86F" stroke-width="1.6"/>
+          <!-- left: the alias the readings trace -->
+          <path d="M50.0 92.2 L59.0 97.3 L68.0 102.9 L77.0 108.9 L86.0 115.1 L95.0 121.4 L104.0 127.6 L113.0 133.6 L122.0 139.1 L131.0 144.2 L140.0 148.6 L149.0 152.2 L158.0 155.1 L167.0 157.0 L176.0 157.9 L185.0 157.9 L194.0 156.8 L203.0 154.8 L212.0 152.0 L221.0 148.2 L230.0 143.8 L239.0 138.7 L248.0 133.1 L257.0 127.1 L266.0 120.9 L275.0 114.6 L284.0 108.4 L293.0 102.4 L302.0 96.9 L311.0 91.8 L320.0 87.4 L329.0 83.8 L338.0 80.9 L347.0 79.0 L356.0 78.1 L365.0 78.1 L374.0 79.2 L383.0 81.2 L392.0 84.0 L401.0 87.8 L410.0 92.2" stroke="#9B4D45" stroke-width="2.6"/>
+          <circle cx="50" cy="92.2" r="4.5" fill="#1D2513"/><circle cx="86" cy="115.1" r="4.5" fill="#1D2513"/><circle cx="122" cy="139.1" r="4.5" fill="#1D2513"/><circle cx="158" cy="155.1" r="4.5" fill="#1D2513"/><circle cx="194" cy="156.8" r="4.5" fill="#1D2513"/><circle cx="230" cy="143.8" r="4.5" fill="#1D2513"/><circle cx="266" cy="120.9" r="4.5" fill="#1D2513"/><circle cx="302" cy="96.9" r="4.5" fill="#1D2513"/><circle cx="338" cy="80.9" r="4.5" fill="#1D2513"/><circle cx="374" cy="79.2" r="4.5" fill="#1D2513"/><circle cx="410" cy="92.2" r="4.5" fill="#1D2513"/>
+          <!-- sensor doodle -->
+          <circle cx="412" cy="58" r="7" fill="#FFFFFF" stroke-width="1.6"/>
+          <path d="M412 51 L412 44" stroke-width="1.6"/>
+          <!-- right: the true wave between readings -->
+          <path d="M490.0 98.2 L492.0 95.2 L494.0 92.5 L496.0 90.1 L498.0 88.0 L500.0 86.3 L502.0 85.1 L504.0 84.2 L506.0 83.8 L508.0 83.7 L510.0 84.1 L512.0 84.9 L514.0 86.2 L516.0 87.8 L518.0 89.8 L520.0 92.1 L522.0 94.8 L524.0 97.8 L526.0 101.1 L528.0 104.6 L530.0 108.2 L532.0 112.1 L534.0 116.1 L536.0 120.1 L538.0 124.2 L540.0 128.2 L542.0 132.2 L544.0 136.1 L546.0 139.9 L548.0 143.5 L550.0 146.9 L552.0 150.0 L554.0 152.8 L556.0 155.4 L558.0 157.5 L560.0 159.4 L562.0 160.8 L564.0 161.8 L566.0 162.4 L568.0 162.6 L570.0 162.3 L572.0 161.7 L574.0 160.6 L576.0 159.1 L578.0 157.3 L580.0 155.1 L582.0 152.5 L584.0 149.6 L586.0 146.4 L588.0 143.0 L590.0 139.3 L592.0 135.5 L594.0 131.5 L596.0 127.4 L598.0 123.3 L600.0 119.1 L602.0 115.0 L604.0 111.0 L606.0 107.0 L608.0 103.3 L610.0 99.7 L612.0 96.4 L614.0 93.3 L616.0 90.5 L618.0 88.1 L620.0 86.0 L622.0 84.3 L624.0 83.0 L626.0 82.1 L628.0 81.6 L630.0 81.5 L632.0 81.8 L634.0 82.6 L636.0 83.8 L638.0 85.4 L640.0 87.3 L642.0 89.6 L644.0 92.3 L646.0 95.2 L648.0 98.5 L650.0 101.9 L652.0 105.6 L654.0 109.4 L656.0 113.4 L658.0 117.4 L660.0 121.5 L662.0 125.6 L664.0 129.6 L666.0 133.5 L668.0 137.3 L670.0 140.9 L672.0 144.3 L674.0 147.5 L676.0 150.3 L678.0 152.9 L680.0 155.1 L682.0 156.9 L684.0 158.4 L686.0 159.5 L688.0 160.1 L690.0 160.4 L692.0 160.2 L694.0 159.6 L696.0 158.5 L698.0 157.1 L700.0 155.3 L702.0 153.1 L704.0 150.6 L706.0 147.7 L708.0 144.5 L710.0 141.1 L712.0 137.5 L714.0 133.7 L716.0 129.7 L718.0 125.6 L720.0 121.5 L722.0 117.4 L724.0 113.3 L726.0 109.2 L728.0 105.3 L730.0 101.5 L732.0 97.9 L734.0 94.5 L736.0 91.4 L738.0 88.6 L740.0 86.1 L742.0 84.0 L744.0 82.2 L746.0 80.9 L748.0 79.9 L750.0 79.4 L752.0 79.3 L754.0 79.6 L756.0 80.3 L758.0 81.4 L760.0 83.0 L762.0 84.9 L764.0 87.1 L766.0 89.8 L768.0 92.7 L770.0 95.9 L772.0 99.3 L774.0 103.0 L776.0 106.8 L778.0 110.7 L780.0 114.7 L782.0 118.8 L784.0 122.9 L786.0 126.9 L788.0 130.8 L790.0 134.7 L792.0 138.3 L794.0 141.7 L796.0 144.9 L798.0 147.8 L800.0 150.4 L802.0 152.6 L804.0 154.5 L806.0 156.0 L808.0 157.2 L810.0 157.9 L812.0 158.1 L814.0 158.0 L816.0 157.4 L818.0 156.4 L820.0 155.1" stroke="#93A86F" stroke-width="1.6"/>
+          <!-- right: the straight line interpolation draws -->
+          <path d="M490 98.2 L600 119.1 L710 141.1 L820 155.1" stroke-width="1.4"/>
+          <circle cx="501" cy="100.3" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="512" cy="102.4" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="523" cy="104.5" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="534" cy="106.6" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="545" cy="108.7" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="556" cy="110.8" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="567" cy="112.9" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="578" cy="115.0" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="589" cy="117.0" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="611" cy="121.3" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="622" cy="123.5" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="633" cy="125.7" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="644" cy="127.9" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="655" cy="130.1" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="666" cy="132.3" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="677" cy="134.5" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="688" cy="136.7" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="699" cy="138.9" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="721" cy="142.5" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="732" cy="143.9" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="743" cy="145.3" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="754" cy="146.7" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="765" cy="148.1" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="776" cy="149.5" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="787" cy="150.9" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="798" cy="152.3" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="809" cy="153.7" r="2.6" fill="#FFFFFF" stroke-width="1.4"/>
+          <circle cx="490" cy="98.2" r="5" fill="#1D2513"/>
+          <circle cx="600" cy="119.1" r="5" fill="#1D2513"/>
+          <circle cx="710" cy="141.1" r="5" fill="#1D2513"/>
+          <circle cx="820" cy="155.1" r="5" fill="#1D2513"/>
+          <!-- the averaging box -->
+          <rect x="30" y="272" width="820" height="56" rx="6" transform="rotate(-0.2 440 300)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ip2cA" x="30" y="214">green: the true 9 Hz wave, one second of it</text>
+        <text class="ip2cB" x="30" y="232">copper: what 10 readings a second show, a 1 Hz wave</text>
+        <text class="ip2cS" x="30" y="250">dots: the 10 readings, one every tenth of a second</text>
+
+        <text class="ip2cL" x="460" y="214">filled: measured, 1 row in 10</text>
+        <text class="ip2cS" x="460" y="232">open: drawn on a straight line, 9 rows in 10</text>
+        <text class="ip2cA" x="460" y="250">green: what the signal really did in between</text>
+
+        <text class="ip2cL" x="46" y="296">Reading the mean of each tenth of a second, not one instant, shrinks the false 1 Hz wave from 0.98 to 0.11.</text>
+        <text class="ip2cS" x="46" y="314">A crude filter: it also blunts a real 9 Hz wave read 20 times a second, from 0.99 to 0.70. Constructed, seed 2008.</text>
+
+        <text class="ip2cN" x="30" y="352">Below half the rate a wave is seen as itself; above it, the wave folds back as a slower one that is not there.</text>
+        <text class="ip2cN" x="30" y="370">Going up never adds a reading. Going down must decide what one row stands for: an instant, a mean or a max.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper wave is made entirely of real readings, and it is still not in the signal.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip2-alias">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">A constructed signal, computed in this page: a 9 Hz vibration of size 1.00 riding a slow rise of 0.50 per second, plus seeded noise, recorded as truth 1,000 times a second for 4 seconds. Choose how a logger reads it. The table is measured from the readings alone, as an analyst would see them. Change any setting and your numbers will differ from the prose.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip2-rate">Logger rate, readings per second</label>
+        <select class="sql-code" id="ip2-rate">
+          <option value="100">100</option>
+          <option value="20">20</option>
+          <option value="12">12</option>
+          <option value="10" selected>10</option>
+          <option value="8">8</option>
+        </select>
+        <label class="sql-label" for="ip2-how">What each reading is</label>
+        <select class="sql-code" id="ip2-how">
+          <option value="instant" selected>The value at one instant, on the tick</option>
+          <option value="mean">The mean over the whole gap since the last tick</option>
+        </select>
+        <label class="sql-label" for="ip2-seed">Seed for the noise</label>
+        <select class="sql-code" id="ip2-seed">
+          <option value="2008" selected>2008, the one the prose quotes</option>
+          <option value="1">1</option>
+          <option value="7">7</option>
+        </select>
+        <div id="ip2-alias-out"></div>
+        <p class="sql-note" id="ip2-alias-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip2-alias-self">...</div>
+    </div>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading the widget<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It opens at 10 readings a second, instant readings, seed 2008. The 40 readings show a strongest wave at 1.00 Hz of size 0.98, and the trend reads 0.54 per second against a true 0.50. The vibration is real, but its speed is wrong, and an analyst with only these readings would report a slow oscillation that does not exist. Switch to 12 a second and the false wave moves to 3 Hz; 8 a second and it is back at 1 Hz. Switch to 100 or 20 a second and the 9 Hz wave appears as itself.</p>
+        <p>Now go back to 10 a second and change "what each reading is" to the mean over the gap. The false wave is still at 1 Hz, but its size falls to 0.11, and the trend reads 0.49. Averaging is a filter: it smooths away most of what changes faster than the gap, which is what you want from a logger that cannot read fast enough. It is not a cure. Some of the false wave survives, and at 20 a second the same averaging shrinks the real 9 Hz wave from 0.99 to 0.70.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Going down: an instant, a mean or a max<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Turning many readings into one row means choosing what the row says. The last value (or the value on the tick) keeps an instant and throws the rest away, so anything faster than the new gap can fold into a false wave. The mean keeps the level and suppresses fast change, including a real spike. The max keeps the spike and loses the level. None is right in general; each answers a different question, and the column name should say which.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Flat 4B is a constructed household whose electricity meter reports average power every 15 minutes. A kettle that runs for one fifth of a 15-minute slot shows up as one fifth of its power, spread across the whole slot. The reading is honest: it is exactly the mean it claims to be. What it cannot tell you is whether that slot held a short, strong load or a long, weak one. Practitioner session 9 reads that trace for what it does reveal.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Going up: interpolation invents<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Stretch 40 readings at 10 a second onto a grid of 100 a second with a straight line between neighbours and you get 391 rows, of which 40 were measured and 351 were drawn by the line. The figure's right panel shows what the line missed: the real signal wiggled nine times a second in between. Forward fill (repeat the last reading) invents just as many rows, as flat steps instead of slopes.</p>
+        <p>Upsampling is sometimes needed, usually to put two channels on one grid before a join. Do it last, flag the invented rows in a column of their own, and never compute a rate of change, a peak or a noise level from them as if they were readings.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Practitioners split on when to resample. One camp resamples at ingest: every channel goes onto one common grid as it lands, so every later query is a simple join and nobody has to think about clocks again. The other camp stores every reading on its own stamps and resamples only inside each analysis, because the right grid and the right summary (instant, mean, max) depend on the question, and a choice made at ingest cannot be undone.</p>
+        <p>Both are defensible. Resampling early is simpler and cheaper to query, and it bakes one answer into every later result. Keeping raw readings costs storage and discipline, and it keeps the decision open. The habit that serves either camp: record, next to the data, the rate, the method and which clock stamped it, so the next analyst can tell what a row means.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 4 ============ -->
+  <section class="section" id="part-4">
+    <div class="section-kicker">
+      <span class="klabel">Part 4 · build-along</span>
+      <h2>Build a signal, read it badly, find the lag, stretch it</h2>
+      <span class="tag build">16 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page. The page defines a small helper, IP2, with the constructed signal and five short functions; read them in the page source if you want every line. Six steps, each with the number you should see at seed 2008. The signal is constructed: change the seed and your numbers will differ, while the shapes of the results will not.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 284" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes. One: the constructed truth, 4 seconds at 1,000 readings a second, a 9 Hz wave plus a slow rise plus seeded noise. Two: the logger, 10 readings a second, instant or mean, 40 readings. Three, in copper: the check, the strongest wave and the trend slope compared with the truth. Four: a second channel whose clock is 0.3 seconds ahead; the lag found is 3 readings. Five: going up from 10 to 100 a second, 40 measured rows and 351 invented. A note says every number in the steps is printed by these boxes at seed 2008 and the signal is constructed.">
+        <defs>
+          <filter id="ip2dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip2dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip2dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip2dH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2dL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip2dS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip2dB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip2dN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip2dH" x="30" y="26">FROM A CONSTRUCTED TRUTH TO FIVE NUMBERS YOU PRINT</text>
+
+        <g filter="url(#ip2dSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="56" width="140" height="120" rx="8" transform="rotate(-0.8 100 116)" fill="#F3F7EA"/>
+          <rect x="200" y="56" width="140" height="120" rx="8" transform="rotate(0.6 270 116)" fill="#FFFFFF"/>
+          <rect x="370" y="56" width="140" height="120" rx="8" transform="rotate(-0.5 440 116)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="540" y="56" width="140" height="120" rx="8" transform="rotate(0.7 610 116)" fill="#FFFFFF"/>
+          <rect x="710" y="56" width="140" height="120" rx="8" transform="rotate(-0.6 780 116)" fill="#FFFFFF"/>
+          <path d="M172 116 L196 116" marker-end="url(#ip2dAr)"/>
+          <path d="M342 116 L366 116" marker-end="url(#ip2dAr)"/>
+          <path d="M512 116 L536 116" marker-end="url(#ip2dAr)"/>
+          <path d="M682 116 L706 116" marker-end="url(#ip2dAr)"/>
+          <!-- gauge doodle -->
+          <path d="M760 166 A 20 20 0 0 1 800 166" stroke-width="1.6"/>
+          <path d="M780 166 L792 154" stroke="#9B4D45" stroke-width="1.6"/>
+        </g>
+
+        <text class="ip2dL" x="100" y="84" text-anchor="middle">the truth</text>
+        <text class="ip2dS" x="100" y="104" text-anchor="middle">4 s at 1,000 a s</text>
+        <text class="ip2dS" x="100" y="120" text-anchor="middle">9 Hz + slow rise</text>
+        <text class="ip2dS" x="100" y="136" text-anchor="middle">+ seeded noise</text>
+
+        <text class="ip2dL" x="270" y="84" text-anchor="middle">the logger</text>
+        <text class="ip2dS" x="270" y="104" text-anchor="middle">10 a second</text>
+        <text class="ip2dS" x="270" y="120" text-anchor="middle">instant or mean</text>
+        <text class="ip2dS" x="270" y="136" text-anchor="middle">40 readings</text>
+
+        <text class="ip2dB" x="440" y="84" text-anchor="middle">the check</text>
+        <text class="ip2dS" x="440" y="104" text-anchor="middle">strongest wave</text>
+        <text class="ip2dS" x="440" y="120" text-anchor="middle">and trend slope</text>
+        <text class="ip2dS" x="440" y="136" text-anchor="middle">against the truth</text>
+
+        <text class="ip2dL" x="610" y="84" text-anchor="middle">second clock</text>
+        <text class="ip2dS" x="610" y="104" text-anchor="middle">channel B</text>
+        <text class="ip2dS" x="610" y="120" text-anchor="middle">0.3 s ahead</text>
+        <text class="ip2dS" x="610" y="136" text-anchor="middle">lag found: 3</text>
+
+        <text class="ip2dL" x="780" y="84" text-anchor="middle">going up</text>
+        <text class="ip2dS" x="780" y="104" text-anchor="middle">10 to 100 a s</text>
+        <text class="ip2dS" x="780" y="120" text-anchor="middle">40 measured</text>
+        <text class="ip2dS" x="780" y="136" text-anchor="middle">351 invented</text>
+
+        <text class="ip2dN" x="30" y="222">Every number in the steps is printed by these five boxes at seed 2008. The signal is constructed: no engine,</text>
+        <text class="ip2dN" x="30" y="240">no logger and no test stand recorded it. Change the seed and your numbers will differ; the shapes will not.</text>
+        <text class="ip2dS" x="30" y="268">truth: a 9 Hz wave of size 1.00 on a rise of 0.50 per second, noise within 0.30 either way, for 4 seconds.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is where you compare what the readings say with what the constructed truth actually was, which real data never lets you do.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Build the constructed truth</h4>
+        <p>IP2.truth draws 4 seconds of the signal at 1,000 values a second, using the engine's seeded generator for the noise. You should see 4,000 values and a first value of 20.52.</p>
+        <div class="prompt-box good"><span class="label">console</span>var y = IP2.truth(2008);
+[y.length, y[0].toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read it fast enough and check</h4>
+        <p>IP2.sample keeps one value per tick; IP2.peak fits a straight line to the readings for the trend, removes it, and reports the strongest repeating wave left. At 100 a second you should see the truth come back: 9 Hz, size 1.00, trend 0.49 per second.</p>
+        <div class="prompt-box good"><span class="label">console</span>var p = IP2.peak(IP2.sample(y, 100, "instant"), 100);
+[p.f, p.amp.toFixed(2), p.slope.toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read it too slowly and predict first</h4>
+        <p>Before running this, write down where the 9 Hz wave should land at 12, 10 and 8 readings a second (its distance to the nearest multiple of the rate). You should see 3 Hz at size 1.07, 1 Hz at 0.98, and 1 Hz at 0.93.</p>
+        <div class="prompt-box good"><span class="label">console</span>[12, 10, 8].map(function (fs) {
+  var q = IP2.peak(IP2.sample(y, fs, "instant"), fs);
+  return fs + " a second: " + q.f + " Hz, size " + q.amp.toFixed(2);
+})</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Average instead of reading an instant</h4>
+        <p>Same rate, 10 a second, but each reading is now the mean of the gap. The false wave stays at 1 Hz and shrinks to 0.11; the trend reads 0.49 instead of 0.54.</p>
+        <div class="prompt-box good"><span class="label">console</span>var a = IP2.peak(IP2.sample(y, 10, "mean"), 10);
+var b = IP2.peak(IP2.sample(y, 10, "instant"), 10);
+[a.f, a.amp.toFixed(2), a.slope.toFixed(2), b.slope.toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Two clocks: find the lag</h4>
+        <p>IP2.pair builds two constructed channels that see one step at the same true instant, with channel B's clock 0.3 seconds ahead. Count the joined rows where they disagree about the step, then let IP2.bestLag find the slide that lines them up. You should see 3 rows and a lag of 3 readings, which at 10 a second is 0.3 seconds.</p>
+        <div class="prompt-box good"><span class="label">console</span>var pr = IP2.pair(2008, 0.3, 10);
+var wrong = pr.a.filter(function (v, k) { return (v &gt; 2.5) !== (pr.b[k] &gt; 2.5); }).length;
+[wrong, IP2.bestLag(pr.a, pr.b, 10)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Stretch it, and count what you invented</h4>
+        <p>IP2.upsample draws a straight line between neighbouring readings onto a grid ten times finer. You should see 391 rows: 40 measured, 351 invented. That second number is the one to carry into any table you build this way.</p>
+        <div class="prompt-box good"><span class="label">console</span>var u = IP2.upsample(IP2.sample(y, 10, "instant"), 10, 100);
+[u.values.length, u.measured, u.invented]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> For every time column, write three things before you use it: which device's clock stamped it, the rate it was read at, and what one row stands for (an instant, a mean, a max, or a filled-in value). If two columns come from two clocks, find a shared event and measure the offset before the first join.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">A 9 Hz vibration is logged 10 times a second. The readings show a slow 1 Hz wave. What happened?</p>
+      <div class="qopt">A · The vibration slowed down during the recording</div>
+      <div class="qopt">B · The wave is faster than half the reading rate, so it folds back as a slower wave that is not in the signal</div>
+      <div class="qopt">C · The noise added a 1 Hz component</div>
+      <q class="qwhy">The limit at 10 readings a second is 5 Hz. A 9 Hz wave sits 1 Hz from the rate, so the readings line up along a 1 Hz wave. Every reading is genuine; the wave they trace is not.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">Channel B's device clock runs 0.3 seconds ahead of channel A's, and both are read 10 times a second. What is the right first fix before joining them?</p>
+      <div class="qopt">A · Find an event both channels saw, measure the slide that lines it up, shift B's stamps by it, then join</div>
+      <div class="qopt">B · Resample both to one reading a second so the offset disappears inside each bucket</div>
+      <div class="qopt">C · Drop the joined rows where the two channels disagree</div>
+      <q class="qwhy">Coarser buckets hide the offset but still split the event across buckets wrongly. Dropping the disagreeing rows deletes exactly the rows around the event, the ones anyone cares about.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">You stretch 40 readings at 10 a second onto a grid of 100 a second with straight lines and get 391 rows. How many did the sensor measure?</p>
+      <div class="qopt">A · All 391, since every row has a value</div>
+      <div class="qopt">B · 351</div>
+      <div class="qopt">C · 40; the other 351 were drawn by the line and should be flagged as filled in</div>
+      <q class="qwhy">Upsampling adds rows, never readings. The 351 in-between values are a guess, and the real signal may have done something quite different between ticks.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 3</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the widget and the console on this page, plus one page of notes about your own data.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Predict, then check, the lowest honest rate</h4>
+        <p>Using the half-rate rule, write down the lowest rate in the widget's list at which the 9 Hz wave should appear as itself. Then check it in the widget, on all three seeds. Your numbers will differ by seed; whether the wave appears at 9 Hz should not.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Try a smaller offset</h4>
+        <p>Run IP2.pair with a skew of 0.1 and of 0.5 seconds, and IP2.bestLag on each. Does the lag finder recover both? What would it do with a skew of 1.5 seconds and a search range of 10 readings?</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the three lines for a dataset you own</h4>
+        <p>For each time column: which clock stamped it, the rate, and what a row stands for. If two columns come from two devices, name the shared event you would use to measure their offset. Next session triages channels; bring the list.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Sampling rate and the half-rate limit</span><span class="note">The gap is one over the rate; a wave is seen as itself only below half the rate.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Aliasing</span><span class="note">9 Hz read at 10, 12 and 8 a second shows as 1, 3 and 1 Hz on the constructed signal.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Cycle versus wall clock</span><span class="note">FD001 counts cycles; seconds per cycle are not in the file, so weeks need a written assumption.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Skew between channels: offset</span><span class="note">Constructed 0.3 s offset; 3 joined rows disagree; the lag finder recovers 3 readings.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Skew between channels: drift</span><span class="note">A constructed 50 parts per million is 4.32 s a day; one offset is not enough.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Resampling down</span><span class="note">Instant, mean or max; the mean shrinks the false wave from 0.98 to 0.11 and blunts a real one.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Resampling up</span><span class="note">Interpolation: 391 rows from 40 readings, 351 of them invented and to be flagged.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Proper anti-alias filtering</span><span class="note">The mean is named as a crude filter; designing filters is self-study.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Event time, late data and windows</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/04-windowing.html">learn streaming data, session 04 "Windowing"</a> and <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">session 05 "Late data"</a>; linked, not retaught.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Tonight's signal is constructed. FD001 is real public rows from NASA's simulation (C-MAPSS), not real engines; no figure describes a real fleet or a real logger.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The rate.</strong> Readings per second. The gap between readings is one over the rate.</div>
+      <div class="cheat-item"><strong>The limit.</strong> A fixed rate shows a wave as itself only below half the rate.</div>
+      <div class="cheat-item"><strong>The alias.</strong> 9 Hz read 10 times a second shows as 1 Hz. Nothing in the readings warns you.</div>
+      <div class="cheat-item"><strong>Cycle is not clock.</strong> FD001 counts cycles. Weeks need an assumption; write it down.</div>
+      <div class="cheat-item"><strong>Offset.</strong> Two device clocks disagree by a fixed amount. Find it from a shared event before joining.</div>
+      <div class="cheat-item"><strong>Drift.</strong> A disagreement that grows: a constructed 50 parts per million is 4.32 s a day.</div>
+      <div class="cheat-item"><strong>Going down.</strong> Say what a row is: an instant, a mean or a max. The mean shrinks aliases and blunts real waves.</div>
+      <div class="cheat-item"><strong>Going up.</strong> Interpolation adds rows, never readings. Flag the invented ones.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 2 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p1-reading-a-turbofan-run.html">← Practitioner session 1 · Reading a turbofan run as a dataset</a>
+        <a href="p3-channel-triage.html">Practitioner session 3 · Channel triage: flat, noisy and drifting →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined") return;
+
+  // The constructed signal and five small functions, exposed as IP2 for the console.
+  // Truth: a 9 Hz wave of size 1 on a rise of 0.5 per second, noise within 0.3, 4 s at 1,000 a second.
+  var IP2 = (function () {
+    var TR = 1000, DUR = 4, F0 = 9, AMP = 1, RISE = 0.5, BASE = 20, NOISE = 0.3, PH = 0.7;
+    function truth(seed) {
+      var r = IOT.mulberry32(seed), y = [];
+      for (var i = 0; i < TR * DUR; i++) {
+        var t = i / TR;
+        y.push(BASE + RISE * t + AMP * Math.sin(2 * Math.PI * F0 * t + PH) + NOISE * (2 * r() - 1));
+      }
+      return y;
+    }
+    // one reading per tick: the value at the tick ("instant") or the mean over the gap ("mean")
+    function sample(y, fs, how) {
+      var n = Math.round(DUR * fs), out = [];
+      for (var k = 0; k < n; k++) {
+        var a = Math.floor(k * TR / fs), b = Math.floor((k + 1) * TR / fs);
+        if (how === "mean") { var s = 0; for (var i = a; i < b; i++) s += y[i]; out.push(s / (b - a)); }
+        else out.push(y[a]);
+      }
+      return out;
+    }
+    function line(x, fs) {
+      var n = x.length, mt = 0, mx = 0, i;
+      for (i = 0; i < n; i++) { mt += i / fs; mx += x[i]; }
+      mt /= n; mx /= n;
+      var sxy = 0, sxx = 0;
+      for (i = 0; i < n; i++) { sxy += (i / fs - mt) * (x[i] - mx); sxx += (i / fs - mt) * (i / fs - mt); }
+      var b = sxy / sxx;
+      return { slope: b, at: mx - b * mt };
+    }
+    // fit the trend, remove it, and find the strongest repeating wave below half the rate
+    function peak(x, fs) {
+      var L = line(x, fs), n = x.length, best = { f: 0, amp: 0 };
+      for (var m = 1; m / (n / fs) < fs / 2; m++) {
+        var f = m / (n / fs), re = 0, im = 0;
+        for (var k = 0; k < n; k++) {
+          var r = x[k] - (L.at + L.slope * k / fs), w = 2 * Math.PI * f * k / fs;
+          re += r * Math.cos(w); im -= r * Math.sin(w);
+        }
+        var amp = 2 * Math.sqrt(re * re + im * im) / n;
+        if (amp > best.amp) best = { f: f, amp: amp };
+      }
+      best.slope = L.slope; best.n = n; best.limit = fs / 2;
+      return best;
+    }
+    // two channels see one step of +5 at true time 2.0 s; channel B's clock reads 'skew' seconds ahead
+    function pair(seed, skew, fs) {
+      var r = IOT.mulberry32(seed), a = [], b = [], n = Math.round(DUR * fs);
+      for (var k = 0; k < n; k++) {
+        var tMs = Math.round(k * 1000 / fs), tbMs = Math.round(k * 1000 / fs - skew * 1000);
+        a.push((tMs >= 2000 ? 5 : 0) + 0.4 * (2 * r() - 1));
+        b.push((tbMs >= 2000 ? 5 : 0) + 0.4 * (2 * r() - 1));
+      }
+      return { a: a, b: b, fs: fs };
+    }
+    // slide B against A one reading at a time; keep the slide with the largest mean product
+    function bestLag(a, b, maxLag) {
+      var best = { lag: 0, c: -Infinity };
+      for (var L = -maxLag; L <= maxLag; L++) {
+        var s = 0, m = 0;
+        for (var k = 0; k < a.length; k++) { var j = k + L; if (j < 0 || j >= b.length) continue; s += a[k] * b[j]; m++; }
+        if (s / m > best.c) best = { lag: L, c: s / m };
+      }
+      return best.lag;
+    }
+    // straight lines between neighbouring readings, onto a finer grid
+    function upsample(x, fsFrom, fsTo) {
+      var out = [], ratio = fsTo / fsFrom, measured = 0;
+      for (var j = 0; j <= (x.length - 1) * ratio; j++) {
+        var p = j / ratio, k = Math.floor(p), w = p - k;
+        if (w === 0) measured++;
+        out.push(w === 0 ? x[k] : x[k] * (1 - w) + x[k + 1] * w);
+      }
+      return { values: out, measured: measured, invented: out.length - measured };
+    }
+    return { F0: F0, AMP: AMP, RISE: RISE, DUR: DUR, TR: TR, truth: truth, sample: sample, peak: peak, pair: pair, bestLag: bestLag, upsample: upsample };
+  })();
+  window.IP2 = IP2;
+
+  var rate = document.getElementById("ip2-rate");
+  var how = document.getElementById("ip2-how");
+  var seed = document.getElementById("ip2-seed");
+  var out = document.getElementById("ip2-alias-out");
+  var verdict = document.getElementById("ip2-alias-verdict");
+  var self = document.getElementById("ip2-alias-self");
+
+  function plot(y, x, fs) {
+    // first 2 seconds; value 18.5 at the bottom, 22.5 at the top
+    var W = 640, H = 200, secs = 2;
+    function px(t) { return (10 + (W - 20) * t / secs).toFixed(1); }
+    function py(v) { return (H - 10 - (v - 18.5) * (H - 20) / 4).toFixed(1); }
+    var tp = [], i;
+    for (i = 0; i < IP2.TR * secs; i += 4) tp.push((i ? "L" : "M") + px(i / IP2.TR) + " " + py(y[i]));
+    var rp = [], dots = "";
+    for (i = 0; i < x.length && i / fs < secs; i++) {
+      rp.push((i ? "L" : "M") + px(i / fs) + " " + py(x[i]));
+      dots += '<circle cx="' + px(i / fs) + '" cy="' + py(x[i]) + '" r="3.2" fill="#1D2513"/>';
+    }
+    return '<svg class="ip2-plot" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="The first two seconds: the constructed truth as a thin green line, the readings as dark dots joined by a copper line.">' +
+      '<rect x="0.5" y="0.5" width="' + (W - 1) + '" height="' + (H - 1) + '" rx="8" fill="#FFFFFF" stroke="#E3E9D8"/>' +
+      '<path d="' + tp.join(" ") + '" fill="none" stroke="#93A86F" stroke-width="1.2"/>' +
+      '<path d="' + rp.join(" ") + '" fill="none" stroke="#9B4D45" stroke-width="2"/>' + dots + "</svg>" +
+      '<p class="sql-note ip2-key">Thin green: the constructed truth. Dots: the readings. Copper: what the readings trace. First 2 of 4 seconds.</p>';
+  }
+
+  function render() {
+    var fs = Number(rate.value), h = how.value, sd = Number(seed.value);
+    var y = IP2.truth(sd), x = IP2.sample(y, fs, h), p = IP2.peak(x, fs);
+    var html = plot(y, x, fs);
+    html += '<table class="sql-table"><thead><tr><th>Measured from the readings</th><th>Value</th><th>Truth</th></tr></thead><tbody>';
+    html += "<tr><td>Readings kept in 4 seconds</td><td><b>" + p.n + "</b></td><td>4,000 values</td></tr>";
+    html += "<tr><td>Fastest wave this rate can show (half the rate)</td><td><b>" + p.limit + " Hz</b></td><td></td></tr>";
+    html += '<tr><td>Strongest wave in the readings</td><td><b class="ip2-f">' + p.f.toFixed(2) + " Hz</b></td><td>9.00 Hz</td></tr>";
+    html += "<tr><td>Its size</td><td><b>" + p.amp.toFixed(2) + "</b></td><td>1.00</td></tr>";
+    html += "<tr><td>Trend, per second</td><td><b>" + p.slope.toFixed(2) + "</b></td><td>0.50</td></tr>";
+    html += "</tbody></table>";
+    out.innerHTML = html;
+    var msg;
+    if (IP2.F0 < fs / 2) {
+      msg = "At " + fs + " readings a second the limit is " + p.limit + " Hz, above the 9 Hz wave, so the readings show it as itself: " + p.f.toFixed(2) + " Hz at size " + p.amp.toFixed(2) + ".";
+      if (h === "mean") msg += " Averaging still shrank it from 1.00: the mean blunts real fast change too.";
+    } else {
+      msg = "At " + fs + " readings a second the limit is " + p.limit + " Hz, below the 9 Hz wave. The readings trace a " + p.f.toFixed(2) + " Hz wave of size " + p.amp.toFixed(2) + " that is not in the signal.";
+      msg += h === "mean" ? " Averaging over each gap shrank it, but did not remove it." : " Switch to the mean over each gap and watch it shrink.";
+    }
+    msg += " Trend read: " + p.slope.toFixed(2) + " per second against a true 0.50.";
+    var canon = fs === 10 && h === "instant" && sd === 2008;
+    msg += canon ? " Constructed signal at the settings the prose quotes." : " Constructed signal; these are not the settings the prose quotes, so your numbers will differ from it.";
+    verdict.textContent = msg;
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, including the one that proves seeded draws repeat, which the constructed noise relies on. The signal is constructed: no engine or logger recorded it."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  [rate, how, seed].forEach(function (el) { el.addEventListener("change", render); });
+  render();
+})();
+</script>
+<style>
+  #ip2-alias .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip2-alias .ip2-plot { display: block; width: 100%; max-width: 40rem; height: auto; margin: .7rem 0 .2rem; }
+  #ip2-alias .ip2-key { margin: 0 0 .4rem; }
+  #ip2-alias table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip2-alias .ip2-f { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

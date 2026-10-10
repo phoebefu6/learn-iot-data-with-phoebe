@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 7 of 10. The PHM08 asymmetric score written from scratch and checked against the engine on 300 units, the printed equation that disagrees with its own figure, and why RMSE and the score tell different stories about the same estimates. Real public rows from NASA's simulation.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The asymmetric score - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 7 of 10. Late is punished harder, the printed equation pairs the constants the other way, and swapping them changes which model wins.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p7-the-asymmetric-score.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The asymmetric score - learn iot data with phoebe">
+<meta name="twitter:description" content="Probe any score at d = +20 and d = -20 before you trust a number it prints.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 7 · The asymmetric score - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 7 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 7 of 10</div>
+    <h1>The <span class="accent">asymmetric</span> score</h1>
+    <p class="sub">Every rung of the remaining-useful-life bench prints two numbers side by side: the root mean square error and the score published with the data in 2008. Tonight you write that score yourself, line by line, and check it against the engine to the digit. Along the way you meet a printed equation that pairs its two constants the other way from its own plotted curve, a baseline whose score is mostly two engines, and a swap of two constants that changes which model wins. Real public rows from NASA's simulation, scored in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Advanced</span>
+      <span class="chip audience">Analysts and engineers who report model error</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · The formula, read two ways</span>
+      <span class="a3" style="flex:3">15-27 · Two numbers, one bench</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's analyst inherits a scoring function</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is NASA's 100 simulated turbofan engines (the degradation is simulated with C-MAPSS). Its analyst has a ladder of models, each scored on the same 300 units under test, and a scoring function she did not write. The review is next week. Before she quotes a single score she wants to know three things: what the function computes, which way it leans, and why its number for the simplest model is so enormous. Those three questions are tonight.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The PHM08 asymmetric score written from scratch and checked against the engine on all 300 units: your sum for rung 3 equals the engine's 3,366.18. The disagreement between the paper's printed equation and its Figure 9, and a two-line probe that tells you which way any implementation leans. Why the always-average baseline scores 305,167: six units from two long-lived engines carry 79.5 percent of it. The gap between RMSE and the score on every rung, and what happens to the ranking when the two constants swap places.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why a score needs a direction<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A remaining-life estimate can be wrong in two ways. Too early, and an engine with life left is pulled: a false alarm, a waiting line, life thrown away. Too late, and the engine stays in service past its end. Leader session 3 priced those two mistakes for the people who sign off a model. Tonight is the practitioner's half: the formula itself, read carefully enough to implement it and to catch an implementation that leans the wrong way.</p>
+        <p>RMSE cannot tell those two mistakes apart. It squares every miss, so 20 cycles early and 20 cycles late weigh exactly the same. The asymmetric score was built to tell them apart, and that is both its value and its trap: a number with a direction is only as trustworthy as your knowledge of which direction it points.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>d.</strong> The estimated remaining life minus the true one, in cycles. Below zero is early; zero or above is late.</li>
+          <li><strong>Unit under test.</strong> One engine at one cut point. The bench has 300: 10 seeded cut points on each of 30 held-out engines (seed 2008), not the NASA test set.</li>
+          <li><strong>Unit score.</strong> The cost of one unit's miss: e raised to the size of d over a constant, minus 1. Zero for a perfect estimate.</li>
+          <li><strong>Summed score.</strong> The unit scores added over all 300 units. Smaller is better. The bench calls it "score".</li>
+          <li><strong>The two constants.</strong> 13 and 10. Whichever side divides by 10 climbs faster and is the side punished harder.</li>
+          <li><strong>Orientation, or lean.</strong> Which side gets which constant. The bench follows the paper's figure and prose: early divides by 13, late by 10.</li>
+          <li><strong>Bias.</strong> The mean of d over the 300 units. Positive means the estimates lean late.</li>
+          <li><strong>Late share.</strong> The share of units whose estimate lands after the truth.</li>
+          <li><strong>Constructed.</strong> Harrow Lane is invented so the truth is knowable. The engine rows are NASA's simulation; no figure describes a real engine.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the formula and its printed orientation</span>
+      <h2>One formula, two readings</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The score was published with the data by Saxena, Goebel, Simon and Eklund (2008), in the paper that ships inside NASA's zip. Its section VII defines it, plots it and explains it. Those three statements of the same score do not all agree on which side is punished harder. The figure draws one unit's cost against its miss under both readings, and lists the three places the paper states the lean.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 448" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn chart of one unit's score against its miss d, from 60 cycles early to 60 cycles late. The solid curve, which the bench uses, climbs faster on the late side: about 46 at d = -50 and about 147 at d = +50; its late branch is copper. A dashed curve, equation 11 as printed taken literally, is its mirror: about 147 at -50 and about 46 at +50. On the right, three boxes: the printed equation pairs a1 = 10 with d below 0, so early is punished harder; Figure 9 shows about 46 at -50 and about 147 at +50, so late is punished harder; the prose says late predictions were more heavily penalized. An arrow leads to a box saying the bench follows the figure and the prose, early divided by 13 and late by 10.">
+        <defs>
+          <filter id="ip7aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip7aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip7aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip7aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip7aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip7aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip7aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip7aH" x="30" y="26">ONE UNIT'S COST AGAINST ITS MISS d, READ TWO WAYS</text>
+        <text class="ip7aH" x="500" y="52">THREE PLACES THE PAPER STATES THE LEAN</text>
+
+        <g filter="url(#ip7aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes: x = 250 + 3.2 d ; y = 300 - 1.4 cost -->
+          <path d="M50 70 L50 300 L460 300"/>
+          <path d="M46 93.6 L50 93.6"/>
+          <path d="M46 235.9 L50 235.9"/>
+          <!-- guides at d = -50 and d = +50 -->
+          <path d="M90 298 L90 100" stroke="#CDD5C0" stroke-dasharray="3 5"/>
+          <path d="M410 298 L410 100" stroke="#CDD5C0" stroke-dasharray="3 5"/>
+          <!-- eq. 11 as printed, taken literally (dashed) -->
+          <path d="M250.0 300.0 L242.0 299.6 L234.0 299.1 L226.0 298.4 L218.0 297.6 L210.0 296.5 L202.0 295.1 L194.0 293.3 L186.0 291.1 L178.0 288.1 L170.0 284.3 L162.0 279.5 L154.0 273.3 L146.0 265.3 L138.0 255.0 L130.0 241.9 L122.0 225.0 L114.0 203.3 L106.0 175.4 L98.0 139.6 L90.0 93.6 L87.4 76" stroke="#93A86F" stroke-dasharray="7 5"/>
+          <path d="M250.0 300.0 L262.8 299.5 L275.6 298.8 L288.4 297.9 L301.2 296.6 L314.0 294.9 L326.8 292.5 L339.6 289.3 L352.4 285.0 L365.2 279.1 L378.0 271.0 L390.8 260.1 L403.6 245.2 L416.4 225.0 L429.2 197.4 L442.0 160.0" stroke="#93A86F" stroke-dasharray="7 5"/>
+          <!-- figure and prose: the bench (solid) -->
+          <path d="M250.0 300.0 L237.2 299.5 L224.4 298.8 L211.6 297.9 L198.8 296.6 L186.0 294.9 L173.2 292.5 L160.4 289.3 L147.6 285.0 L134.8 279.1 L122.0 271.0 L109.2 260.1 L96.4 245.2 L83.6 225.0 L70.8 197.4 L58.0 160.0" stroke-width="2.6"/>
+          <path d="M250.0 300.0 L258.0 299.6 L266.0 299.1 L274.0 298.4 L282.0 297.6 L290.0 296.5 L298.0 295.1 L306.0 293.3 L314.0 291.1 L322.0 288.1 L330.0 284.3 L338.0 279.5 L346.0 273.3 L354.0 265.3 L362.0 255.0 L370.0 241.9 L378.0 225.0 L386.0 203.3 L394.0 175.4 L402.0 139.6 L410.0 93.6 L412.6 76" stroke="#9B4D45" stroke-width="3"/>
+          <!-- the four reading points -->
+          <circle cx="90" cy="235.9" r="4.5" fill="#1D2513"/>
+          <circle cx="410" cy="93.6" r="4.5" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="90" cy="93.6" r="4.5" fill="#FFFFFF" stroke="#93A86F"/>
+          <circle cx="410" cy="235.9" r="4.5" fill="#FFFFFF" stroke="#93A86F"/>
+
+          <!-- right panel: three statements -->
+          <rect x="500" y="64" width="350" height="62" rx="6" transform="rotate(-0.6 675 95)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="500" y="136" width="350" height="62" rx="6" transform="rotate(0.5 675 167)" fill="#FFFFFF"/>
+          <rect x="500" y="208" width="350" height="62" rx="6" transform="rotate(-0.4 675 239)" fill="#FFFFFF"/>
+          <path d="M675 272 L675 292" marker-end="url(#ip7aAr)"/>
+          <rect x="500" y="296" width="350" height="50" rx="6" transform="rotate(0.6 675 321)" fill="#F3F7EA"/>
+          <!-- doodle: a gauge needle leaning to the late side -->
+          <path d="M808 328 A14 14 0 0 1 836 328"/>
+          <path d="M822 328 L831 318" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ip7aS" x="44" y="74" text-anchor="end">cost</text>
+        <text class="ip7aS" x="44" y="97.6" text-anchor="end">147</text>
+        <text class="ip7aS" x="44" y="239.9" text-anchor="end">46</text>
+        <text class="ip7aS" x="44" y="304" text-anchor="end">0</text>
+        <text class="ip7aS" x="90" y="318" text-anchor="middle">-50</text>
+        <text class="ip7aS" x="250" y="318" text-anchor="middle">0</text>
+        <text class="ip7aS" x="410" y="318" text-anchor="middle">+50</text>
+        <text class="ip7aA" x="150" y="336" text-anchor="middle">early: d below 0</text>
+        <text class="ip7aB" x="350" y="336" text-anchor="middle">late: d at or above 0</text>
+        <text class="ip7aS" x="50" y="362">solid: figure and prose, the bench (copper = late side) · dashed: eq. 11 as printed, taken literally</text>
+
+        <text class="ip7aL" x="512" y="84">Eq. (11) as printed</text>
+        <text class="ip7aS" x="512" y="102">a1 = 10 paired with d &lt; 0, a2 = 13 with d &gt;= 0</text>
+        <text class="ip7aB" x="512" y="118">taken literally: early is punished harder</text>
+        <text class="ip7aL" x="512" y="156">Figure 9, the plotted curve</text>
+        <text class="ip7aS" x="512" y="174">about 46 at d = -50, about 147 at d = +50</text>
+        <text class="ip7aA" x="512" y="190">late is punished harder</text>
+        <text class="ip7aL" x="512" y="228">The prose of section VII</text>
+        <text class="ip7aS" x="512" y="246">late predictions more heavily penalized</text>
+        <text class="ip7aA" x="512" y="262">late is punished harder</text>
+        <text class="ip7aL" x="512" y="316">The bench follows figure and prose</text>
+        <text class="ip7aS" x="512" y="334">early divides by 13, late by 10</text>
+
+        <text class="ip7aN" x="30" y="392">The printed pairing and the figure disagree; the figure matches the stated intent, and the bench follows it.</text>
+        <text class="ip7aN" x="30" y="410">Any score you are handed may follow either reading: probe it at d = +20 and d = -20 before comparing.</text>
+        <text class="ip7aS" x="30" y="434">Saxena, Goebel, Simon and Eklund (2008): eq. 11, Figure 9 and section VII, read at source.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper branch is the side the bench charges more for; the dashed mirror is what the printed equation gives if you take it literally.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The formula, term by term<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>For each unit, take d: the estimated remaining life minus the true remaining life, in cycles. If d is below zero the estimate is early, and the unit costs e raised to the power of minus d over 13, minus 1. If d is zero or above the estimate is late, and the unit costs e raised to d over 10, minus 1. Add the unit costs over every unit under test. That sum is the score; smaller is better.</p>
+        <p>Each piece earns its place. The exponential makes the penalty grow faster than the miss: in the paper's words, "the penalty grows exponentially with increasing error". The minus 1 makes a perfect estimate cost exactly 0. The two constants set the lean: dividing by the smaller number makes that side climb faster. With early over 13 and late over 10, a miss of 20 cycles costs 6.39 late and 3.66 early; a miss of 50 costs 147.41 late and 45.81 early, about three times as much. The paper states the intent plainly: "late predictions were more heavily penalized than early predictions".</p>
+        <p>Two consequences follow before any model is fitted. The score has units of nothing (it is not cycles, and it is not money). And because it is a sum of exponentials, it is ruled by its worst few units, which Part 2 measures.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The printed equation against the figure<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Read the paper's equation (11) on its own and you find a1 = 10 paired with d &lt; 0 and a2 = 13 paired with d &gt;= 0. Taken literally, the early side divides by the smaller number, climbs faster, and is punished harder. That is the dashed curve in the figure.</p>
+        <p>Now read Figure 9, the plotted curve, off its axes: about 46 at d = -50 and about 147 at d = +50. Compute both candidates at that point and only one matches: early over 13 gives 45.81, late over 10 gives 147.41. The prose of the same section says late predictions were penalized more heavily. So the printed pairing and the figure disagree, and the figure matches the stated intent. The bench follows the figure and the prose, and its self-check "late costs more than early at equal size" holds it there.</p>
+        <p>The reading lesson is not about this one paper. A formula in a PDF, a plot of it and a sentence describing it are three statements of the same thing. When they disagree, compute a value you can read off the plot and see which statement it agrees with. Then write down which reading you followed. Nothing on this page can say what code the authors ran in 2008; only what the page shows.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) had copied a scoring function from a public code notebook, and its tests all passed, because the tests had been written from the printed equation. She ran one line, the function at d = +20 and at d = -20, and the early miss came back more expensive. She did not quietly "fix" it. She re-ran the ladder under both readings, found that the rung she was about to recommend changed between them, and added a line to the review naming which reading every score on the slide followed.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Which way should the score lean?</strong> For engines the paper prefers early to late, and its constants encode that. The same section also says that "in specific situations" where failures are not life-threatening, early predictions "may instead involve significant economic burden", and that the preference can be tuned. So the score's own authors hold both positions for different machines. The constants are a business choice; leader session 3 is about making it.</p>
+        <p><strong>Which way does the score lean on paper?</strong> The printed equation and the figure disagree, as above. Every later paper and code repository you meet may have picked either one, usually without saying so. The bench follows the figure and the prose because they agree with each other and with the stated intent. That is a reason, not a ruling: if you meet a published result scored the other way, it is not wrong, it is a different score, and its numbers are not comparable with these.</p>
+        <p><strong>One summed score or several?</strong> The PHM08 challenge ranked entries on the one sum. The same paper argues for weighting units with a short true remaining life more heavily, and for a correlation measure beside the sum, because a summed score can hide uneven performance across units. The bench prints RMSE, the summed score, the bias and the late share, and crowns none.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Read the source yourself<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The paper is inside NASA's zip for data set 6, next to the data. Read section VII with Figure 9 open beside equation (11), and do the check yourself: pick d = -50 and d = +50, compute both pairings, and read the plot.</p>
+        <ul>
+          <li>Saxena, A., Goebel, K., Simon, D., and Eklund, N. (2008). "Damage Propagation Modeling for Aircraft Engine Run-to-Failure Simulation." Proceedings of the 1st International Conference on Prognostics and Health Management (PHM08), Denver, CO. Read at source (the PDF ships inside the NASA data set zip).</li>
+          <li>Saxena, A., and Goebel, K. (2008). "Turbofan Engine Degradation Simulation Data Set." NASA Prognostics Data Repository, NASA Ames Research Center, Moffett Field, CA. Read at source: <a href="https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/">NASA PCoE data set repository</a>.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the baseline's 305,167 and the score against RMSE</span>
+      <h2>Two numbers, one bench, different stories</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The bench scores every rung on the same 300 cut points on 30 held-out engines (seed 2008, 70 training engines; not the NASA test set). The left half of the figure places the simplest model's 300 units on the score's own curve, which is why its sum is 305,167. The right half reads one change, the planted dropout from practitioner session 6, with both numbers: one meter barely moves, the other swings.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 428" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Left, hand drawn: the mean-life baseline's 300 units placed on the early side of the score curve, d from about -142 to +72 cycles. Almost every unit sits on the floor near zero cost; six units from engines 69 and 96 sit high up the steep early wall, the worst at d = -142 costing 55,440 alone, 18.2 percent of the sum. The six carry 79.5 percent, the other 294 units 20.5 percent. Right: two meter dials for the planted dropout. The RMSE needle moves from 23.64 to 24.89, plus 1.25 or 5 percent; the summed-score needle swings from 3,366 to 4,656, plus 1,290 or 38 percent, because the bias moved late from +1.4 to +4.7 cycles.">
+        <defs>
+          <filter id="ip7bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip7bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip7bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip7bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip7bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip7bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip7bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip7bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip7bH" x="30" y="26">WHY THE BASELINE SCORES 305,167</text>
+        <text class="ip7bS" x="30" y="44">its 300 units placed on the score's own curve</text>
+        <text class="ip7bH" x="470" y="26">ONE CHANGE, READ BY TWO METERS</text>
+        <text class="ip7bS" x="470" y="44">rung 3 in ink, rung 3 after the planted dropout in copper</text>
+
+        <g filter="url(#ip7bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- left axes: x = 70 + 1.5 (d + 150) ; y = 290 - cost x 220 / 56000 -->
+          <path d="M60 60 L60 294 L420 294"/>
+          <path d="M56 72.2 L60 72.2"/>
+          <!-- the early-side curve the baseline's units sit on -->
+          <path d="M82 72.2 L85.0 103.3 L92.5 162.9 L100.0 203.5 L107.5 231.1 L115.0 249.9 L122.5 262.7 L130.0 271.4 L137.5 277.4 L145.0 281.4 L152.5 284.1 L160.0 286.0 L167.5 287.3 L175.0 288.2 L182.5 288.7 L190.0 289.1 L197.5 289.4 L205.0 289.6 L212.5 289.7 L220.0 289.8 L235.0 289.9 L250.0 290.0 L340.0 289.9 L362.5 289.7 L377.5 289.0 L392.5 287.4 L400.0 285.7" stroke="#93A86F" stroke-width="1.6"/>
+          <!-- the 294 units near the floor -->
+          <g fill="#1D2513" stroke="none">
+            <circle cx="184" cy="289" r="2.4"/><circle cx="204" cy="290" r="2.4"/><circle cx="199" cy="289" r="2.4"/><circle cx="219" cy="290" r="2.4"/>
+            <circle cx="136" cy="276" r="2.4"/><circle cx="213" cy="290" r="2.4"/><circle cx="168" cy="287" r="2.4"/><circle cx="232" cy="290" r="2.4"/>
+            <circle cx="318" cy="290" r="2.4"/><circle cx="326" cy="290" r="2.4"/><circle cx="195" cy="289" r="2.4"/><circle cx="156" cy="285" r="2.4"/>
+            <circle cx="187" cy="289" r="2.4"/><circle cx="207" cy="290" r="2.4"/><circle cx="211" cy="290" r="2.4"/><circle cx="359" cy="290" r="2.4"/>
+            <circle cx="270" cy="290" r="2.4"/><circle cx="285" cy="290" r="2.4"/><circle cx="281" cy="290" r="2.4"/><circle cx="363" cy="290" r="2.4"/>
+            <circle cx="293" cy="290" r="2.4"/><circle cx="312" cy="290" r="2.4"/><circle cx="236" cy="290" r="2.4"/><circle cx="262" cy="290" r="2.4"/>
+            <circle cx="252" cy="290" r="2.4"/><circle cx="209" cy="290" r="2.4"/><circle cx="225" cy="290" r="2.4"/><circle cx="245" cy="290" r="2.4"/>
+            <circle cx="277" cy="290" r="2.4"/><circle cx="210" cy="290" r="2.4"/><circle cx="235" cy="290" r="2.4"/><circle cx="404" cy="285" r="2.4"/>
+            <circle cx="314" cy="290" r="2.4"/><circle cx="371" cy="289" r="2.4"/><circle cx="228" cy="290" r="2.4"/><circle cx="126" cy="267" r="2.4"/>
+            <circle cx="253" cy="290" r="2.4"/><circle cx="189" cy="289" r="2.4"/><circle cx="243" cy="290" r="2.4"/><circle cx="171" cy="288" r="2.4"/>
+            <circle cx="186" cy="289" r="2.4"/><circle cx="217" cy="290" r="2.4"/><circle cx="276" cy="290" r="2.4"/><circle cx="249" cy="290" r="2.4"/>
+            <circle cx="279" cy="290" r="2.4"/><circle cx="223" cy="290" r="2.4"/><circle cx="259" cy="290" r="2.4"/><circle cx="250" cy="290" r="2.4"/>
+            <circle cx="121" cy="261" r="2.4"/><circle cx="305" cy="290" r="2.4"/><circle cx="303" cy="290" r="2.4"/><circle cx="267" cy="290" r="2.4"/>
+            <circle cx="241" cy="290" r="2.4"/><circle cx="309" cy="290" r="2.4"/>
+          </g>
+          <!-- the six worst units: engines 69 and 96 -->
+          <circle cx="82" cy="72" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="84" cy="88" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="85" cy="103" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="90.5" cy="155" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="94" cy="160" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="102" cy="210" r="4.2" fill="#9B4D45" stroke="#9B4D45"/>
+
+          <!-- right: RMSE dial, 0 to 50 -->
+          <path d="M490 200 A70 70 0 0 1 630 200"/>
+          <path d="M560 136 L560 130"/>
+          <path d="M560 200 L554.9 140.7" stroke-width="2.4"/>
+          <path d="M560 200 L559.6 140.5" stroke="#9B4D45" stroke-width="2.4"/>
+          <circle cx="560" cy="200" r="5" fill="#FFFFFF"/>
+          <!-- right: summed-score dial, 0 to 5,000 -->
+          <path d="M690 200 A70 70 0 0 1 830 200"/>
+          <path d="M760 136 L760 130"/>
+          <path d="M760 200 L790.8 149.1" stroke-width="2.4"/>
+          <path d="M760 200 L818.1 187.2" stroke="#9B4D45" stroke-width="2.4"/>
+          <circle cx="760" cy="200" r="5" fill="#FFFFFF"/>
+        </g>
+
+        <text class="ip7bS" x="54" y="76" text-anchor="end">55,440</text>
+        <text class="ip7bS" x="54" y="297" text-anchor="end">0</text>
+        <text class="ip7bS" x="85" y="312" text-anchor="middle">-140</text>
+        <text class="ip7bS" x="145" y="312" text-anchor="middle">-100</text>
+        <text class="ip7bS" x="220" y="312" text-anchor="middle">-50</text>
+        <text class="ip7bS" x="295" y="312" text-anchor="middle">0</text>
+        <text class="ip7bS" x="370" y="312" text-anchor="middle">+50</text>
+        <text class="ip7bA" x="240" y="330" text-anchor="middle">d in cycles; below 0 = early</text>
+
+        <text class="ip7bB" x="100" y="76">engine 69, 142 cycles early: 55,440 alone, 18.2 percent</text>
+        <text class="ip7bB" x="122" y="140">six worst units, engines 69 and 96:</text>
+        <text class="ip7bS" x="122" y="156">79.5 percent of the sum</text>
+        <text class="ip7bS" x="240" y="272">the other 294: 20.5 percent</text>
+
+        <text class="ip7bS" x="490" y="216" text-anchor="middle">0</text>
+        <text class="ip7bS" x="630" y="216" text-anchor="middle">50</text>
+        <text class="ip7bS" x="560" y="122" text-anchor="middle">25</text>
+        <text class="ip7bS" x="690" y="216" text-anchor="middle">0</text>
+        <text class="ip7bS" x="830" y="216" text-anchor="middle">5,000</text>
+        <text class="ip7bS" x="760" y="122" text-anchor="middle">2,500</text>
+
+        <text class="ip7bH" x="560" y="242" text-anchor="middle">RMSE</text>
+        <text class="ip7bH" x="760" y="242" text-anchor="middle">summed score</text>
+        <text class="ip7bV" x="560" y="264" text-anchor="middle">23.64 to 24.89</text>
+        <text class="ip7bV" x="760" y="264" text-anchor="middle">3,366 to 4,656</text>
+        <text class="ip7bS" x="560" y="282" text-anchor="middle">+1.25, 5 percent</text>
+        <text class="ip7bB" x="760" y="282" text-anchor="middle">+1,290, 38 percent</text>
+        <text class="ip7bS" x="560" y="298" text-anchor="middle">barely moves</text>
+        <text class="ip7bS" x="760" y="298" text-anchor="middle">prices the late shift</text>
+        <text class="ip7bA" x="470" y="324">bias moves from +1.4 to +4.7 cycles, later</text>
+        <text class="ip7bS" x="470" y="342">and only the score has a steep late side</text>
+
+        <text class="ip7bN" x="30" y="372">A sum of exponentials is ruled by its worst few units: six of 300, from engines 69 and 96, carry 79.5</text>
+        <text class="ip7bN" x="30" y="390">percent of the baseline's sum. RMSE squares a miss and has no side; the score also charges late faster.</text>
+        <text class="ip7bS" x="30" y="414">300 cut points on 30 held-out engines, not the NASA test set. Real public rows from NASA's simulation (C-MAPSS).</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper dots are six units that make most of 305,167; the copper needles are one late shift that RMSE hardly sees.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip7-lean">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The whole bench runs in your browser twice: once with the published lean (early divided by 13, late by 10) and once with the two constants swapped, as eq. 11 reads if taken literally. RMSE does not care which; watch what the summed score does. Seed 2008, 300 cut points on 30 held-out engines, not the NASA test set. Real public rows from NASA's simulation.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip7-orient">Lean</label>
+        <select class="sql-code" id="ip7-orient">
+          <option value="pub" selected>Published: early / 13, late / 10 (figure and prose)</option>
+          <option value="flip">Swapped: early / 10, late / 13 (eq. 11 read literally)</option>
+        </select>
+        <label class="sql-label" for="ip7-d">One unit's miss d: <b id="ip7-d-val">+50</b> cycles</label>
+        <input class="sql-code" id="ip7-d" type="range" min="-100" max="100" step="1" value="50">
+        <div id="ip7-out"></div>
+        <p class="sql-note" id="ip7-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip7-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the lean widget<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Start with the slider. At d = +50 the published lean charges 147.41 and the swapped one 45.81; drag to -50 and the two trade places. That is the whole difference between the two readings, for one unit. Then read the table: every rung, its RMSE and its rank by RMSE, its summed score and its rank by score, its bias and its late share.</p>
+        <p>Under the published lean, look at rung 2 and the cap-130 convention check: RMSE ranks the cap-130 rung ahead (23.70 against 24.00), the score ranks rung 2 ahead (3,542 against 3,622). Look at the trailing-mean contrast and the planted dropout: RMSE calls them a tie (24.88 against 24.89), the score puts them well apart (4,171 against 4,656). Now switch the lean. The RMSE column does not change, because RMSE has no side. The score column reorders, and the rung at the top is no longer rung 3.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why the baseline scores 305,167<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The mean-life baseline knows one number: the 70 training engines lived 200.37 cycles on average. At every cut point it predicts 200.37 minus the cycles already run, floored at zero. Two of the 30 held-out engines outlive that average by a long way: engine 69 (362 cycles, the longest in FD001) and engine 96 (336). At their cut points they are already past cycle 200, so the baseline predicts 0 to 14 cycles left when 140 to 150 remain.</p>
+        <p>Those misses land on the early side, the side divided by 13, and the exponential still makes them enormous. The single worst unit (d = -142) costs 55,440 on its own, 18.2 percent of the sum. Six units from those two engines carry 79.5 percent. A sum of exponentials is ruled by its worst few units; for contrast, rung 3's three worst units carry 12.8 percent of its sum. Note the irony: the baseline leans early (bias -12.1 cycles, 43 percent late), so its catastrophe sits on the gentle side. Swap the constants in the widget and that side becomes the steep one, and the same two engines make the baseline's sum many times larger again.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The ladder through both lenses<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every rung, published lean, 300 cut points on 30 held-out engines (not the NASA test set), as RMSE / summed score, with bias:</p>
+        <ul>
+          <li><strong>Rung 0, mean-life baseline.</strong> 45.61 / 305,167, bias -12.1, 43 percent late. Mostly two long-lived engines.</li>
+          <li><strong>Rung 1, linear fit on 14 raw channels, uncapped target.</strong> 30.50 / 28,557, bias +15.8, 70 percent late.</li>
+          <li><strong>Rung 2, health index with a target capped at 125.</strong> 24.00 / 3,542, bias +0.8. The gain over rung 1 comes from capping the target and clamping, not from folding the channels into one number. The cap is a convention; cap 130 on rung 3 gives 23.70 / 3,622.</li>
+          <li><strong>Rung 3, plus lag-free smoothing.</strong> 23.64 / 3,366, bias +1.4. A small, real gain (0.36 of RMSE); a trailing mean of the same window lags and makes both numbers worse, 24.88 / 4,171.</li>
+          <li><strong>Anti-lever, hottest readings missing and gaps dropped.</strong> 24.89 / 4,656, bias +4.7.</li>
+          <li><strong>Break, cycle order shuffled.</strong> 40.41 / 46,145.</li>
+        </ul>
+        <p>The two-number headline: the planted dropout moves RMSE by only +1.25 (5 percent) but the score by +1,290 (38 percent), and the bias goes late. The square-error number barely notices a late shift that the asymmetric score prices. And between rung 1 and rung 3, RMSE says the gap is 30.50 against 23.64; the score says 28,557 against 3,366. Same 300 estimates, very different stories about how far apart they are.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's review slide (constructed) said the new cleaning step, which drops rows with gaps, moved RMSE from 23.64 to 24.89: "within noise". The reliability engineer added two columns before signing: the summed score, 3,366 to 4,656, and the bias, +1.4 to +4.7 cycles. The step had not added noise; it had pushed the estimates late, on exactly the side the shop fears. The slide now carries four numbers and the cleaning step went back to practitioner session 6.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why the gap is mechanical, not mysterious<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>RMSE squares each miss, averages, and takes the root. Squaring is symmetric and grows like a parabola. The score exponentiates each miss, with a steeper constant on the late side, and sums. Both punish big misses more than small ones, so on the four main rungs they agree on the order. They disagree in three places: on the size of each step (an exponential stretches big misses far more than a square does), on direction (only the score sees it), and on close calls between rungs whose misses fall differently on the two sides, like rung 2 and the cap-130 check.</p>
+        <p>None of that makes one number right. RMSE is used here, not taught: rolling-origin backtests and error metrics live in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn time-series forecasting, backtesting and metrics</a>. Scoring a detector's alarms with precision and recall is a different job again, in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/a5-measuring-detection.html">learn anomaly detection, measuring detection</a>. The habit to carry from both: report the numbers side by side and say what each one cannot see.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Write the score, check it against the engine, then swap it</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). Six steps, each with the number you should see at seed 2008. You write the score in three lines, prove it agrees with the engine on all 300 units, then swap the two constants and watch the ranking move. The figure is the plan.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 456" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn plan. Four boxes in a row: rung predictions from the ladder, 300 per rung; d equals estimate minus truth; your phm function, early e to the minus d over 13 minus 1, else e to the d over 10 minus 1; sum and compare, rung 3 gives 3,366.18 and the engine 3,366.18, gap 0. An arrow says swap 13 and 10 and run again. Below, a table of eight rungs with RMSE, the summed score and its rank under the published lean, and under the swapped one. Rung 3 is first under the published lean and fourth when swapped; the planted dropout row, copper, goes from fifth to first. RMSE does not change.">
+        <defs>
+          <filter id="ip7cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip7cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip7cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip7cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip7cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip7cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip7cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip7cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip7cH" x="30" y="26">CHECK YOUR SCORE AGAINST THE ENGINE, THEN SWAP THE TWO CONSTANTS</text>
+
+        <g filter="url(#ip7cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="48" width="190" height="76" rx="8" transform="rotate(-0.7 125 86)" fill="url(#ip7cHc)"/>
+          <rect x="240" y="48" width="190" height="76" rx="8" transform="rotate(0.5 335 86)" fill="#FFFFFF"/>
+          <rect x="450" y="48" width="190" height="76" rx="8" transform="rotate(-0.5 545 86)" fill="#FFFFFF"/>
+          <rect x="660" y="48" width="190" height="76" rx="8" transform="rotate(0.6 755 86)" fill="#F3F7EA"/>
+          <path d="M222 86 L238 86" marker-end="url(#ip7cAr)"/>
+          <path d="M432 86 L448 86" marker-end="url(#ip7cAr)"/>
+          <path d="M642 86 L658 86" marker-end="url(#ip7cAr)"/>
+          <path d="M545 126 L545 150" marker-end="url(#ip7cAr)"/>
+          <!-- doodle: a dial, needle swung the other way -->
+          <path d="M498 150 A12 12 0 0 1 522 150"/>
+          <path d="M510 150 L502 142"/>
+          <!-- table -->
+          <rect x="30" y="160" width="820" height="214" rx="8" transform="rotate(0.2 440 267)" fill="#FFFFFF"/>
+          <path d="M40 188 L840 188" stroke="#CDD5C0"/>
+          <rect x="36" y="280" width="808" height="22" rx="4" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ip7cL" x="44" y="72">rung predictions</text>
+        <text class="ip7cS" x="44" y="92">300 per rung, from</text>
+        <text class="ip7cS" x="44" y="110">IOT.ladder(IOT_SAMPLE)</text>
+        <text class="ip7cL" x="254" y="72">d = estimate - truth</text>
+        <text class="ip7cS" x="254" y="92">r.cuts[i].rul is the truth</text>
+        <text class="ip7cS" x="254" y="110">below 0 early, else late</text>
+        <text class="ip7cL" x="464" y="72">your phm(d)</text>
+        <text class="ip7cS" x="464" y="92">d &lt; 0: e^(-d/13) - 1</text>
+        <text class="ip7cS" x="464" y="110">else: e^(d/10) - 1</text>
+        <text class="ip7cL" x="674" y="72">sum it, compare</text>
+        <text class="ip7cS" x="674" y="92">yours, rung 3: 3,366.18</text>
+        <text class="ip7cS" x="674" y="110">engine: 3,366.18, gap 0</text>
+        <text class="ip7cA" x="556" y="146">swap 13 and 10, run again</text>
+
+        <text class="ip7cH" x="44" y="180">rung</text>
+        <text class="ip7cH" x="360" y="180" text-anchor="middle">RMSE</text>
+        <text class="ip7cH" x="490" y="180" text-anchor="middle">published lean</text>
+        <text class="ip7cH" x="580" y="180" text-anchor="middle">rank</text>
+        <text class="ip7cH" x="690" y="180" text-anchor="middle">swapped</text>
+        <text class="ip7cH" x="790" y="180" text-anchor="middle">rank</text>
+
+        <text class="ip7cL" x="44" y="208">rung 3 · lag-free smoothing</text>
+        <text class="ip7cS" x="360" y="208" text-anchor="middle">23.64</text>
+        <text class="ip7cS" x="490" y="208" text-anchor="middle">3,366</text>
+        <text class="ip7cA" x="580" y="208" text-anchor="middle">1</text>
+        <text class="ip7cS" x="690" y="208" text-anchor="middle">5,002</text>
+        <text class="ip7cS" x="790" y="208" text-anchor="middle">4</text>
+
+        <text class="ip7cL" x="44" y="230">rung 2 · target capped at 125</text>
+        <text class="ip7cS" x="360" y="230" text-anchor="middle">24.00</text>
+        <text class="ip7cS" x="490" y="230" text-anchor="middle">3,542</text>
+        <text class="ip7cS" x="580" y="230" text-anchor="middle">2</text>
+        <text class="ip7cS" x="690" y="230" text-anchor="middle">5,059</text>
+        <text class="ip7cS" x="790" y="230" text-anchor="middle">5</text>
+
+        <text class="ip7cL" x="44" y="252">rung 3 with cap 130</text>
+        <text class="ip7cS" x="360" y="252" text-anchor="middle">23.70</text>
+        <text class="ip7cS" x="490" y="252" text-anchor="middle">3,622</text>
+        <text class="ip7cS" x="580" y="252" text-anchor="middle">3</text>
+        <text class="ip7cS" x="690" y="252" text-anchor="middle">4,445</text>
+        <text class="ip7cS" x="790" y="252" text-anchor="middle">2</text>
+
+        <text class="ip7cL" x="44" y="274">contrast · trailing mean (lags)</text>
+        <text class="ip7cS" x="360" y="274" text-anchor="middle">24.88</text>
+        <text class="ip7cS" x="490" y="274" text-anchor="middle">4,171</text>
+        <text class="ip7cS" x="580" y="274" text-anchor="middle">4</text>
+        <text class="ip7cS" x="690" y="274" text-anchor="middle">4,901</text>
+        <text class="ip7cS" x="790" y="274" text-anchor="middle">3</text>
+
+        <text class="ip7cB" x="44" y="296">anti-lever · hot readings missing</text>
+        <text class="ip7cB" x="360" y="296" text-anchor="middle">24.89</text>
+        <text class="ip7cB" x="490" y="296" text-anchor="middle">4,656</text>
+        <text class="ip7cB" x="580" y="296" text-anchor="middle">5</text>
+        <text class="ip7cB" x="690" y="296" text-anchor="middle">4,316</text>
+        <text class="ip7cB" x="790" y="296" text-anchor="middle">1</text>
+
+        <text class="ip7cL" x="44" y="318">rung 1 · linear, raw channels</text>
+        <text class="ip7cS" x="360" y="318" text-anchor="middle">30.50</text>
+        <text class="ip7cS" x="490" y="318" text-anchor="middle">28,557</text>
+        <text class="ip7cS" x="580" y="318" text-anchor="middle">6</text>
+        <text class="ip7cS" x="690" y="318" text-anchor="middle">7,034</text>
+        <text class="ip7cS" x="790" y="318" text-anchor="middle">6</text>
+
+        <text class="ip7cL" x="44" y="340">break · cycle order shuffled</text>
+        <text class="ip7cS" x="360" y="340" text-anchor="middle">40.41</text>
+        <text class="ip7cS" x="490" y="340" text-anchor="middle">46,145</text>
+        <text class="ip7cS" x="580" y="340" text-anchor="middle">7</text>
+        <text class="ip7cS" x="690" y="340" text-anchor="middle">21,046</text>
+        <text class="ip7cS" x="790" y="340" text-anchor="middle">7</text>
+
+        <text class="ip7cL" x="44" y="362">rung 0 · mean-life baseline</text>
+        <text class="ip7cS" x="360" y="362" text-anchor="middle">45.61</text>
+        <text class="ip7cS" x="490" y="362" text-anchor="middle">305,167</text>
+        <text class="ip7cS" x="580" y="362" text-anchor="middle">8</text>
+        <text class="ip7cS" x="690" y="362" text-anchor="middle">6,451,096</text>
+        <text class="ip7cS" x="790" y="362" text-anchor="middle">8</text>
+
+        <text class="ip7cN" x="30" y="400">RMSE does not move when the constants swap; the score's winner does. Swapped, the anti-lever, which drops</text>
+        <text class="ip7cN" x="30" y="418">the hottest readings and leans late, ranks first. The lean picks the winner: always say which one you used.</text>
+        <text class="ip7cS" x="30" y="442">Seed 2008, 300 cut points on 30 held-out engines, not the NASA test set. The baseline's sum is two long-lived engines.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper row is the planted dropout: fifth under the published lean, first when the two constants swap, with RMSE unchanged.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Write the score for one unit</h4>
+        <p>Three lines, the figure's reading: early divides by 13, late by 10. Check the two anchors: a perfect estimate costs 0, and 20 cycles late (6.39) costs more than 20 cycles early (3.66). The same function in Python is in the second box, for your own notebooks; it prints the same three values.</p>
+        <div class="prompt-box good"><span class="label">console</span>function phm(d) { return d &lt; 0 ? Math.exp(-d / 13) - 1 : Math.exp(d / 10) - 1; }
+[phm(0), phm(20).toFixed(2), phm(-20).toFixed(2)]</div>
+        <div class="prompt-box good"><span class="label">python</span>import math
+def phm(d, a_early=13, a_late=10):
+    return math.exp(-d / a_early) - 1 if d &lt; 0 else math.exp(d / a_late) - 1
+[phm(0), round(phm(20), 2), round(phm(-20), 2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the lean against Figure 9</h4>
+        <p>The plot reads about 147 at d = +50 and about 46 at d = -50. Yours should print 147.41 and 45.81, and the engine's own function the same 147.41. If yours printed them the other way round, you implemented the printed pairing.</p>
+        <div class="prompt-box good"><span class="label">console</span>[phm(50).toFixed(2), phm(-50).toFixed(2), IOT.phmScore(50, 13, 10).toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Score rung 3 yourself, on all 300 units</h4>
+        <p>Run the bench once, then add your unit scores over rung 3's 300 predictions against the true remaining life at each cut. You should see 3366.18 twice and a gap of exactly 0: same arithmetic, same order. (Add in a different order and the gap may be a few parts in a trillion; that is floating point, not disagreement.)</p>
+        <div class="prompt-box good"><span class="label">console</span>var r = IOT.ladder(IOT_SAMPLE);
+function total(rung, f) { var s = 0; r[rung].preds.forEach(function (p, i) { s += f(p - r.cuts[i].rul); }); return s; }
+[total("smooth", phm).toFixed(2), r.smooth.score.toFixed(2), total("smooth", phm) - r.smooth.score]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read every rung through both lenses</h4>
+        <p>Eight lines, RMSE then your summed score: mean 45.61 305167, linear 30.50 28557, hi 24.00 3542, smooth 23.64 3366, trailing 24.88 4171, mnarSmooth 24.89 4656, shuffleSmooth 40.41 46145, cap130Smooth 23.70 3622. Find the pair RMSE and the score rank in opposite order (hi and cap130Smooth), and the pair RMSE calls a tie (trailing and mnarSmooth).</p>
+        <div class="prompt-box good"><span class="label">console</span>IOT.RUNGS.map(function (k) { return k + " " + r[k].rmse.toFixed(2) + " " + Math.round(total(k, phm)); })</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Swap the two constants and score again</h4>
+        <p>Write the literal reading of the printed equation and re-sum every rung. Rung 3 goes from 3366 to 5002; the planted dropout from 4656 to 4316, now the lowest on the bench; the baseline from 305167 to 6451096, because its two long-lived engines sit on the side that just got steep. Then ask the engine for the same swap: it prints 4315.57 for the dropout rung, which rounds to yours.</p>
+        <div class="prompt-box good"><span class="label">console</span>function swapped(d) { return d &lt; 0 ? Math.exp(-d / 10) - 1 : Math.exp(d / 13) - 1; }
+[IOT.RUNGS.map(function (k) { return k + " " + Math.round(total(k, phm)) + " -&gt; " + Math.round(total(k, swapped)); }),
+ IOT.ladder(IOT_SAMPLE, { only: ["mnarSmooth"], aEarly: 10, aLate: 13 }).mnarSmooth.score.toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Pin the lean with a test that can fail</h4>
+        <p>One assertion keeps your function on the side you chose; it prints nothing while it holds. Then ask the engine to plant the swap in its own scoring function and re-run its self-checks: exactly one fails, "late costs more than early at equal size". A check you have watched fail is a check you can trust.</p>
+        <div class="prompt-box good"><span class="label">console</span>console.assert(phm(20) &gt; phm(-20), "late must cost more than early");
+IOT.selfTest("swapScore").checks.filter(function (c) { return !c.pass; }).map(function (c) { return c.name; })</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before you quote any asymmetric score, probe it at d = +20 and d = -20, write down which side costs more and where the constants came from, and put RMSE, the bias and the late share beside it. A score with a direction is only as honest as your knowledge of the direction.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">A colleague's scoring function returns 3.66 for d = +20 and 6.39 for d = -20. What do you conclude?</p>
+      <div class="qopt">A · It is the published score, correctly implemented</div>
+      <div class="qopt">B · It follows eq. 11 as printed, taken literally: early costs more, the opposite of Figure 9 and the prose; its numbers are not comparable with the bench's until that is stated</div>
+      <div class="qopt">C · It is broken and every number it produced should be discarded</div>
+      <q class="qwhy">Under the figure and the prose, +20 costs 6.39 and -20 costs 3.66. This function has them the other way round, which is the printed pairing read literally. It is a different score, not necessarily a wrong one (the same paper says the preference can be tuned), so the fix is to name the reading, not to throw the work away.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The mean-life baseline's summed score is 305,167 on 300 units under test. Which description is right?</p>
+      <div class="qopt">A · Six units from two long-lived engines, 69 and 96, predicted to fail almost at once when 140 to 150 cycles remain, carry 79.5 percent of it</div>
+      <div class="qopt">B · It is late on most units, and late is punished harder</div>
+      <div class="qopt">C · Every unit costs about 1,017, the score per unit</div>
+      <q class="qwhy">The baseline leans early (43 percent late, bias -12.1). Its huge misses are false alarms on two engines that outlive the 200.37-cycle average. A sum of exponentials is ruled by its worst few units, so the per-unit average describes almost none of them.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">With the two constants swapped, the planted dropout scores 4,316 and the clean rung 3 scores 5,002. What is the right reading?</p>
+      <div class="qopt">A · The dropout rung is the better model and should ship</div>
+      <div class="qopt">B · RMSE is the broken number, since it did not change</div>
+      <div class="qopt">C · The lean picked the winner: the dropout pushes estimates late, and a score that charges late gently rewards that; RMSE (23.64 against 24.89) and the bias (+1.4 against +4.7) show nothing improved, so state the lean with every score</div>
+      <q class="qwhy">Swapping the constants changes what is being rewarded, not how good the estimates are. RMSE has no side, so it does not move. The late shift the dropout causes is cheap under the swapped reading and expensive under the published one; which reading you report is a decision, and it decides the ranking.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 8</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, half in the console on this page and half in your own code.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Probe a score you did not write</h4>
+        <p>Find any asymmetric or weighted error metric in your team's code or in a public repository you rely on. Run it at d = +20 and d = -20, and write one line: which side costs more, which constant goes with which side, and whether the code, the docs and any plot agree. If they disagree, you have tonight's reading lesson in your own estate.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Weight the short remaining lives</h4>
+        <p>The paper argues for weighting units with a short true remaining life more heavily. Add a weight to your total function (for example, double the cost of any unit whose true remaining life is under 30 cycles; the weight and the threshold are your choice, so write them down) and re-rank the eight rungs. Your numbers will differ from anyone else's; what matters is whether the order moves, and that the weight is a decision you can name.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Carry the deadline forward</h4>
+        <p>Practitioner session 8 turns "late costs more" into a different shape: a decision that must arrive within a time budget, at the edge or in the cloud. Bring one sentence on how late a prediction can be, in your own setting, before it is worth nothing.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The PHM08 asymmetric score</span><span class="note">d = estimated minus true remaining life; e^(-d/13) - 1 early, e^(d/10) - 1 late, summed. Saxena et al. (2008), section VII, read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The orientation discrepancy</span><span class="note">Eq. 11 as printed pairs a1 = 10 with d &lt; 0; Figure 9 (about 46 at -50, about 147 at +50) and the prose say late is punished harder. The bench follows the figure. Taught, not resolved.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The lean probe</span><span class="note">Score d = +20 and d = -20 (6.39 against 3.66 under the published lean) before trusting any implementation.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Why the baseline scores 305,167</span><span class="note">Six units from engines 69 and 96 carry 79.5 percent; the worst unit 55,440 alone, 18.2 percent. Rung 3's three worst carry 12.8 percent.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The score against RMSE, every rung</span><span class="note">Planted dropout: RMSE +1.25 (5 percent), score +1,290 (38 percent), bias +1.4 to +4.7. 300 cut points on 30 held-out engines, not the NASA test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The score from scratch, checked</span><span class="note">Your sum on rung 3 equals the engine's 3,366.18; the engine's planted swap fails its own late-costs-more check.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Swapping the constants</span><span class="note">RMSE unchanged; the summed-score winner moves from rung 3 to the planted dropout at seed 2008.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">One summed score or several</span><span class="note">The paper argues for weighting short remaining lives and a correlation measure; the bench prints four numbers and crowns none. Started in homework.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">RMSE, backtests and measuring a detector</span><span class="note">Used, not taught: <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn time-series forecasting, backtesting and metrics</a>; <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/a5-measuring-detection.html">learn anomaly detection, measuring detection</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; no cost of being wrong is given as a money figure.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The formula.</strong> d = estimate minus truth. Early: e^(-d/13) - 1. Late: e^(d/10) - 1. Sum over units.</div>
+      <div class="cheat-item"><strong>The lean.</strong> Late punished harder: 147.41 against 45.81 at 50 cycles.</div>
+      <div class="cheat-item"><strong>The discrepancy.</strong> Eq. 11 as printed pairs the constants the other way; Figure 9 and the prose agree on late. The bench follows the figure.</div>
+      <div class="cheat-item"><strong>The probe.</strong> Score d = +20 and d = -20 before trusting any implementation: 6.39 against 3.66.</div>
+      <div class="cheat-item"><strong>The baseline.</strong> 305,167, mostly two long-lived engines: six units carry 79.5 percent.</div>
+      <div class="cheat-item"><strong>Worst few rule.</strong> A sum of exponentials is ruled by its worst few units. Ask for them.</div>
+      <div class="cheat-item"><strong>Two numbers.</strong> Planted dropout: RMSE +5 percent, score +38 percent. The late shift is what the score sees.</div>
+      <div class="cheat-item"><strong>The swap.</strong> Swap 13 and 10 and the dropout rung wins. Say which lean you used, every time.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 7 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p6-missing-not-at-random-planted.html">← Practitioner session 6 · Missing not at random, planted</a>
+        <a href="p8-edge-or-cloud-budget.html">Practitioner session 8 · Edge or cloud: a bandwidth and latency budget →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var sel = document.getElementById("ip7-orient");
+  var dIn = document.getElementById("ip7-d");
+  var dVal = document.getElementById("ip7-d-val");
+  var out = document.getElementById("ip7-out");
+  var verdict = document.getElementById("ip7-verdict");
+  var self = document.getElementById("ip7-self");
+
+  var RUNGS = [
+    ["mean", "Rung 0 · mean-life baseline"],
+    ["linear", "Rung 1 · linear fit, 14 raw channels"],
+    ["hi", "Rung 2 · target capped at 125"],
+    ["smooth", "Rung 3 · plus lag-free smoothing"],
+    ["trailing", "Contrast · trailing mean (lags)"],
+    ["cap130Smooth", "Convention check · rung 3, cap 130"],
+    ["mnarSmooth", "Anti-lever · hot readings missing"],
+    ["shuffleSmooth", "Break · cycle order shuffled"]
+  ];
+
+  /* canon settings (seed 2008, every default), then the same bench with the two constants swapped */
+  var pub = IOT.ladder(IOT_SAMPLE);
+  var flip = IOT.ladder(IOT_SAMPLE, { aEarly: 10, aLate: 13 });
+
+  function int(x) { return Math.round(x).toLocaleString("en-GB"); }
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function ranks(res, field) {
+    var keys = RUNGS.map(function (r) { return r[0]; });
+    var sorted = keys.slice().sort(function (a, b) { return res[a][field] - res[b][field]; });
+    var o = {};
+    sorted.forEach(function (k, i) { o[k] = i + 1; });
+    return o;
+  }
+  function nameOf(k) { for (var i = 0; i < RUNGS.length; i++) if (RUNGS[i][0] === k) return RUNGS[i][1]; return k; }
+
+  function render() {
+    var isPub = sel.value === "pub";
+    var res = isPub ? pub : flip, other = isPub ? flip : pub;
+    var aE = res.opts.aEarly, aL = res.opts.aLate;
+    var d = Number(dIn.value);
+    dVal.textContent = (d > 0 ? "+" : "") + d;
+    var here = IOT.phmScore(d, aE, aL), there = IOT.phmScore(d, other.opts.aEarly, other.opts.aLate);
+    var rR = ranks(pub, "rmse"), rS = ranks(res, "score");
+    var best = RUNGS.map(function (r) { return r[0]; }).filter(function (k) { return rS[k] === 1; })[0];
+    var bestR = RUNGS.map(function (r) { return r[0]; }).filter(function (k) { return rR[k] === 1; })[0];
+    var differ = RUNGS.filter(function (r) { return rR[r[0]] !== rS[r[0]]; }).length;
+
+    var html = '<p class="sql-note">One unit, d = ' + (d > 0 ? "+" : "") + d + " cycles (" + (d < 0 ? "early" : "late") + "): costs <b>" + here.toFixed(2) +
+      "</b> under this lean, " + there.toFixed(2) + " under the other.</p>";
+    html += '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Rung</th><th>RMSE</th><th>RMSE rank</th><th>Summed score</th><th>Score rank</th><th>Bias</th><th>Late</th></tr></thead><tbody>';
+    RUNGS.forEach(function (rr) {
+      var k = rr[0], p = pub[k], s = res[k];
+      var cls = rR[k] !== rS[k] ? ' class="ip7-hot"' : "";
+      html += "<tr><td>" + rr[1] + "</td><td>" + p.rmse.toFixed(2) + "</td><td>" + rR[k] + "</td><td><b>" + int(s.score) + "</b></td><td><b" + cls + ">" + rS[k] +
+        "</b></td><td>" + sgn(p.bias) + "</td><td>" + (100 * p.lateShare).toFixed(0) + "%</td></tr>";
+    });
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+
+    verdict.textContent = (isPub ? "Published lean (early divided by 13, late by 10)" : "Swapped lean (early divided by 10, late by 13)") +
+      ": the lowest summed score is " + nameOf(best) + " at " + int(res[best].score) + ", while RMSE's best is " + nameOf(bestR) + " at " + pub[bestR].rmse.toFixed(2) +
+      ". RMSE and the score rank " + differ + " of the 8 rungs differently (copper ranks). RMSE is the same under both leans; only the score moves. " +
+      "The baseline's " + int(res.mean.score) + " is mostly two long-lived engines: a sum of exponentials is ruled by its worst few units. 300 cut points on 30 held-out engines, not the NASA test set.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  var sw = IOT.selfTest("swapScore");
+  self.textContent = st.pass && !sw.pass
+    ? "The engine's six self-checks pass in this browser, and with the two constants planted the wrong way round its check \"late costs more than early at equal size\" fails, as it should. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not behave as expected in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  dIn.addEventListener("input", render);
+  render();
+})();
+</script>
+<style>
+  #ip7-lean .sql-code { border: 1px solid var(--hairline); border-radius: 8px; width: 100%; max-width: 40rem; }
+  #ip7-lean input.sql-code { width: 100%; }
+  #ip7-lean table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip7-lean .ip7-hot { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

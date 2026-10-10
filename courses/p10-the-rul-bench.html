@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 10 of 10. The whole remaining-useful-life ladder live in the page on 100 simulated engines: a fleet-average floor, a linear fit, a capped health index, lag-free smoothing, RMSE and the PHM08 asymmetric score side by side, an anti-lever and a break button. Real public rows from NASA's simulation.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The remaining-useful-life bench - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 10 of 10. Plant a heat-driven dropout and drop the gappy rows: RMSE moves 5 percent, the asymmetric score 38 percent, and the predictions go late.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p10-the-rul-bench.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The remaining-useful-life bench - learn iot data with phoebe">
+<meta name="twitter:description" content="Every rung computed in your browser, with a button that makes it worse and a button that breaks it.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 10 · The remaining-useful-life bench - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 10 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 10 of 10</div>
+    <h1>The remaining-useful-life <span class="accent">bench</span></h1>
+    <p class="sub">Nine sessions took a remaining-life estimate apart one piece at a time. This one puts the whole ladder in front of you on the 100 simulated engines: the fleet-average floor, a straight linear fit, a health index trained on a capped label, and lag-free smoothing on top, each scored on the same 300 held-out cut points with root mean square error and the PHM08 asymmetric score side by side. Then two buttons. One plants the most ordinary sensor fault there is, readings that vanish when the engine runs hot, and lets the pipeline drop the rows with gaps. The other shuffles the order of cycles inside every engine, which breaks the bench on purpose and proves it was measuring time. Real public rows from NASA's simulation, computed in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Hardest</span>
+      <span class="chip audience">Anyone who will build or check a remaining-life model</span>
+      <span class="chip audience">Anyone who has to defend one of its numbers</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-20 · The ladder</span>
+      <span class="a3" style="flex:4">20-34 · The anti-lever and the break button</span>
+      <span class="a4" style="flex:3">34-45 · Write the brief and close</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Where this lands</h2>
+    </div>
+    <p class="lede">Session 1 read the file and scored the floor. Sessions 2 and 3 dealt with clocks and with channels that are flat, noisy or drifting; 4 and 5 built a health index and capped the label; 6 planted a missing-not-at-random dropout; 7 took the asymmetric score apart; 8 and 9 left the engine for the edge and the home. Everything below runs from the same engine, whose six self-checks run on load and each of which has been shown to fail when its fault is planted back. Harrow Lane Overhaul, the constructed shop whose fleet these engines are, wants one page it can hand to whoever signs off the next model.</p>
+
+    <div class="legend">
+      <span class="pill">Live = worked through in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with today.</strong> Two numbers you can quote from memory because you produced them: the top rung's root mean square error of 23.64 cycles and its asymmetric score of 3,366 over 300 units. The knowledge of which rung did the work (the cap) and which did almost nothing (smoothing, and only if it does not lag). What a heat-driven dropout does to both numbers, and why the one built for this problem moves seven times as much as the other. Proof that the bench measures time, from the button that removes it. And a five-line brief somebody else could check.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What the bench recomputes on every press<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A seeded split sets 30 of the 100 engines aside. Each held-out engine is cut at 10 points, with true remaining life drawn from 10 to 150 cycles, giving 300 units under test. The other 70 engines train. Every rung standardises the 14 channels on the training rows, fits by least squares, predicts at each cut point using only the rows up to it, and is scored on all 300.</p>
+        <p>The rungs: the fleet-average life minus age; a linear fit of the uncapped label on the raw channels; the same fit on a label capped at 125 and divided by it, which makes the fitted value a health index between 0 and 1; and that health index smoothed by a straight line through its last 10 values, read at the newest point. Every number is computed in the page from real public rows of NASA's simulation. The split, the cut points, the dropout and the shuffle are modelled, and labelled so on the widget.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · the ladder</span>
+      <h2>Four rungs, two scores, one trap beside them</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">The figure is the canon ladder. Predict each rung's direction before you look at the widget: which rung do you expect to do the most work? Most people guess the smoothing, because noisy channels are the first thing anyone notices. The bars say otherwise.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 370" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn bar charts of the canon ladder on 300 held-out cut points, seed 2008. Left, root mean square error in cycles: mean-life floor 45.61, linear fit on raw channels 30.50, health index with the label capped at 125 24.00 shown in copper, plus lag-free smoothing 23.64, and a trailing mean instead 24.88. Right, the asymmetric score per unit on a log scale: 1,017.22, 95.19, 11.81, 11.22 and 13.90. A note says the cap does the work, smoothing adds a little, and a lagging smoother takes it back.">
+        <defs>
+          <filter id="ip10aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip10aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip10aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip10aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip10aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip10aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip10aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip10aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip10aH" x="30" y="26">ROOT MEAN SQUARE ERROR, CYCLES</text>
+        <text class="ip10aH" x="470" y="26">ASYMMETRIC SCORE PER UNIT (LOG SCALE)</text>
+
+        <g filter="url(#ip10aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M40 250 L420 250"/>
+          <!-- RMSE: height = rmse x 4 -->
+          <rect x="56" y="68" width="48" height="182" rx="3" transform="rotate(-0.6 80 159)" fill="url(#ip10aHc)"/>
+          <rect x="126" y="128" width="48" height="122" rx="3" transform="rotate(0.5 150 189)" fill="url(#ip10aHc)"/>
+          <rect x="196" y="154" width="48" height="96" rx="3" transform="rotate(-0.4 220 202)" fill="#9B4D45" stroke="#9B4D45"/>
+          <rect x="266" y="155" width="48" height="95" rx="3" transform="rotate(0.4 290 203)" fill="#F3F7EA"/>
+          <rect x="336" y="150" width="48" height="100" rx="3" transform="rotate(-0.5 360 200)" fill="#FFFFFF" stroke-dasharray="5 4"/>
+
+          <path d="M480 250 L860 250"/>
+          <!-- per-unit score, log10 x 60 -->
+          <path d="M480 190 L860 190 M480 130 L860 130 M480 70 L860 70" stroke="#E3E9D8" stroke-width="1.2"/>
+          <rect x="496" y="70" width="48" height="180" rx="3" transform="rotate(0.5 520 160)" fill="url(#ip10aHc)"/>
+          <rect x="566" y="131" width="48" height="119" rx="3" transform="rotate(-0.5 590 190)" fill="url(#ip10aHc)"/>
+          <rect x="636" y="186" width="48" height="64" rx="3" transform="rotate(0.4 660 218)" fill="#9B4D45" stroke="#9B4D45"/>
+          <rect x="706" y="187" width="48" height="63" rx="3" transform="rotate(-0.4 730 218)" fill="#F3F7EA"/>
+          <rect x="776" y="181" width="48" height="69" rx="3" transform="rotate(0.5 800 215)" fill="#FFFFFF" stroke-dasharray="5 4"/>
+        </g>
+
+        <text class="ip10aV" x="80" y="58" text-anchor="middle">45.61</text>
+        <text class="ip10aV" x="150" y="118" text-anchor="middle">30.50</text>
+        <text class="ip10aV" x="220" y="144" text-anchor="middle">24.00</text>
+        <text class="ip10aV" x="290" y="138" text-anchor="middle">23.64</text>
+        <text class="ip10aV" x="360" y="118" text-anchor="middle">24.88</text>
+
+        <text class="ip10aS" x="476" y="194" text-anchor="end">10</text>
+        <text class="ip10aS" x="476" y="134" text-anchor="end">100</text>
+        <text class="ip10aS" x="476" y="74" text-anchor="end">1000</text>
+        <text class="ip10aL" x="520" y="60" text-anchor="middle">1,017.22</text>
+        <text class="ip10aL" x="590" y="121" text-anchor="middle">95.19</text>
+        <text class="ip10aL" x="660" y="176" text-anchor="middle">11.81</text>
+        <text class="ip10aL" x="730" y="160" text-anchor="middle">11.22</text>
+        <text class="ip10aL" x="800" y="140" text-anchor="middle">13.90</text>
+
+        <text class="ip10aS" x="80" y="268" text-anchor="middle">mean life</text>
+        <text class="ip10aS" x="150" y="268" text-anchor="middle">linear</text>
+        <text class="ip10aB" x="220" y="268" text-anchor="middle">HI + cap</text>
+        <text class="ip10aS" x="290" y="268" text-anchor="middle">+ smooth</text>
+        <text class="ip10aS" x="360" y="268" text-anchor="middle">trailing</text>
+        <text class="ip10aS" x="520" y="268" text-anchor="middle">mean life</text>
+        <text class="ip10aS" x="590" y="268" text-anchor="middle">linear</text>
+        <text class="ip10aB" x="660" y="268" text-anchor="middle">HI + cap</text>
+        <text class="ip10aS" x="730" y="268" text-anchor="middle">+ smooth</text>
+        <text class="ip10aS" x="800" y="268" text-anchor="middle">trailing</text>
+        <text class="ip10aA" x="30" y="292">dashed: the same health index smoothed by a trailing mean of 10, which lags</text>
+
+        <text class="ip10aN" x="30" y="324">The cap does the work: 30.50 to 24.00, and a score per unit from 95.19 to 11.81. The lag-free smoother adds a little (23.64,</text>
+        <text class="ip10aN" x="30" y="342">11.22). A trailing mean of the same window takes it back and more. 300 units, 70 training engines, seed 2008.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper bars are the rung that mattered; the dashed bars are the smoother everyone reaches for first.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip10-bench">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The whole ladder on real public rows from NASA's simulation, computed in this page. Modelled, and labelled so: the seeded split of 70 training and 30 held-out engines, the 10 cut points per held-out engine, the planted dropout and the shuffle. At the canon settings the table prints the canon figures.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip10-cap">Cap on the label (a convention: the literature uses both)</label>
+        <select class="sql-code" id="ip10-cap">
+          <option value="125" selected>125</option>
+          <option value="130">130</option>
+        </select>
+        <label class="sql-label" for="ip10-win">Smoothing window, in health-index values</label>
+        <select class="sql-code" id="ip10-win">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+        </select>
+        <label class="sql-label" for="ip10-seed">Seed for the split and the cut points</label>
+        <select class="sql-code" id="ip10-seed">
+          <option value="2008" selected>2008, the canon</option>
+          <option value="1">1</option>
+          <option value="7">7</option>
+          <option value="42">42</option>
+        </select>
+        <label class="sql-label" for="ip10-p">Dropout probability when T50 is in the hottest fifth: <b id="ip10-p-val">0.7</b></label>
+        <input class="sql-code" id="ip10-p" type="range" min="0" max="0.9" step="0.1" value="0.7">
+        <div class="ip10-btns">
+          <button class="btn primary" id="ip10-anti" type="button">Plant the dropout, then drop rows with gaps</button>
+          <button class="btn" id="ip10-break" type="button">Shuffle cycle order inside each engine</button>
+          <button class="btn" id="ip10-reset" type="button">Back to the canon settings</button>
+        </div>
+        <div id="ip10-out"></div>
+        <p class="sql-note" id="ip10-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip10-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The five runs worth doing first<span class="mini">6 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Leave everything alone.</strong> Floor 45.61, linear 30.50, health index 24.00, smoothed 23.64; scores 305,167, 28,557, 3,542 and 3,366 summed over 300 units. Late share 43, 70, 56 and 56 percent.</li>
+          <li><strong>Read the linear rung's bias.</strong> +15.8 cycles: without a cap, the fit is dragged by early-life rows it cannot distinguish, and it ends up late on 70 percent of units. Late is the expensive direction, so its score is 28,557 even though its error is "only" 30.50.</li>
+          <li><strong>Switch the cap to 130.</strong> The smoothed rung reads 23.70 and 3,622 against 23.64 and 3,366. A convention, chosen on this subset; neither value is right.</li>
+          <li><strong>Try seeds 1, 7 and 42.</strong> The numbers move. What holds on every seed: the capped health index beats the floor and the linear fit, the lag-free smoother beats the trailing mean, the dropout makes both numbers worse than the clean top rung (on the score, under the late-is-worse lean this bench uses; session 7 shows the swap), and the shuffle drags the top rung back near the floor. What does not hold: at seed 7 the uncapped linear fit is worse than the floor (40.40 against 38.06), and at seed 42 the 130 cap beats 125 (21.89 against 22.32). Quote seed-2008 numbers and say "your numbers move with the seed".</li>
+          <li><strong>Press the dropout button.</strong> 24.89 and 4,656. Part 2 is about why.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why the floor's score is 305,167<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A sum of exponentials is ruled by its worst few terms. Engine 69 (life 362, the longest) and engine 96 (life 336) are already past the 200-cycle training average at their cut points, so the floor predicts 0 to 14 cycles left when 140 to 150 remain. Those six units, out of 300, carry 79.5 percent of the sum; the single worst (an error of -142 cycles) costs 55,440 on its own. For contrast, the smoothed rung's three worst units carry 12.8 percent of its total.</p>
+        <p>The paper that defined the score saw this coming. Saxena and colleagues suggest weighting short true lives more and adding a correlation measure, because one aggregate can hide a model that predicts well for some units and badly for the rest. The bench prints four numbers per rung for that reason.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why smoothing buys so little, and how it can cost<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The health index is already a weighted sum of 14 channels, and averaging across channels removes much of the cycle-to-cycle noise before any smoothing in time. What is left is a signal that only moves one way, slowly at first and then quickly. A trailing mean of the last 10 values reports where the engine was about five cycles ago, which is always healthier than where it is: the bias goes from +1.4 to +4.3 and the score from 3,366 to 4,171.</p>
+        <p>The lag-free smoother fits a straight line through the same 10 values and reads it at the newest point. It removes noise without stepping back in time. On seeds 1, 7 and 42 it improved both numbers each time, by 0.03 to 0.85 cycles of error: real, small, and never a fix.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · the anti-lever and the break button</span>
+      <h2>A heat-driven dropout, and the button that removes time</h2>
+      <span class="tag build">14 min hands on</span>
+    </div>
+    <p class="lede">The dropout is planted and declared: any reading with T50 at or above 1416.2 degrees Rankine (the hottest fifth of the fleet's readings) goes missing with probability 0.7, and the pipeline then does what most pipelines do with a gap, which is drop the row. 3,073 of the 20,631 rows vanish, nearly all from the end of engines' lives. The figure draws what that does to one prediction.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn mechanism of the anti-lever. One engine's cycles drawn as ticks from start to the cut point now. In the hot region near the end most ticks are struck through: readings at or above 1416.2 that went missing. A bracket marks the last 10 surviving readings, which stretch back further in time than the last 10 cycles, and an arrow says the pipeline reads them as now, so the engine looks cooler and its predicted life is late. Right, two score cards: clean, RMSE 23.64, score 3,366, bias plus 1.4; after the dropout, RMSE 24.89, score 4,656, bias plus 4.7. Below, the break button: shuffled cycle order gives RMSE 40.41 and score 46,145.">
+        <defs>
+          <filter id="ip10bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip10bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip10bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip10bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip10bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip10bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip10bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip10bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip10bH" x="30" y="26">WHAT "DROP ROWS WITH GAPS" DOES TO ONE PREDICTION</text>
+        <text class="ip10bH" x="620" y="26">BOTH NUMBERS, 300 UNITS</text>
+
+        <g filter="url(#ip10bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the hot region -->
+          <rect x="400" y="62" width="168" height="66" rx="4" transform="rotate(-0.4 484 95)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <!-- timeline -->
+          <path d="M40 130 L568 130"/>
+          <!-- cool ticks -->
+          <path d="M60 116 L60 130 M90 116 L90 130 M120 116 L120 130 M150 116 L150 130 M180 116 L180 130 M210 116 L210 130 M240 116 L240 130 M270 116 L270 130 M300 116 L300 130 M330 116 L330 130 M360 116 L360 130 M390 116 L390 130"/>
+          <!-- hot ticks, most struck -->
+          <path d="M412 116 L412 130 M432 116 L432 130 M452 116 L452 130 M472 116 L472 130 M492 116 L492 130 M512 116 L512 130 M532 116 L532 130 M552 116 L552 130"/>
+          <path d="M406 112 L418 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <path d="M446 112 L458 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <path d="M466 112 L478 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <path d="M486 112 L498 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <path d="M506 112 L518 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <path d="M546 112 L558 124" stroke="#7A3730" stroke-width="2.6" data-strike="1"/>
+          <!-- now marker -->
+          <path d="M568 70 L568 146" stroke-width="2.6"/>
+          <!-- bracket: the last surviving readings reach back -->
+          <path d="M300 156 L300 166 L532 166 L532 156" stroke="#3F6212"/>
+          <!-- arrow: read as now -->
+          <path d="M542 170 C556 200 556 232 540 258" marker-end="url(#ip10bAr)"/>
+          <!-- prediction lands late -->
+          <path d="M40 270 L568 270"/>
+          <path d="M470 258 L470 282" stroke-width="2.6"/>
+          <circle cx="532" cy="270" r="6" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M478 252 L524 252" marker-end="url(#ip10bAr)" stroke="#9B4D45"/>
+
+          <!-- score cards -->
+          <rect x="620" y="44" width="232" height="86" rx="8" transform="rotate(-0.8 736 87)" fill="#F3F7EA"/>
+          <rect x="620" y="146" width="232" height="86" rx="8" transform="rotate(0.7 736 189)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="620" y="250" width="232" height="70" rx="8" transform="rotate(-0.6 736 285)" fill="#FFFFFF" stroke-dasharray="6 5"/>
+        </g>
+
+        <text class="ip10bS" x="60" y="104">cool readings, all present</text>
+        <text class="ip10bB" x="410" y="56">hot: T50 at or above 1416.2</text>
+        <text class="ip10bL" x="568" y="162" text-anchor="middle">now</text>
+        <text class="ip10bA" x="300" y="184">the last 10 surviving readings</text>
+        <text class="ip10bS" x="300" y="200">reach back further than 10 cycles</text>
+        <text class="ip10bS" x="40" y="232">read as now: the engine looks cooler than it is,</text>
+        <text class="ip10bS" x="40" y="250">so the predicted life lands after the true one</text>
+        <text class="ip10bL" x="470" y="300" text-anchor="middle">true RUL</text>
+        <text class="ip10bB" x="532" y="300" text-anchor="middle">predicted</text>
+        <text class="ip10bB" x="500" y="244" text-anchor="middle">late</text>
+
+        <text class="ip10bL" x="636" y="68">Clean, top rung</text>
+        <text class="ip10bV" x="636" y="96">23.64 · 3,366</text>
+        <text class="ip10bS" x="636" y="118">RMSE · score; bias +1.4</text>
+        <text class="ip10bB" x="636" y="170">After the dropout</text>
+        <text class="ip10bV" x="636" y="198">24.89 · 4,656</text>
+        <text class="ip10bS" x="636" y="220">bias +4.7; RMSE +5%, score +38%</text>
+        <text class="ip10bL" x="636" y="274">Break: cycles shuffled</text>
+        <text class="ip10bV" x="636" y="302">40.41 · 46,145</text>
+
+        <text class="ip10bN" x="30" y="350">Dropping the gaps removes the end of life and leaves the pipeline reading older, cooler rows as if they were current.</text>
+        <text class="ip10bN" x="30" y="368">The square-error number barely notices; the score built to punish lateness does. Shuffle time away and both collapse.</text>
+        <text class="ip10bS" x="30" y="392">Modelled dropout, declared: probability 0.7 above the fleet's 80th-percentile T50; 3,073 of 20,631 rows removed.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the struck ticks are where the evidence was, and the arrow is the one assumption the pipeline never wrote down: that the last row it kept is now.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the two-number move<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Press the dropout button at the canon settings. Root mean square error goes from 23.64 to 24.89, five percent. The asymmetric score goes from 3,366 to 4,656, thirty-eight percent. The bias goes from +1.4 to +4.7 cycles and the late share from 56 to 60 percent. One number says "slightly worse". The other says "materially worse, and in the expensive direction".</p>
+        <p>That gap is the whole argument for printing both. A team that tracks only RMSE ships the dropout-damaged model and calls it a five percent regression. A team that tracks the score sees the late shift. Neither number alone tells you that the cause is the pipeline's treatment of missing rows; the mechanism in the figure does, and practitioner session 6 is where it was built.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst had a clean pipeline with a single line in it that nobody remembered writing: drop rows with any null. On the simulated fleet that line does exactly what the button does. Her fix was not a cleverer model; it was carrying the time gap forward, so the model knows how stale its last reading is, and refusing to call a prediction "current" when the newest reading was more than a few cycles old.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why the break button proves the bench measures time<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Shuffle the order of the cycles inside every engine and keep the labels where they were. The channels still hold the same values, the fleet is the same, the fit is the same code. The only thing destroyed is the link between a reading and how far the engine is from failure. The top rung goes to 40.41 and 46,145, close to the floor's error, because every prediction collapses toward the fleet's middle.</p>
+        <p>A bench that scored about the same with time shuffled would be measuring something other than degradation. This one does not, and that is the evidence that its other numbers mean what they say.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Which way does the score lean?</strong> The prose of the 2008 paper says late predictions are penalised more, and its Figure 9 shows a score of about 147 at an error of +50 against about 46 at -50. Its equation as printed pairs the parameter 10 with early errors and 13 with late ones, which taken literally would do the opposite. The bench follows the prose and the figure (late divides by 10, early by 13). Expect to meet code that followed the equation.</p>
+        <p><strong>One score or several?</strong> The same paper argues the summed score should be weighted toward short true lives and paired with a correlation measure. Later work mostly reports RMSE and the summed score. The bench prints four numbers and does not crown one.</p>
+        <p><strong>125 or 130?</strong> Both caps are in current use. At seed 2008 the difference is 23.64 against 23.70 in error and 3,366 against 3,622 in score; at seed 42 the order flips (22.32 against 21.89). A choice that flips with the split is a convention, not a finding.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Reproduce the canon, then write the brief</h2>
+      <span class="tag build">11 min hands on</span>
+    </div>
+    <p class="lede">Open the console. Reproduce the top rung, the anti-lever and the break, prove the self-checks can fail, then write five lines anyone signing off a remaining-life model should be handed. The figure is the brief.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn brief card with five lines. One, the floor: fleet average, RMSE 45.61. Two, the label: capped at 125, a convention, 130 also in use. Three, missingness: mechanism stated, gaps carried, never dropped silently; dropping them costs 38 percent in score. Four, both numbers: RMSE and asymmetric score, with bias and late share. Five, the protocol: held-out engines, n equals 300, seed stated, not the NASA test set. A copper pin marks line three.">
+        <defs>
+          <filter id="ip10cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip10cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip10cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip10cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip10cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip10cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip10cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip10cH" x="30" y="26">THE BRIEF: FIVE LINES, EACH WITH THE NUMBER THAT BOUNDS IT</text>
+
+        <g filter="url(#ip10cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="44" width="820" height="200" rx="10" transform="rotate(-0.3 440 144)" fill="#FFFFFF"/>
+          <path d="M50 82 L830 82 M50 114 L830 114 M50 146 L830 146 M50 178 L830 178 M50 210 L830 210" stroke="#E3E9D8" stroke-width="1.2"/>
+          <circle cx="40" cy="126" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <rect x="226" y="117" width="604" height="26" rx="4" fill="#FBEFEC" stroke="#9B4D45" stroke-width="1.2"/>
+        </g>
+
+        <text class="ip10cL" x="56" y="72">1 · The floor</text>
+        <text class="ip10cS" x="236" y="72">fleet-average model on the same cut points: RMSE 45.61, score 305,167</text>
+        <text class="ip10cL" x="56" y="104">2 · The label</text>
+        <text class="ip10cS" x="236" y="104">capped at 125 (a convention; 130 also in use); the cap value written down</text>
+        <text class="ip10cB" x="56" y="136">3 · Missingness</text>
+        <text class="ip10cB" x="236" y="136">mechanism stated, gaps carried, never dropped silently: dropping cost +38% in score</text>
+        <text class="ip10cL" x="56" y="168">4 · Both numbers</text>
+        <text class="ip10cS" x="236" y="168">RMSE and the asymmetric score (late divides by 10), plus bias and late share</text>
+        <text class="ip10cL" x="56" y="200">5 · The protocol</text>
+        <text class="ip10cS" x="236" y="200">held-out engines, n = 300 units, seed stated; not comparable with test-set papers</text>
+        <text class="ip10cS" x="56" y="230">signed: whoever ran the bench, with the date the self-checks last passed</text>
+
+        <text class="ip10cN" x="30" y="274">Line 3 is the one most briefs leave out, because a pipeline that drops gaps produces a file with no nulls, and a file with</text>
+        <text class="ip10cN" x="30" y="292">no nulls looks finished.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - five lines, each one a number someone else can recompute; the copper line is the one the anti-lever priced.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Run the canon ladder</h4>
+        <p>Every rung at the default settings. The top rung should print 23.64 and 3366; your numbers will match for the same seed.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r = IOT.ladder(IOT_SAMPLE);
+[r.smooth.rmse.toFixed(2), r.smooth.score.toFixed(0), r.smooth.bias.toFixed(1), r.smooth.n]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read the anti-lever and the break</h4>
+        <p>Both were computed in the same call. 24.89 and 4656 for the dropout, with 3,073 rows removed; 40.41 and 46145 for the shuffle.</p>
+        <div class="prompt-box good"><span class="label">console</span>[r.mnarSmooth.rmse.toFixed(2), r.mnarSmooth.score.toFixed(0), r.mnar.dropped,
+ r.shuffleSmooth.rmse.toFixed(2), r.shuffleSmooth.score.toFixed(0)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Prove a self-check can fail</h4>
+        <p>Plant the swapped score back into the real function: the check "late costs more than early at equal size" must fail. Then the lagging smoother and the dropout that removes cool rows too. A check that passed on the broken engine would not be a check.</p>
+        <div class="prompt-box good"><span class="label">console</span>IOT.FAULTS.map(function (f) {
+  var t = IOT.selfTest(f);
+  return f + ": " + (t.pass ? "PASSED (bad)" : "failed " + t.checks.filter(function (c) { return !c.pass; }).map(function (c) { return c.name; }).join("; "));
+})</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Move the seed and watch the order hold</h4>
+        <p>Seed 42 gives different numbers: 22.32 for the clean top rung, 23.16 with the dropout, 39.28 shuffled. Check that the dropout is still worse than the clean rung on both scores and the shuffle far worse than both. The numbers move with the seed; that ordering held on every seed tried.</p>
+        <div class="prompt-box good"><span class="label">console</span>var s = IOT.ladder(IOT_SAMPLE, { seed: 42, only: ["smooth", "mnarSmooth", "shuffleSmooth"] });
+[s.smooth.rmse, s.mnarSmooth.rmse, s.shuffleSmooth.rmse].map(function (x) { return x.toFixed(2); })</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the brief for Harrow Lane</h4>
+        <p>Five lines as in the figure, filled from your own runs. For line 3, write the mechanism of missingness in one sentence ("readings vanish when..."), then what the pipeline does with a gap. If the answer is "drops the row", line 3 is the finding.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Never sign off a remaining-life number without its floor, its cap, its missingness mechanism, both scores and its protocol. And never trust a bench you have not broken: if shuffling time does not wreck it, it was not measuring time.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">The dropout button moves the top rung's RMSE from 23.64 to 24.89 and its asymmetric score from 3,366 to 4,656. Why does the score move so much more?</p>
+      <div class="qopt">A · Because the score is computed on fewer units after the dropout</div>
+      <div class="qopt">B · Because the dropout shifts predictions late (bias +1.4 to +4.7), and the asymmetric score punishes late errors on a steeper exponential than early ones, while RMSE treats both sides alike</div>
+      <div class="qopt">C · Because the score is more sensitive to noise than RMSE</div>
+      <q class="qwhy">Both numbers are on the same 300 units. What changed is the direction of the errors: removing the hot end of life makes engines look healthier, so remaining life is over-predicted. Late errors divide by 10 in the exponent, early by 13.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">A colleague swaps the lag-free smoother for a trailing mean of the same 10 values "because it is simpler". What does the bench say?</p>
+      <div class="qopt">A · Worse on both numbers (24.88 and 4,171 against 23.64 and 3,366), because a trailing mean reports where a one-way degrading signal was about five cycles ago, which is always healthier, so it leans late</div>
+      <div class="qopt">B · Identical, since both use the same 10 values</div>
+      <div class="qopt">C · Better, because averaging always reduces error</div>
+      <q class="qwhy">Same window, different estimator. On a signal that only moves one way, lag is bias, and here the bias is in the expensive direction (+4.3 against +1.4).</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">What does the break button (shuffle cycle order inside each engine) prove?</p>
+      <div class="qopt">A · That the model is overfitting</div>
+      <div class="qopt">B · That the cap is too low</div>
+      <div class="qopt">C · That the bench measures the link between readings and time to failure: remove it and the top rung falls to 40.41 and 46,145, near the floor, so the clean numbers are not an artefact of the code</div>
+      <q class="qwhy">Everything except the time order is held fixed. A bench that scored similarly with time destroyed would be measuring something else. This one collapses, which is what gives its other numbers their meaning.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">After the track</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">About an hour, partly in the console here and partly on something you own.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Build the fix the anti-lever implies</h4>
+        <p>Instead of dropping gappy rows, carry each row's cycle number into the smoother so the line is fitted against real time, not row position. Run it under the planted dropout and write down whether the late shift shrinks. Your numbers will differ; the direction is the result.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Break your own bench</h4>
+        <p>Take a model you own that predicts something over time. Shuffle the time order of its inputs inside each entity and rescore. If the score barely moves, write down what it was actually measuring.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the five-line brief for a real model</h4>
+        <p>Floor, label, missingness, both numbers, protocol. Hand it to whoever signs off the model and ask which line they would have asked for first.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered today</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The ladder, driven by the reader</span><span class="note">Floor 45.61, linear 30.50, capped health index 24.00, lag-free smoothing 23.64 RMSE, on 300 held-out cut points.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Two numbers side by side</span><span class="note">RMSE and the PHM08 asymmetric score (Saxena et al. 2008, read at source), with bias and late share.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The anti-lever</span><span class="note">Heat-driven dropout, rows with gaps dropped: 24.89 and 4,656; 3,073 of 20,631 rows removed.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The break button</span><span class="note">Cycle order shuffled inside each engine: 40.41 and 46,145.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The lagging smoother</span><span class="note">Trailing mean of 10: 24.88 and 4,171, worse than no smoothing.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The cap as a convention</span><span class="note">125 against 130: 3,366 against 3,622. Both read at source in current papers.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Self-checks that can fail</span><span class="note">Six properties on load; three planted faults each fail one. A Python copy agrees with the browser to the digit.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">A five-line brief</span><span class="note">Floor, label, missingness, both numbers, protocol.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Deep sequence models for remaining life</span><span class="note">Named only. Their published numbers use other protocols and are not comparable with the bench.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Forecast backtests</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn timeseries forecasting, builder session 8</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; held-out engines, not the NASA test set.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The ladder.</strong> 45.61, 30.50, 24.00, 23.64 RMSE. Scores 305,167, 28,557, 3,542, 3,366 over 300 units.</div>
+      <div class="cheat-item"><strong>What did the work.</strong> The cap. Smoothing added 0.36 cycles, and only because it did not lag.</div>
+      <div class="cheat-item"><strong>The trap.</strong> A trailing mean of 10 lags a one-way signal: 24.88 and 4,171, worse than none.</div>
+      <div class="cheat-item"><strong>The anti-lever.</strong> Hot readings vanish, gappy rows dropped: RMSE +5 percent, score +38 percent, bias goes late.</div>
+      <div class="cheat-item"><strong>The break.</strong> Shuffle time inside each engine: 40.41 and 46,145. The bench measures time.</div>
+      <div class="cheat-item"><strong>The score.</strong> Late divides by 10, early by 13. The printed equation and the figure disagree; the figure matches the prose.</div>
+      <div class="cheat-item"><strong>The protocol.</strong> 70 training engines, 30 held out, 10 cuts each, seed 2008. Not the NASA test set.</div>
+      <div class="cheat-item"><strong>The brief.</strong> Floor, label, missingness, both numbers, protocol. Each with its number.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 10 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p9-smart-home-telemetry.html">← Practitioner session 9 · Smart home telemetry</a>
+        <a href="../index.html">All sessions →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var cap = document.getElementById("ip10-cap");
+  var win = document.getElementById("ip10-win");
+  var seed = document.getElementById("ip10-seed");
+  var p = document.getElementById("ip10-p");
+  var pVal = document.getElementById("ip10-p-val");
+  var out = document.getElementById("ip10-out");
+  var verdict = document.getElementById("ip10-verdict");
+  var self = document.getElementById("ip10-self");
+  var showAnti = false, showBreak = false;
+
+  var LABELS = {
+    mean: "Fleet-average floor",
+    linear: "Linear fit, raw channels, uncapped",
+    hi: "Health index, capped label",
+    smooth: "+ lag-free smoothing (top rung)",
+    trailing: "trailing mean instead (lags)",
+    mnarSmooth: "ANTI-LEVER: dropout, gaps dropped",
+    shuffleSmooth: "BREAK: cycle order shuffled"
+  };
+
+  function fmt(x, d) { return x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+
+  function opts() {
+    return { cap: Number(cap.value), window: Number(win.value), seed: Number(seed.value), mnarP: Number(p.value) };
+  }
+
+  function isCanon(o) { return o.cap === 125 && o.window === 10 && o.seed === 2008 && Math.abs(o.mnarP - 0.7) < 1e-9; }
+
+  function render() {
+    var o = opts();
+    pVal.textContent = o.mnarP.toFixed(1);
+    var keys = ["mean", "linear", "hi", "smooth", "trailing"];
+    if (showAnti) keys.push("mnarSmooth");
+    if (showBreak) keys.push("shuffleSmooth");
+    out.innerHTML = '<p class="sql-note">Running the ladder on 100 engines...</p>';
+    setTimeout(function () {
+      var r = IOT.ladder(IOT_SAMPLE, { cap: o.cap, window: o.window, seed: o.seed, mnarP: o.mnarP, only: keys });
+      var html = '<table class="sql-table"><thead><tr><th>Rung</th><th>RMSE</th><th>Score, sum</th><th>Per unit</th><th>Bias</th><th>Late</th></tr></thead><tbody>';
+      keys.forEach(function (k) {
+        var x = r[k];
+        var cls = k === "mnarSmooth" ? ' class="ip10-anti"' : k === "shuffleSmooth" ? ' class="ip10-brk"' : k === "smooth" ? ' class="ip10-top"' : "";
+        html += "<tr" + cls + "><td>" + LABELS[k] + "</td><td><b>" + fmt(x.rmse, 2) + "</b></td><td><b>" + fmt(x.score, 0) + "</b></td><td>" + fmt(x.scorePerUnit, 2) +
+          "</td><td>" + (x.bias >= 0 ? "+" : "") + x.bias.toFixed(1) + "</td><td>" + Math.round(x.lateShare * 100) + "%</td></tr>";
+      });
+      html += "</tbody></table>";
+      html += '<p class="sql-note">' + r.smooth.n + " units under test (30 held-out engines x 10 cuts), 70 training engines, seed " + o.seed +
+        (isCanon(o) ? ", the canon settings." : ". Not the canon settings: your numbers will differ from the figures in the prose.") + "</p>";
+      out.innerHTML = html;
+      var s = r.smooth, msg = "Top rung: RMSE " + fmt(s.rmse, 2) + ", score " + fmt(s.score, 0) + ", bias " + (s.bias >= 0 ? "+" : "") + s.bias.toFixed(1) + ".";
+      if (showAnti) {
+        var m = r.mnarSmooth;
+        msg += " Dropout planted (" + fmt(r.mnar.dropped, 0) + " of " + fmt(r.mnar.total, 0) + " rows gone, probability " + o.mnarP.toFixed(1) + " above T50 " + r.mnar.threshold.toFixed(1) +
+          "): RMSE " + fmt(m.rmse, 2) + " (" + (m.rmse >= s.rmse ? "+" : "") + ((m.rmse / s.rmse - 1) * 100).toFixed(0) + "%), score " + fmt(m.score, 0) + " (" + (m.score >= s.score ? "+" : "") + ((m.score / s.score - 1) * 100).toFixed(0) + "%), bias " + (m.bias >= 0 ? "+" : "") + m.bias.toFixed(1) + ".";
+      }
+      if (showBreak) {
+        var b = r.shuffleSmooth;
+        msg += " Time shuffled: RMSE " + fmt(b.rmse, 2) + ", score " + fmt(b.score, 0) + ". The bench was measuring time.";
+      }
+      verdict.textContent = msg;
+    }, 20);
+  }
+
+  document.getElementById("ip10-anti").addEventListener("click", function () { showAnti = true; render(); });
+  document.getElementById("ip10-break").addEventListener("click", function () { showBreak = true; render(); });
+  document.getElementById("ip10-reset").addEventListener("click", function () {
+    cap.value = "125"; win.value = "10"; seed.value = "2008"; p.value = "0.7"; showAnti = false; showBreak = false; render();
+  });
+  [cap, win, seed].forEach(function (el) { el.addEventListener("change", render); });
+  p.addEventListener("change", render);
+  p.addEventListener("input", function () { pVal.textContent = Number(p.value).toFixed(1); });
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  var faults = IOT.FAULTS.filter(function (f) { return !IOT.selfTest(f).pass; }).length;
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, and " + faults + " of " + IOT.FAULTS.length + " planted faults make a check fail, as they should. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  render();
+})();
+</script>
+<style>
+  #ip10-bench .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip10-bench input.sql-code { width: 100%; max-width: 24rem; }
+  #ip10-bench table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip10-bench .ip10-btns { display: flex; flex-wrap: wrap; gap: .5rem; margin: .7rem 0 .3rem; }
+  #ip10-bench tr.ip10-top td { background: var(--indigo-50); }
+  #ip10-bench tr.ip10-anti td { background: var(--amber-50); color: var(--amber-ink-text); }
+  #ip10-bench tr.ip10-brk td { background: #FFFFFF; font-style: italic; }
+</style>
+</body>
+</html>

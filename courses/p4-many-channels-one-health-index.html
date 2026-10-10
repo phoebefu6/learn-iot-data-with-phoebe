@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 4 of 10. Fourteen sensor channels standardised, weighted and combined into one health index between 0 and 1, set beside the margin-based index NASA's paper defined and kept back. Real public rows from NASA's simulation, computed in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="From many channels to one health index - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 4 of 10. Standardise, weight, combine: a learned health index on 300 held-out cut points scores RMSE 24.00 and 3,542 on the asymmetric score. What the one number gains, and what it hides.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p4-many-channels-one-health-index.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From many channels to one health index - learn iot data with phoebe">
+<meta name="twitter:description" content="One number a planner can read. It is only as honest as the label it was fitted to.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 4 · From many channels to one health index - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 4 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 4 of 10</div>
+    <h1>From many channels to <span class="accent">one health index</span></h1>
+    <p class="sub">Session 3 sorted the channels. Fourteen survived, and nobody can read fourteen traces per engine per week. Tonight squeezes them into one number between 1 (healthy) and 0 (failed) in three moves: put every channel on the same ruler, give each a weight, add them up. Then the comparison that keeps the number honest: the health index NASA's paper defined from the engine's physical margins, which it never gave out, against the one you can learn from the sensors. Real public rows from NASA's simulation, computed in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Working depth</span>
+      <span class="chip audience">Analysts building features from sensor data</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-4 · Welcome</span>
+      <span class="a2" style="flex:3">4-16 · Standardise, weight, combine</span>
+      <span class="a3" style="flex:3">16-28 · Two kinds of index</span>
+      <span class="a4" style="flex:4">28-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's planners want one gauge</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop whose fleet is NASA's 100 simulated engines. Every week its planners decide which engines to pull. The analyst has triaged the channels (session 3) and could hand them fourteen charts per engine. They asked for something else: one gauge per engine, full when it is healthy, empty when it is about to fail, that they can sort a list by. Building that gauge is easy. Knowing what it hides is the work.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The three moves that turn many channels into one number (standardise on the training engines only, weight by least squares, combine and clamp) built by hand in your console and checked against the engine to three decimals. The paper's own health index, the lowest of four normalised operability margins, and why participants were never given it. A learned index scored on 300 held-out cut points: root mean square error 24.00 cycles and an asymmetric score of 3,542, against 30.50 and 28,557 for the same fourteen channels fitted to the raw label. And an honest account of where that gain comes from, which is not where most people first look.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Where tonight sits<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The data is NASA's FD001 training set, data set 6 of the Prognostics Center of Excellence repository (Saxena and Goebel, 2008): 100 engines, one operating condition, one fault mode, each run from a healthy start to failure. The degradation is simulated with C-MAPSS, so every number on this page describes real public rows from NASA's simulation, not real engines.</p>
+        <p>Session 1 found the label in the cycle count. Session 3 decided which fourteen channels a model may see. Tonight is the first model that uses them as one signal, and it is rung 2 of the bench that session 10 runs end to end.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Health index.</strong> One number per engine per cycle, 1 when healthy and 0 at failure.</li>
+          <li><strong>Standardise.</strong> Subtract a channel's mean and divide by its standard deviation, so every channel is measured in the same unit: standard deviations.</li>
+          <li><strong>Weight.</strong> How much one standard deviation of a channel moves the index. Fitted, not chosen.</li>
+          <li><strong>Operability margin.</strong> How far a component is from a limit it must not cross, such as a compressor's stall margin.</li>
+          <li><strong>Capped label.</strong> Remaining life held flat at 125 early in life, so the index reads 1 until the engine has fewer than 125 cycles left.</li>
+          <li><strong>Cut point.</strong> A moment in a held-out engine's life where the model is asked "how long is left?". 30 engines, 10 cut points each, 300 units under test.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers standardise, weight, combine</span>
+      <h2>Fourteen rulers, one number</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The fourteen channels are measured in degrees Rankine, psia, rpm and plain ratios. Adding them as they stand would add units, not evidence. The figure draws the three moves that fix that, with the numbers the engine prints for the seed-2008 training engines.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 416" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in three moves. On the left, three of the fourteen channels with their own units and spreads: T50 in degrees Rankine, mean 1408.91 and standard deviation 8.97; Nc in rpm, mean 9066.51 and standard deviation 22.78; bypass ratio, mean 8.44 and standard deviation 0.037; and eleven more. Arrows lead to a box that standardises each channel with the mean and spread of the 70 training engines only. Next, the copper box: a weight per channel fitted by least squares, below zero for channels that rise near failure and above zero for channels that fall, for example Nc minus 0.052 and P30 plus 0.034. Last, a box that adds 0.686 and the weighted values and holds the result between 0 and 1. A dial below reads 0 failed to 1 healthy.">
+        <defs>
+          <filter id="ip4aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip4aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip4aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip4aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip4aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip4aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip4aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip4aH" x="30" y="26">THREE MOVES: STANDARDISE, WEIGHT, COMBINE</text>
+
+        <g filter="url(#ip4aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three raw channels -->
+          <rect x="30" y="50" width="200" height="56" rx="6" transform="rotate(-0.6 130 78)" fill="#FFFFFF"/>
+          <rect x="30" y="122" width="200" height="56" rx="6" transform="rotate(0.5 130 150)" fill="#FFFFFF"/>
+          <rect x="30" y="194" width="200" height="56" rx="6" transform="rotate(-0.4 130 222)" fill="#FFFFFF"/>
+          <!-- the rest of the pile -->
+          <rect x="30" y="266" width="200" height="34" rx="6" transform="rotate(0.4 130 283)" fill="url(#ip4aHc)" stroke="#CDD5C0"/>
+          <!-- standardise -->
+          <rect x="270" y="80" width="180" height="140" rx="8" transform="rotate(0.6 360 150)" fill="#F3F7EA"/>
+          <!-- weight: the subject -->
+          <rect x="490" y="60" width="170" height="180" rx="8" transform="rotate(-0.7 575 150)" fill="#FBEFEC" stroke="#9B4D45" stroke-width="2.4"/>
+          <!-- combine -->
+          <rect x="700" y="80" width="150" height="140" rx="8" transform="rotate(0.8 775 150)" fill="#FFFFFF"/>
+          <!-- arrows -->
+          <path d="M234 78 L266 100" marker-end="url(#ip4aAr)"/>
+          <path d="M234 150 L266 150" marker-end="url(#ip4aAr)"/>
+          <path d="M234 222 L266 200" marker-end="url(#ip4aAr)"/>
+          <path d="M454 150 L486 150" marker-end="url(#ip4aAr)"/>
+          <path d="M664 150 L696 150" marker-end="url(#ip4aAr)"/>
+          <path d="M775 224 L775 252" marker-end="url(#ip4aAr)"/>
+          <!-- dial doodle -->
+          <path d="M735 300 A40 40 0 0 1 815 300"/>
+          <path d="M775 300 L792 270" stroke="#9B4D45" stroke-width="2.4"/>
+          <circle cx="775" cy="300" r="3" fill="#1D2513"/>
+        </g>
+
+        <text class="ip4aL" x="42" y="74">T50 · degrees Rankine</text>
+        <text class="ip4aS" x="42" y="92">mean 1408.91, sd 8.97</text>
+        <text class="ip4aL" x="42" y="146">Nc · rpm</text>
+        <text class="ip4aS" x="42" y="164">mean 9066.51, sd 22.78</text>
+        <text class="ip4aL" x="42" y="218">BPR · a ratio</text>
+        <text class="ip4aS" x="42" y="236">mean 8.44, sd 0.037</text>
+        <text class="ip4aS" x="42" y="288">and 11 more channels</text>
+
+        <text class="ip4aA" x="284" y="106">standardise</text>
+        <text class="ip4aL" x="284" y="128">z = (x - mean) / sd</text>
+        <text class="ip4aS" x="284" y="152">mean and sd from the</text>
+        <text class="ip4aS" x="284" y="168">14,026 rows of the 70</text>
+        <text class="ip4aS" x="284" y="184">training engines only</text>
+
+        <text class="ip4aB" x="504" y="86">weight</text>
+        <text class="ip4aS" x="504" y="106">least squares on the</text>
+        <text class="ip4aS" x="504" y="122">70 training engines</text>
+        <text class="ip4aS" x="504" y="146">rises near failure:</text>
+        <text class="ip4aS" x="504" y="162">weight below zero</text>
+        <text class="ip4aS" x="504" y="178">falls: above zero</text>
+        <text class="ip4aL" x="504" y="202">Nc -0.052</text>
+        <text class="ip4aL" x="504" y="220">P30 +0.034</text>
+
+        <text class="ip4aA" x="714" y="106">combine</text>
+        <text class="ip4aS" x="714" y="128">0.686 + the sum</text>
+        <text class="ip4aS" x="714" y="144">of weight x z</text>
+        <text class="ip4aS" x="714" y="168">held between 0 and 1</text>
+        <text class="ip4aL" x="714" y="192">= the index</text>
+
+        <text class="ip4aS" x="735" y="322" text-anchor="middle">0 failed</text>
+        <text class="ip4aS" x="815" y="322" text-anchor="middle">1 healthy</text>
+
+        <text class="ip4aN" x="30" y="358">A weight on raw units is a weight on units: one sd of bypass ratio is 0.037, one sd of core speed is 22.78 rpm. Standardising</text>
+        <text class="ip4aN" x="30" y="376">first puts every channel in standard deviations, and fitting mean and sd on training engines keeps held-out ones off the ruler.</text>
+        <text class="ip4aS" x="30" y="400">Means and spreads computed on the training rows of the seed-2008 split; weights and the 0.686 printed by the engine (rung 2).</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the only step that learns anything about failure; the other two are bookkeeping that makes its answer readable.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Standardise: one ruler for every channel<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Each channel gets its own mean and standard deviation, computed on the 14,026 rows of the 70 training engines and on nothing else. T50 (the low-pressure turbine outlet temperature) centres on 1408.91 degrees Rankine with a spread of 8.97; the core speed Nc on 9066.51 rpm with a spread of 22.78; the bypass ratio on 8.44 with a spread of 0.037. After subtracting and dividing, a reading of +1 means "one spread above the training average" on every channel alike.</p>
+        <p>Two things this move does not do. It does not remove noise: a jittery channel is exactly as jittery in standard deviations as it was in rpm (session 3's noise share is unchanged by it). And it must not see the held-out engines. A mean computed on all 100 engines would leak a little of the test engines' end of life into the ruler, and the score would flatter the model by an amount nobody could see.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) first tried the planners' own suggestion: add up the fourteen readings and watch the total. Its movement was mostly core speed and corrected core speed, the two channels whose spread is counted in tens of rpm, and T50's rise of about 22 degrees over a life, the signal her engineers trusted most, barely showed in it. She standardised, and the same sum stopped being a speed chart in disguise.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Weight: the sign from triage, the size from the fit<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The weights are fitted by least squares on the training rows, to a target that reads 1 while an engine has 125 or more cycles left and falls in a straight line to 0 at failure. All fourteen signs agree with session 3's correlations: the channels that rise as failure nears (T50, Ps30, Nc and the rest) get weights below zero, and the four that fall (P30, phi, W31, W32) get weights above zero. That agreement is a check worth running every time; a sign that disagrees with the triage is a question to answer before anyone reads the index.</p>
+        <p>The sizes are where people overread. The largest weight belongs to Nc, -0.052 per standard deviation, the channel with one of the weakest correlations in session 3 (-0.390). That is not a contradiction. Nc drifts steadily across the whole life, which a one-line correlation flattens and a joint fit can use. And Nc and NRc are one shaft read two ways (session 1), as are Nf and NRf; how a fit splits weight between two readings of the same thing says nothing about either probe. A weight is a coefficient in one fitted sum, not an importance score.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Combine: a sum, a floor and a ceiling<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The index is 0.686 plus the sum of weight times standardised reading, then held between 0 and 1. The 0.686 is what an engine reads when every channel sits exactly at the training average, and it is also the average of the capped target over the training rows: most of those rows come from the part of life with 125 or more cycles left, so the average engine reads well above one half. The floor and ceiling matter more than they look: without them a very healthy reading would promise more than 125 cycles, which the target never taught, and a very hot one would promise negative life.</p>
+        <p>Multiply by 125 and the index becomes cycles left, which is how the bench scores it. Equal weights on the sign-corrected channels are the obvious alternative and a fair homework exercise; the bench does not run them, so no number for them appears here.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Where the index should top out.</strong> The learned index reads 1 at 125 cycles left because the target is capped at 125. Papers use 125 and 130 both: one sets 125 "based on the minimum run length of 128 cycles observed in the training data", another uses a maximum of 130, and the paper usually credited with the capped target, Heimes (2008), is reported second-hand only. Move the cap and the index's whole scale moves with it. It is a convention, chosen on this subset; it is a modelling choice, not a law of engines. Session 5 runs both.</p>
+        <p><strong>Whether to fuse at all.</strong> The PHM08 paper argues that one summed score can hide uneven performance across units and asks for more than one number when judging models. The same objection applies to a fused index: one number per engine is what the planners asked for, and it is also exactly where the channel that moved disappears. Some teams keep the index and a short list of the channels driving it side by side; some keep only the channels. Neither side has a result on this bench that settles it.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the two kinds of index</span>
+      <h2>The index the paper kept back, and the one you can learn</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The simulation that produced these rows had a health index of its own, built from physics, and it decided when each engine failed. Nobody outside got it. The learned index is an attempt to infer it from the sensors, and the figure puts the two side by side so the difference in kind is impossible to miss.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn comparison of two health indices. Left, the paper's: four operability margins, fan stall, LPC stall, HPC stall and EGT, each normalised, feed a copper box that takes the lowest of the four, reading 1 healthy and 0 failed. Notes say the stall margins fail at 15 percent and the EGT margin at about 2 percent, the simulation stopped when the index reached 0, and the index was not given to participants. Right, the learned one: 14 standardised sensed channels feed a weighted sum fitted to the capped life divided by 125, giving a learned index from 0 to 1 that is multiplied by 125 for cycles left. Notes say it is fitted on the label, not on physics, and that above 125 cycles it can only say healthy.">
+        <defs>
+          <filter id="ip4bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip4bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip4bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip4bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip4bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip4bW { font: 800 12px Inter, sans-serif; fill: #FFFFFF; }
+          .ip4bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip4bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip4bH" x="30" y="26">THE PAPER'S INDEX (KEPT BACK)</text>
+        <text class="ip4bH" x="480" y="26">A LEARNED INDEX (FITTED HERE)</text>
+
+        <g filter="url(#ip4bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- four margins -->
+          <rect x="40" y="56" width="156" height="32" rx="5" transform="rotate(-0.6 118 72)" fill="#FFFFFF"/>
+          <rect x="40" y="98" width="156" height="32" rx="5" transform="rotate(0.5 118 114)" fill="#FFFFFF"/>
+          <rect x="40" y="140" width="156" height="32" rx="5" transform="rotate(-0.4 118 156)" fill="#FFFFFF"/>
+          <rect x="40" y="182" width="156" height="32" rx="5" transform="rotate(0.6 118 198)" fill="#FFFFFF"/>
+          <path d="M200 72 L234 118" marker-end="url(#ip4bAr)"/>
+          <path d="M200 114 L234 130" marker-end="url(#ip4bAr)"/>
+          <path d="M200 156 L234 144" marker-end="url(#ip4bAr)"/>
+          <path d="M200 198 L234 158" marker-end="url(#ip4bAr)"/>
+          <!-- the min: the subject -->
+          <rect x="238" y="88" width="184" height="104" rx="8" transform="rotate(0.8 330 140)" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- divider -->
+          <path d="M452 46 L452 296" stroke="#CDD5C0" stroke-dasharray="6 6"/>
+          <!-- learned side -->
+          <rect x="480" y="56" width="200" height="44" rx="6" transform="rotate(-0.5 580 78)" fill="url(#ip4bHc)"/>
+          <path d="M580 104 L580 126" marker-end="url(#ip4bAr)"/>
+          <rect x="480" y="130" width="200" height="48" rx="6" transform="rotate(0.6 580 154)" fill="#F3F7EA"/>
+          <path d="M580 182 L580 204" marker-end="url(#ip4bAr)"/>
+          <rect x="480" y="208" width="200" height="48" rx="6" transform="rotate(-0.6 580 232)" fill="#FFFFFF"/>
+          <!-- sensor dot doodle -->
+          <circle cx="726" cy="150" r="10" fill="#FFFFFF"/>
+          <circle cx="726" cy="150" r="3" fill="#1D2513"/>
+          <path d="M726 160 L726 178"/>
+          <path d="M714 178 L738 178"/>
+        </g>
+
+        <text class="ip4bL" x="52" y="76">fan stall margin</text>
+        <text class="ip4bL" x="52" y="118">LPC stall margin</text>
+        <text class="ip4bL" x="52" y="160">HPC stall margin</text>
+        <text class="ip4bL" x="52" y="202">EGT margin</text>
+
+        <text class="ip4bW" x="252" y="114">health index</text>
+        <text class="ip4bW" x="252" y="134">= the lowest of the</text>
+        <text class="ip4bW" x="252" y="152">four, normalised</text>
+        <text class="ip4bW" x="252" y="176">1 healthy, 0 failed</text>
+
+        <text class="ip4bS" x="40" y="240">stall margins hit their limit at 15 percent,</text>
+        <text class="ip4bS" x="40" y="256">the EGT margin at about 2 percent;</text>
+        <text class="ip4bS" x="40" y="272">the simulation stopped when the index hit 0.</text>
+        <text class="ip4bB" x="40" y="294">Not given to participants: they had to infer it.</text>
+
+        <text class="ip4bL" x="492" y="83">14 channels, standardised</text>
+        <text class="ip4bL" x="492" y="150">weighted sum, fitted to</text>
+        <text class="ip4bS" x="492" y="168">capped life left / 125</text>
+        <text class="ip4bL" x="492" y="228">learned index, 0 to 1</text>
+        <text class="ip4bS" x="492" y="246">x 125 = cycles left</text>
+
+        <text class="ip4bA" x="700" y="76">fitted on the label,</text>
+        <text class="ip4bA" x="700" y="92">not on physics</text>
+        <text class="ip4bB" x="700" y="226">above 125 it can</text>
+        <text class="ip4bB" x="700" y="242">only say healthy</text>
+
+        <text class="ip4bN" x="30" y="334">The paper's index is a physical definition the simulation stopped on, kept back so that participants had to infer it. The</text>
+        <text class="ip4bN" x="30" y="352">learned index is a fitted proxy for time to failure: it agrees with its label on average and knows nothing the label did not teach.</text>
+        <text class="ip4bS" x="30" y="376">Left: Saxena et al. (2008), sections V.D and VI, read at source. Right: rung 2 of the bench, 70 training engines, seed 2008.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the truth the simulation used and nobody received; everything on the right is an inference about it.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The index the paper defined and kept back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Saxena, Goebel, Simon and Eklund (2008) describe how the runs were made. Each engine's health is the lowest of its normalised operability margins: the stall margins of the fan, the low-pressure compressor and the high-pressure compressor, and the exhaust gas temperature (EGT) margin. It reads 1 when healthy and 0 at failure; the stall margins reach their limit at 15 percent and the EGT margin at about 2 percent, and the simulation stopped when health reached 0. Participants in the PHM08 challenge were not given this index. They had to infer it from the sensed variables, which is the job every practitioner session inherits.</p>
+        <p>Notice the operator. A lowest-of-four index is ruled by whichever margin is closest to its limit; the other three can be anywhere. In FD001 there is one fault mode, high-pressure compressor degradation, so one margin is expected to lead. In a subset with two fault modes, the margin that rules the index can differ from engine to engine, and one number would not say which.</p>
+      </div>
+    </details>
+
+    <div class="wk" id="ip4-hi">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The learned health index on the 30 held-out engines, computed from the shipped sample in your browser: the seeded split (seed 2008), the fit on 70 training engines, and 10 seeded cut points per held-out engine. Pick a model and an engine; every number below is printed by the engine as it runs.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip4-hi-model">Model</label>
+        <select class="sql-code" id="ip4-hi-model">
+          <option value="hi" selected>Rung 2 · health index, label capped at 125</option>
+          <option value="linear">Rung 1 · the same 14 channels, raw label</option>
+        </select>
+        <label class="sql-label" for="ip4-hi-unit">Held-out engine</label>
+        <select class="sql-code" id="ip4-hi-unit"></select>
+        <div id="ip4-hi-out"></div>
+        <p class="sql-note" id="ip4-hi-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip4-hi-self">...</div>
+    </div>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading the widget, and where the gain comes from<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Start on rung 2 and engine 96, one of the two long-lived engines (life 336). Its gauge column empties as the cut points move toward failure, and its two cut points with the most life left (143 and 150 cycles) both read well under 1. Then read the bench line: on 300 cut points across 30 held-out engines (not the NASA test set), rung 2 scores a root mean square error of 24.00 cycles and a summed asymmetric score of 3,542, with a mean bias of +0.8 and 56 percent of units predicted late. Switch to rung 1: 30.50 and 28,557, and 70 percent late. Then look back at engine 96 alone under each rung: its own error does not follow the fleet's ranking, which is the uneven-units warning in miniature.</p>
+        <p>Now the honest part. Rung 2 differs from rung 1 in what it is fitted to, not in which channels it sees. Dividing the target by 125 divides every fitted weight by 125 and changes no prediction at all; multiply the index back by 125 and you have a straight linear fit to the capped label, held between 0 and 125. So the drop from 30.50 to 24.00 is not something "having an index" earned. It comes from the capped target and the clamp. The widget prints one visible piece of it: every held-out cut point whose true life is above 125 is predicted early, because the index cannot say more than 125, and early is the cheaper side of a score that divides late errors by 10 and early ones by 13. Session 5 takes the target apart.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What one number hides<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Which channel moved.</strong> Two engines at 0.4 can get there by different routes. The sum is the same; the maintenance conversation is not.</li>
+          <li><strong>Anything above the cap.</strong> An engine with 150 cycles left and one with 130 both read healthy. For a planner choosing between them, that is information thrown away by design.</li>
+          <li><strong>Noise.</strong> The index is a weighted sum of noisy readings, and nothing in the three moves smooths it. Session 10's rung 3 adds a lag-free local line over the last 10 values; the gain on the bench is small (0.36 RMSE), and a plain trailing mean of the same window makes both numbers worse, because a signal that only moves one way punishes lag.</li>
+          <li><strong>Uneven engines.</strong> One fleet RMSE averages over engines the index reads well and engines it reads badly. The widget prints each held-out engine's own error; read the spread before quoting the average.</li>
+        </ul>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's planners (constructed) sorted their first weekly list by the index and pulled the lowest three. The analyst added one column beside it: the two channels contributing most to each engine's drop that week. On the second week, two engines at nearly the same index had different leading channels, and the engineers wanted to see one of them first. The index sorted the list; the extra column decided the order of work.</p>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Build the index by hand, then check it against the bench</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). You will build Harrow Lane's gauge for one engine by hand, check it against the engine to three decimals, and reproduce rung 2 of the bench. The figure shows which engines feed which step, because the line between them is where most index projects leak.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 286" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes. One: 70 training engines, 14,026 rows, a mean and spread per channel. Two: fit 15 numbers, an intercept and 14 weights, to the label capped at 125. Three: 30 held-out engines, 10 cut points each, n equals 300. Four, in copper: the index times 125, never above 125; 49 of the 300 true lives are above it. Five: scored against the true, uncapped life: RMSE 24.00 and score 3,542. A small dial sits under the copper box.">
+        <defs>
+          <filter id="ip4cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip4cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip4cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip4cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip4cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip4cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip4cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip4cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip4cH" x="30" y="26">WHAT THE BENCH DOES WITH THE INDEX</text>
+
+        <g filter="url(#ip4cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="50" width="140" height="126" rx="8" transform="rotate(-0.8 100 113)" fill="url(#ip4cHc)"/>
+          <rect x="200" y="50" width="140" height="126" rx="8" transform="rotate(0.6 270 113)" fill="#F3F7EA"/>
+          <rect x="370" y="50" width="140" height="126" rx="8" transform="rotate(-0.5 440 113)" fill="#FFFFFF"/>
+          <rect x="540" y="50" width="140" height="126" rx="8" transform="rotate(0.7 610 113)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="710" y="50" width="140" height="126" rx="8" transform="rotate(-0.6 780 113)" fill="#FFFFFF"/>
+          <path d="M172 113 L196 113" marker-end="url(#ip4cAr)"/>
+          <path d="M342 113 L366 113" marker-end="url(#ip4cAr)"/>
+          <path d="M512 113 L536 113" marker-end="url(#ip4cAr)"/>
+          <path d="M682 113 L706 113" marker-end="url(#ip4cAr)"/>
+          <!-- dial doodle -->
+          <path d="M594 204 A16 16 0 0 1 626 204"/>
+          <path d="M610 204 L620 192" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ip4cL" x="100" y="76" text-anchor="middle">70 training</text>
+        <text class="ip4cL" x="100" y="92" text-anchor="middle">engines</text>
+        <text class="ip4cS" x="100" y="114" text-anchor="middle">14,026 rows</text>
+        <text class="ip4cS" x="100" y="130" text-anchor="middle">mean and sd</text>
+        <text class="ip4cS" x="100" y="146" text-anchor="middle">per channel</text>
+
+        <text class="ip4cL" x="270" y="76" text-anchor="middle">fit 15 numbers</text>
+        <text class="ip4cS" x="270" y="98" text-anchor="middle">intercept and</text>
+        <text class="ip4cS" x="270" y="114" text-anchor="middle">14 weights, to</text>
+        <text class="ip4cS" x="270" y="130" text-anchor="middle">life left capped</text>
+        <text class="ip4cS" x="270" y="146" text-anchor="middle">at 125, over 125</text>
+
+        <text class="ip4cL" x="440" y="76" text-anchor="middle">30 held-out</text>
+        <text class="ip4cS" x="440" y="98" text-anchor="middle">engines, read only,</text>
+        <text class="ip4cS" x="440" y="114" text-anchor="middle">10 cut points each</text>
+        <text class="ip4cV" x="440" y="146" text-anchor="middle">n = 300</text>
+
+        <text class="ip4cB" x="610" y="76" text-anchor="middle">index x 125</text>
+        <text class="ip4cS" x="610" y="98" text-anchor="middle">never above 125</text>
+        <text class="ip4cS" x="610" y="122" text-anchor="middle">49 of the 300</text>
+        <text class="ip4cS" x="610" y="138" text-anchor="middle">true lives are</text>
+        <text class="ip4cS" x="610" y="154" text-anchor="middle">above it</text>
+
+        <text class="ip4cL" x="780" y="76" text-anchor="middle">score against</text>
+        <text class="ip4cL" x="780" y="92" text-anchor="middle">true, uncapped</text>
+        <text class="ip4cS" x="780" y="114" text-anchor="middle">life left</text>
+        <text class="ip4cV" x="780" y="140" text-anchor="middle">RMSE 24.00</text>
+        <text class="ip4cS" x="780" y="160" text-anchor="middle">score 3,542</text>
+
+        <text class="ip4cN" x="30" y="236">Training engines set the ruler and the weights; held-out engines are only ever read. Each prediction is scored against the true,</text>
+        <text class="ip4cN" x="30" y="254">uncapped life, so an index that tops out at 125 is early on every cut point above it, and early is the cheaper side of the score.</text>
+        <text class="ip4cS" x="30" y="276">300 cut points on 30 held-out engines, seed 2008, not the NASA test set. Score: PHM08 asymmetric, late / 10, early / 13.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the ceiling the index cannot cross, and the reason it is always early on the healthiest cut points.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Decode the fleet and split it</h4>
+        <p>The same seeded split every practitioner session uses: 70 training engines, 30 held out, 10 cut points each. You should see 70, 30 and 300.</p>
+        <div class="prompt-box good"><span class="label">console</span>var units = IOT.decode(IOT_SAMPLE);
+var sp = IOT.splitAndCuts(units, IOT.DEFAULTS);
+[sp.trainIds.length, sp.testIds.length, sp.cuts.length]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Build the ruler on the training engines only</h4>
+        <p>A mean and a standard deviation per channel, from training rows and nothing else. You should see 14,026 rows, and T50 (the third channel) centred on 1408.91 with a spread of 8.97.</p>
+        <div class="prompt-box good"><span class="label">console</span>var rows = [].concat.apply([], sp.trainIds.map(function (id) { return units[id - 1].rows; }));
+var mu = [], sd = [];
+for (var k = 0; k &lt; 14; k++) {
+  var m = rows.reduce(function (a, x) { return a + x[k]; }, 0) / rows.length;
+  var v = rows.reduce(function (a, x) { return a + (x[k] - m) * (x[k] - m); }, 0) / rows.length;
+  mu.push(m); sd.push(Math.sqrt(v));
+}
+[rows.length, mu[2].toFixed(2), sd[2].toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Fit the weights</h4>
+        <p>Rung 2 of the bench fits an intercept and 14 weights to the capped label over 125; rung 1 fits the same channels to the raw label, for comparison. You should see 15 numbers, the first 0.686.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r = IOT.ladder(IOT_SAMPLE, { only: ["linear", "hi"] });
+[r.hi.w.length, r.hi.w[0].toFixed(3)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check every sign against the triage</h4>
+        <p>Session 3's correlation and tonight's weight should point the same way on every channel. You should see 14, then the weights by channel: Nc's -0.052 is the largest in size.</p>
+        <div class="prompt-box good"><span class="label">console</span>var tri = IOT.triage(IOT_SAMPLE).kept;
+tri.filter(function (t, k) { return (t.r &gt; 0) === (r.hi.w[k + 1] &gt; 0); }).length;
+tri.map(function (t, k) { return t.sym + " " + r.hi.w[k + 1].toFixed(3); }).join(", ")</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Compute one engine's index by hand</h4>
+        <p>The first cut point is engine 96 at cycle 262, with 74 cycles truly left. Intercept plus weight times standardised reading gives 0.540, the same as the engine's own prediction divided by 125; that is 67.5 cycles, early by 6.5.</p>
+        <div class="prompt-box good"><span class="label">console</span>var c = r.cuts[0], row = units[c.u - 1].rows[c.cut - 1];
+var hi = r.hi.w[0];
+for (var k = 0; k &lt; 14; k++) hi += r.hi.w[k + 1] * (row[k] - mu[k]) / sd[k];
+[c.u, c.cut, c.rul, hi.toFixed(3), (r.hi.preds[0] / 125).toFixed(3), r.hi.preds[0].toFixed(1)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Score it, and count the cut points above the cap</h4>
+        <p>On the 300 held-out cut points (not the NASA test set): rung 2 at 24.00 and 3,542, rung 1 at 30.50 and 28,557. Then 49 cut points have more than 125 cycles truly left, and the index predicts all 49 early. Your numbers match for the same seed.</p>
+        <div class="prompt-box good"><span class="label">console</span>[r.hi.rmse.toFixed(2), Math.round(r.hi.score), r.linear.rmse.toFixed(2), Math.round(r.linear.score)];
+var above = r.cuts.filter(function (c) { return c.rul &gt; 125; }).length;
+var early = r.cuts.filter(function (c, i) { return c.rul &gt; 125 &amp;&amp; r.hi.preds[i] &lt; c.rul; }).length;
+[above, early]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before anyone reads an index, write three lines beside it: which rows built the ruler (training only), whether every weight's sign agrees with the triage, and the highest value the index can say. The third line is the one people forget, and it decides which side of the truth the index lands on for every healthy engine.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Why are the channels standardised, with mean and spread from the training engines only, before they are weighted?</p>
+      <div class="qopt">A · Standardising removes the cycle-to-cycle noise from each channel</div>
+      <div class="qopt">B · So a weight means "per standard deviation" on every channel alike, and the held-out engines never shape the ruler they are measured with</div>
+      <div class="qopt">C · Least squares cannot be fitted to values in rpm or psia</div>
+      <q class="qwhy">Noise in standard deviations is the same noise, and least squares fits raw values happily, with weights that mostly measure units. The training-only ruler is what keeps the held-out score honest.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">On 300 held-out cut points, rung 2 (health index, label capped at 125) scores 24.00 and 3,542; rung 1 (same channels, raw label) scores 30.50 and 28,557. What earned the gain?</p>
+      <div class="qopt">A · Squeezing fourteen channels into one number filtered out their noise</div>
+      <div class="qopt">B · The index uses fewer channels than rung 1</div>
+      <div class="qopt">C · The capped label and the 0 to 125 clamp: dividing the target by 125 rescales every weight and changes no prediction, so "being an index" adds nothing on its own</div>
+      <q class="qwhy">Both rungs see the same fourteen channels, and nothing in the three moves smooths noise. What changed is the target and the ceiling; one visible effect is that all 49 cut points above 125 are now predicted early, the cheaper side of the score.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">What was the health index in the PHM08 simulation, and who had it?</p>
+      <div class="qopt">A · The lowest of four normalised operability margins, 1 healthy and 0 failed; the simulation stopped at 0, and participants were not given it</div>
+      <div class="qopt">B · A weighted sum of the 21 sensors, shipped as column 26 of the file</div>
+      <div class="qopt">C · The remaining useful life divided by 125</div>
+      <q class="qwhy">The paper's index is physical and was kept back so that participants had to infer it. A weighted sum of sensors fitted to a capped label is one way of inferring it, not the thing itself.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 5</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the console on this page. Your numbers will differ from anything printed here as soon as you change an input, and that is the point.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Drop one reading of a shaft and refit</h4>
+        <p>Using the standardised training rows from the build-along and IOT.fitOLS, refit the capped label without NRc (the corrected core speed) and compare Nc's new weight with -0.052. Write one sentence on what the change says about reading a weight as an importance.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find the engine the index reads worst</h4>
+        <p>Step through the held-out engines in the widget and note the one with the largest error over its 10 cut points. Look at its rows in session 1's inspector: which channel looks different from the fleet, and would one index have told a planner?</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the three lines for a score you own</h4>
+        <p>Any composite you have shipped (a risk score, a health score, a lead score): which rows built its ruler, whether its weights' signs match a simple one-variable check, and the highest value it can say. Session 5 asks the same of the label.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Standardising channels</span><span class="note">Mean and spread from the 14,026 rows of the 70 training engines only; T50 centred on 1408.91, spread 8.97.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Weighting by least squares</span><span class="note">An intercept of 0.686 and 14 weights; every sign agrees with session 3's correlation; a weight is not an importance.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Combining and clamping</span><span class="note">Held between 0 and 1; times 125 for cycles left.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The paper's margin-based index</span><span class="note">Lowest of the normalised fan, LPC, HPC stall and EGT margins; not given to participants. Saxena et al. (2008), read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">A learned index against a physical one</span><span class="note">A fitted proxy for time to failure versus the definition the simulation stopped on.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Rung 2 on the bench</span><span class="note">RMSE 24.00, score 3,542 on 300 held-out cut points (seed 2008); rung 1 at 30.50 and 28,557. The gain belongs to the capped label and the clamp.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What one number hides</span><span class="note">The channel that moved, anything above the cap, noise, and uneven engines.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The cap, 125 or 130</span><span class="note">Both in use; a convention chosen on this subset. Run side by side in practitioner session 5.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Smoothing the index</span><span class="note">A small, real gain with a lagging trap beside it; rung 3 in practitioner session 10.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">General anomaly detectors on time series</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/b7-timeseries-anomalies.html">learn anomaly detection, time-series anomalies</a>. Here the index asks how far along an engine is, not whether a point is odd.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; no figure describes a real fleet.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>Three moves.</strong> Standardise, weight, combine. Only the weighting learns anything about failure.</div>
+      <div class="cheat-item"><strong>The ruler.</strong> Mean and spread from training engines only. Never let held-out rows shape it.</div>
+      <div class="cheat-item"><strong>The sign check.</strong> Every weight's sign should match the triage correlation. All 14 do here.</div>
+      <div class="cheat-item"><strong>Weights are not importances.</strong> Nc carries the largest weight with one of the weakest correlations; twin readings split weight arbitrarily.</div>
+      <div class="cheat-item"><strong>The paper's index.</strong> Lowest normalised operability margin, 1 to 0. Kept back from participants.</div>
+      <div class="cheat-item"><strong>The learned index.</strong> A fitted proxy for the capped label, held between 0 and 1. Times 125 for cycles.</div>
+      <div class="cheat-item"><strong>The bench.</strong> Rung 2: RMSE 24.00, score 3,542 on 300 held-out cut points, not the NASA test set.</div>
+      <div class="cheat-item"><strong>The ceiling.</strong> An index capped at 125 (or 130) is early on every engine healthier than that.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 4 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p3-channel-triage.html">← Practitioner session 3 · Channel triage: flat, noisy and drifting</a>
+        <a href="p5-remaining-useful-life-as-a-target.html">Practitioner session 5 · Remaining useful life as a target →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var selM = document.getElementById("ip4-hi-model");
+  var selU = document.getElementById("ip4-hi-unit");
+  var out = document.getElementById("ip4-hi-out");
+  var verdict = document.getElementById("ip4-hi-verdict");
+  var self = document.getElementById("ip4-hi-self");
+
+  var units = IOT.decode(IOT_SAMPLE);
+  var r = IOT.ladder(IOT_SAMPLE, { only: ["linear", "hi"] });
+  var cap = r.opts.cap;
+  var tri = IOT.triage(IOT_SAMPLE).kept;
+  var LABEL = { hi: "Rung 2 · health index, capped at " + cap, linear: "Rung 1 · 14 channels, raw label" };
+
+  r.testIds.slice().sort(function (a, b) { return a - b; }).forEach(function (id) {
+    var o = document.createElement("option");
+    o.value = id;
+    o.textContent = "Engine " + id + " · life " + units[id - 1].n;
+    if (id === 96) o.selected = true;
+    selU.appendChild(o);
+  });
+
+  function fmt(x) { return Math.round(x).toLocaleString("en-US"); }
+  function sgn(x, p) { return (x >= 0 ? "+" : "") + x.toFixed(p); }
+
+  function render() {
+    var key = selM.value, R = r[key], id = Number(selU.value);
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Model, 300 held-out cut points</th><th>RMSE</th><th>Score (sum)</th><th>Per unit</th><th>Bias</th><th>Late</th></tr></thead><tbody>';
+    ["hi", "linear"].forEach(function (k) {
+      var x = r[k];
+      html += "<tr" + (k === key ? ' class="ip4-sel"' : "") + "><td>" + LABEL[k] + "</td><td><b>" + x.rmse.toFixed(2) + "</b></td><td><b>" + fmt(x.score) +
+        "</b></td><td>" + x.scorePerUnit.toFixed(2) + "</td><td>" + sgn(x.bias, 1) + "</td><td>" + Math.round(x.lateShare * 100) + "%</td></tr>";
+    });
+    html += "</tbody></table></div>";
+
+    var se = 0, late = 0, k = 0;
+    html += '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Cycle seen</th><th>True life left</th>' +
+      (key === "hi" ? "<th>Index</th><th>Gauge</th>" : "") + "<th>Predicted</th><th>Error</th><th>Side</th></tr></thead><tbody>";
+    r.cuts.forEach(function (c, i) {
+      if (c.u !== id) return;
+      var p = R.preds[i], d = p - c.rul;
+      se += d * d; k++; if (d > 0) late++;
+      html += "<tr><td>" + c.cut + "</td><td>" + c.rul + "</td>";
+      if (key === "hi") {
+        var hv = p / cap;
+        html += "<td><b>" + hv.toFixed(3) + '</b></td><td><span class="ip4-bar"><i style="width:' + (100 * hv).toFixed(1) + '%"></i></span></td>';
+      }
+      html += "<td><b>" + p.toFixed(1) + "</b></td><td>" + sgn(d, 1) + "</td><td>" + (d > 0 ? "late" : "early") + "</td></tr>";
+    });
+    html += "</tbody></table></div>";
+
+    var above = 0, aboveEarly = 0;
+    r.cuts.forEach(function (c, i) { if (c.rul > cap) { above++; if (R.preds[i] < c.rul) aboveEarly++; } });
+
+    if (key === "hi") {
+      var order = tri.map(function (t, j) { return { t: t, w: r.hi.w[j + 1] }; })
+        .sort(function (a, b) { return Math.abs(b.w) - Math.abs(a.w); });
+      var agree = order.filter(function (o) { return (o.t.r > 0) === (o.w > 0); }).length;
+      html += '<p class="sql-note"><b>Rung 2 weights per standard deviation, largest first (intercept ' + r.hi.w[0].toFixed(3) + "):</b> " +
+        order.map(function (o) { return o.t.sym + " " + sgn(o.w, 3); }).join(", ") +
+        ". Signs agreeing with session 3's correlation: " + agree + " of " + order.length + ".</p>";
+    }
+    out.innerHTML = html;
+
+    var rm = Math.sqrt(se / k);
+    verdict.textContent = "Engine " + id + " (life " + units[id - 1].n + "), " + (key === "hi" ? "rung 2" : "rung 1") + ": RMSE " + rm.toFixed(1) +
+      " cycles over its " + k + " cut points, " + late + " of " + k + " late. Across all " + R.n + " held-out cut points, " + above +
+      " have more than " + cap + " cycles truly left, and this model predicts " + aboveEarly + " of them early. " +
+      (key === "hi" ? "The index cannot say more than " + cap + ", so every engine healthier than that reads early." : "Uncapped, the raw-label fit can say more than " + cap + ", and its late share is far higher.") +
+      " Held-out engines, not the NASA test set.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  selM.addEventListener("change", render);
+  selU.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ip4-hi .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; width: 100%; }
+  #ip4-hi table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip4-hi tr.ip4-sel td { background: var(--amber-50); color: var(--amber-ink-text); }
+  #ip4-hi .ip4-bar { display: inline-block; width: 5rem; height: .55rem; border-radius: 4px; background: var(--hairline); overflow: hidden; vertical-align: middle; }
+  #ip4-hi .ip4-bar i { display: block; height: 100%; background: var(--indigo); }
+</style>
+</body>
+</html>

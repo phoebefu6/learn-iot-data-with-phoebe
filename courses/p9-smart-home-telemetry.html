@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 9 of 10. Build the occupancy threshold on Flat 4B, a constructed household meter trace, reproduce its 93.0 percent, then coarsen the trace and measure how much of the routine survives. Where to stop, taught as design choices with a price. Not legal advice.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Smart home telemetry: occupancy and where to stop - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 9 of 10. One threshold on one meter reads a household's routine. Averaging the trace to an hour does not hide it; four hours mostly does. Measured on a constructed household, in your browser.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p9-smart-home-telemetry.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart home telemetry: occupancy and where to stop - learn iot data with phoebe">
+<meta name="twitter:description" content="An hourly meter trace still reads the leave time within 30 minutes on 13 of 14 days. Coarsening is a design choice with a price; measure what it actually hides.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 9 · Smart home telemetry: occupancy and where to stop - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 9 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 9 of 10</div>
+    <h1>Smart home telemetry: <span class="accent">occupancy and where to stop</span></h1>
+    <p class="sub">Eight sessions on engines taught you to read a sensor row that nobody typed. Tonight the sensor is an electricity meter in a home, and the row is about people. You build the occupancy rule yourself on Flat 4B, a constructed household, reproduce how well it reads the household, and then do the thing a data team rarely measures: blur the trace on purpose and see how much of the routine survives. The answers are design choices with a cost, not a compliance checklist. Nothing here is legal advice; the law lives in the GDPR and PDPA sessions linked below.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Advanced</span>
+      <span class="chip audience">Data scientists and engineers near home devices</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · One threshold reads the household</span>
+      <span class="a3" style="flex:3">15-27 · Where to stop</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Flat 4B's trace lands on a practitioner's desk</h2>
+    </div>
+    <p class="lede">Flat 4B is a constructed household: its electricity meter writes one average-power reading every 15 minutes, 96 a day, for 14 days, 1,344 readings in all. Because it is constructed, the truth is known: for every slot, whether someone was awake at home. Leader session 4 asked which inferences a product team should refuse to make. Tonight the practitioner who has to build or refuse them gets the trace, writes the rule, checks it against the truth, and measures what each way of stopping actually stops.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> An occupancy detector you wrote yourself in a dozen lines, matching the engine's reading of every one of the 1,344 slots and reproducing its numbers: 93.0 percent of slots right, leave time within 30 minutes on 12 of 14 days, median error 0 minutes. The mechanism behind its two bad misses, both on days a timed appliance ran. A clear account of why the household is not a user, and whose consent a meter trace never had. And a measured answer to "will coarsening protect them?": on this trace, averaging to an hour hides almost nothing, four hours hides the leave time on most days, and a daily total reads no better than guessing. Each stop priced in what the product loses. Constructed data throughout; your numbers will differ on another household.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The engine problem, on a smaller wire<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Harrow Lane Overhaul (constructed; its fleet is real public rows from NASA's simulation, the degradation simulated with C-MAPSS) taught that the quantity you care about is never a column. Engine health had to be inferred from temperatures; remaining life had to be computed from a failure that arrived once, at the end. A home meter is the same shape. The column is watts. The quantity a product wants, who is in and awake, is never written down, and has to be inferred from a channel installed to send a bill.</p>
+        <p>Two things change. The unit is not a machine but a household: whoever is home, the reading is all of them added together. And a wrong or unwanted inference is not paid for by a hangar but by the people the trace describes, most of whom never signed anything. That is why "where to stop" is a practitioner's question too, not only a leader's: the stop is built in the pipeline, at a resolution, on a device or in a table.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Slot.</strong> One 15-minute interval. 96 per day; slot 36 starts at 09:00.</li>
+          <li><strong>Average power.</strong> What the meter writes for each slot, in watts: the energy used in the slot divided by its length.</li>
+          <li><strong>Floor.</strong> The day's 10th percentile reading: the fridge and whatever sits on standby.</li>
+          <li><strong>Threshold rule.</strong> A reading more than 120 W above the day's floor counts as someone up and at home.</li>
+          <li><strong>Leave time.</strong> The start of the longest quiet run between the first active slot and 20:00.</li>
+          <li><strong>Confounder.</strong> Something that moves the reading without the thing you infer: a quiet awake hour, or a timed appliance running in an empty flat.</li>
+          <li><strong>Coarsening.</strong> Keeping fewer, longer readings: hourly or daily averages instead of every 15 minutes.</li>
+          <li><strong>Constructed.</strong> Flat 4B and its product team are invented so that the truth is knowable. No figure describes a real household, meter, device or product.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the trace, the threshold and what it reveals</span>
+      <h2>One threshold reads the household</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The rule has no model in it: a floor, a margin and a run-length. The figure draws it on the day it fails worst, because the failure shows the mechanism better than a good day does. Day 8 is a weekday; the household woke at 06:30, left at 07:45 and came back at 18:30. At 10:45 a timed appliance ran for three quarters of an hour in an empty flat.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 384" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn chart of day 8 of the constructed Flat 4B meter trace: 96 readings of average power, a low floor near 100 watts, a breakfast spike at 06:45 after waking at 06:30, three raised readings from 10:45 marked as a timed appliance with nobody home, and evening cooking after the return at 18:30. A dashed threshold sits at the day's floor of 103 watts plus 120. Under the chart, a strip shows the built-in truth, awake at home 06:30 to 07:45 and 18:30 to 22:45, and a strip shows what the rule reads, including a short copper run at 10:45 where the timer fooled it. An arrow marks the gap between the true leave time, 07:45, and the rule's, 11:30: 225 minutes. A panel on the right lists the rule in three lines: the floor is the 10th percentile of 96 readings, someone is up and at home above floor plus 120 watts, and leave time is the start of the longest quiet run after waking and before 20:00. Because the timer cut the empty day in two, the rule took the longer half.">
+        <defs>
+          <filter id="ip9aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="71" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip9aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip9aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip9aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip9aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip9aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip9aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip9aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip9aH" x="30" y="26">FLAT 4B (CONSTRUCTED), DAY 8: HOW THE RULE READS A DAY, AND SLIPS</text>
+        <text class="ip9aH" x="630" y="26">THE RULE, THREE LINES</text>
+
+        <g filter="url(#ip9aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- meter dial (doodle anchor) -->
+          <circle cx="60" cy="150" r="16" fill="#FFFFFF"/>
+          <path d="M60 150 L70 140"/>
+          <path d="M78 150 L104 150" marker-end="url(#ip9aAr)"/>
+          <!-- axes: x 110..590 = slots 0..96 (5 px per slot); y 250 = 0 W, 0.15 px per W -->
+          <path d="M110 56 L110 250 L600 250"/>
+          <!-- the timed appliance band (the thing the figure is about) -->
+          <rect x="325" y="146" width="15" height="104" fill="url(#ip9aHc)" stroke="none"/>
+          <!-- threshold: floor 103 W + 120 W -->
+          <path d="M110 216.6 L590 216.6" stroke="#3F6212" stroke-width="1.6" stroke-dasharray="7 6"/>
+          <!-- the 96 readings of day 8 -->
+          <path d="M112.5 227.5 L117.5 229.8 L122.5 231.3 L127.5 229.0 L132.5 233.3 L137.5 235.3 L142.5 227.7 L147.5 234.4 L152.5 232.6 L157.5 232.0 L162.5 230.3 L167.5 234.3 L172.5 234.4 L177.5 232.0 L182.5 228.4 L187.5 234.6 L192.5 229.6 L197.5 230.2 L202.5 233.5 L207.5 227.5 L212.5 232.4 L217.5 229.3 L222.5 230.5 L227.5 229.3 L232.5 231.7 L237.5 227.2 L242.5 210.8 L247.5 129.7 L252.5 199.6 L257.5 214.6 L262.5 192.8 L267.5 231.1 L272.5 227.8 L277.5 232.8 L282.5 234.8 L287.5 227.8 L292.5 232.4 L297.5 229.9 L302.5 228.8 L307.5 228.1 L312.5 232.9 L317.5 233.2 L322.5 227.7 L327.5 153.1 L332.5 153.7 L337.5 153.4 L342.5 227.1 L347.5 230.3 L352.5 228.4 L357.5 234.3 L362.5 228.6 L367.5 231.8 L372.5 233.8 L377.5 229.6 L382.5 234.6 L387.5 230.3 L392.5 229.0 L397.5 229.9 L402.5 235.2 L407.5 230.7 L412.5 227.7 L417.5 234.3 L422.5 234.3 L427.5 235.6 L432.5 230.1 L437.5 235.4 L442.5 231.7 L447.5 231.8 L452.5 231.6 L457.5 226.9 L462.5 229.4 L467.5 229.2 L472.5 235.6 L477.5 234.7 L482.5 185.1 L487.5 201.4 L492.5 217.4 L497.5 89.3 L502.5 75.7 L507.5 217.6 L512.5 222.7 L517.5 203.8 L522.5 190.2 L527.5 192.7 L532.5 195.7 L537.5 207.4 L542.5 210.3 L547.5 193.2 L552.5 212.9 L557.5 203.7 L562.5 197.9 L567.5 227.2 L572.5 230.8 L577.5 228.1 L582.5 233.7 L587.5 235.0" stroke="#2A410C" stroke-width="1.8"/>
+          <!-- built-in truth: awake at home -->
+          <rect x="240" y="262" width="25" height="9" fill="#3F6212" stroke="#3F6212" stroke-width="1"/>
+          <rect x="480" y="262" width="85" height="9" fill="#3F6212" stroke="#3F6212" stroke-width="1"/>
+          <!-- what the rule reads -->
+          <rect x="240" y="278" width="25" height="9" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="325" y="278" width="15" height="9" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <rect x="480" y="278" width="10" height="9" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="495" y="278" width="10" height="9" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="515" y="278" width="50" height="9" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <!-- the miss -->
+          <path d="M265 294 L265 306"/>
+          <path d="M265 300 L337 300" marker-end="url(#ip9aAr)"/>
+          <!-- the panel -->
+          <rect x="630" y="44" width="230" height="270" rx="8" transform="rotate(0.6 745 179)" fill="#F3F7EA"/>
+          <path d="M646 214 L844 214" stroke="#CDD5C0" stroke-width="1.5"/>
+          <rect x="644" y="226" width="202" height="78" rx="6" transform="rotate(-0.9 745 265)" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ip9aS" x="60" y="184" text-anchor="middle">meter</text>
+        <text class="ip9aS" x="102" y="74" text-anchor="end">1,200 W</text>
+        <text class="ip9aS" x="102" y="254" text-anchor="end">0 W</text>
+        <text class="ip9aS" x="240" y="124" text-anchor="end">woke 06:30</text>
+        <text class="ip9aB" x="332" y="118" text-anchor="middle">timed appliance 10:45</text>
+        <text class="ip9aB" x="332" y="134" text-anchor="middle">nobody home</text>
+        <text class="ip9aS" x="490" y="80" text-anchor="end">back 18:30, cooking</text>
+        <text class="ip9aA" x="350" y="210">floor 103 W + 120 W</text>
+        <text class="ip9aS" x="104" y="270" text-anchor="end">truth</text>
+        <text class="ip9aS" x="104" y="286" text-anchor="end">rule</text>
+        <text class="ip9aB" x="346" y="304">225 min</text>
+        <text class="ip9aS" x="110" y="324" text-anchor="middle">00:00</text>
+        <text class="ip9aS" x="230" y="324" text-anchor="middle">06:00</text>
+        <text class="ip9aS" x="350" y="324" text-anchor="middle">12:00</text>
+        <text class="ip9aS" x="470" y="324" text-anchor="middle">18:00</text>
+        <text class="ip9aS" x="590" y="324" text-anchor="middle">24:00</text>
+
+        <text class="ip9aL" x="646" y="70">1 · the day's floor</text>
+        <text class="ip9aS" x="646" y="86">10th percentile of 96 readings</text>
+        <text class="ip9aS" x="646" y="102">day 8: 103 W</text>
+        <text class="ip9aL" x="646" y="128">2 · someone up and at home</text>
+        <text class="ip9aS" x="646" y="144">any reading above floor + 120 W</text>
+        <text class="ip9aL" x="646" y="170">3 · when they left</text>
+        <text class="ip9aS" x="646" y="186">start of the longest quiet run</text>
+        <text class="ip9aS" x="646" y="202">after waking, before 20:00</text>
+        <text class="ip9aB" x="658" y="248">225 minutes off</text>
+        <text class="ip9aS" x="658" y="264">truth: left at 07:45</text>
+        <text class="ip9aS" x="658" y="280">rule: left at 11:30; the</text>
+        <text class="ip9aS" x="658" y="296">timer cut the day in two</text>
+
+        <text class="ip9aN" x="30" y="350">Constructed: day 8 of Flat 4B's 14 days. Over all 14 the rule reads 93.0 percent of 15-minute slots right</text>
+        <text class="ip9aN" x="30" y="368">and leave time within 30 minutes on 12 days; both bad misses, 225 and 45 minutes, fall on timer days.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper run is three readings from an appliance in an empty flat, and it moved the household's leave time by almost four hours.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The rule, and how well it reads the household<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three lines. Sort the day's 96 readings and take the 10th percentile as the floor: the fridge and the standby load, whatever is on when nobody is doing anything. Call any reading more than 120 W above that floor "someone up and at home". Then read the routine off the on and off slots: the first active slot is waking, the longest quiet run before 20:00 is the absence, the last active slot is bed.</p>
+        <p>Checked against the truth the trace was built from, across all 14 constructed days, the rule reads 93.0 percent of the 15-minute slots right. It puts the leave time within 30 minutes on 12 of 14 days, and the median leave-time error is 0 minutes. The floor is per day, so it adapts to a day with the heating on or a weekend with more cooking; the margin is fixed. You will rebuild all of it in the build-along and get the same numbers to the slot.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>The Flat 4B team's practitioner (constructed) was asked for "a quick look at whether the trace is useful". She wrote these three lines before lunch, printed day 1 (woke 07:30, left 09:00, back 17:45, asleep 23:30; the truth has the return at 17:30) and realised the quick look was already a schedule of when the flat stands empty. Nobody had asked her to compute that. Nobody had asked her not to.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Where it slips, mechanism by mechanism<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Flat 4B was built with two confounders, and the rule's errors split cleanly between them. Of the 94 slots it reads wrong, 85 are quiet awake slots: someone at home, reading or on a laptop, drawing less than the margin. Only 9 are the opposite, an appliance on with nobody in. You will count both in the build-along.</p>
+        <p>The two bad leave-time misses both fall on days the timed appliance ran, but they fail differently. Day 8 is the figure: the timer at 10:45 cut the empty stretch into a short half and a long half, and the rule took the long one, 225 minutes late. Day 9 failed 45 minutes early: the household's last half hour before leaving was quiet, so the rule saw them go at 07:45 when they left at 08:30, and the timer at 12:45 split the empty day into two halves of equal length, so the rule kept the first. Say both mechanisms; "the timer did it" is only half true.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the trace says beyond occupancy<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Flat 4B measures presence and routine, and from them, read backwards, the hours the flat is empty. It was not built to carry more, so nothing more is measured here. The research literature reports more. Giaconi, Gunduz and Poor (2018), read at source, state that a third party with smart-meter data may learn "a user's presence at home, her religious beliefs, disabilities, illnesses", and even the TV channel being watched. Molina-Markham and colleagues' 2010 paper "Private Memoirs of a Smart Meter" is widely cited as showing activity inference from meter data; it is reported here, because its text could not be read.</p>
+        <p>For a practitioner the lesson is about the pipeline, not the paper. Every one of those inferences is computed from the same 15-minute column the bill needs. Nothing in the data changes as the inference climbs from "energy used" to "when nobody is home"; only the code someone chooses to run on it does. That is why the stops in Part 2 act on the data itself, where they can make an inference impossible rather than merely unwritten.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers consent, the household as the unit and where to stop</span>
+      <h2>Where to stop, and what each stop costs</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">A data team can stop an inference in three places on the path from the meter to a feature: at the source, by keeping coarser readings; on a device in the home, by running the rule there and sending only the answer; or before storage, by keeping a building's total instead of each flat's trace. The figure draws the path and the wall it crosses. The live panel under it measures the first stop on Flat 4B.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 404" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn data path. Inside a copper outline labelled the home's wall, a meter dial feeds a home device that can run the rule. An arrow leaves the home, crossing the wall, to the team's store, which holds data per flat and per slot, and on to features, where it is decided who sees what. Three numbered cuts sit on the path. Cut 1, between the meter and the device: coarsen at the source, sending hourly or daily totals; it keeps the bill and the trend and costs time-of-day advice and faults that show only as a spike. Cut 2, before the wall: infer on the device, so only the answer and a daily total leave; it keeps the feature in use and costs device compute and updates, and nobody outside can audit the rule. Cut 3, between the store and the features: aggregate before storing, keeping a building's total; it keeps planning, peaks and trends and costs every per-flat feature, and a small group can still be unpicked. A note says cut 1 is measured on Flat 4B in the build-along and cuts 2 and 3 are not.">
+        <defs>
+          <filter id="ip9bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip9bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip9bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip9bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip9bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip9bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip9bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip9bH" x="30" y="26">WHERE A DATA TEAM CAN STOP: THREE CUTS ON ONE PATH</text>
+
+        <g filter="url(#ip9bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the home's wall (the thing the figure is about) -->
+          <rect x="30" y="44" width="400" height="150" rx="10" transform="rotate(-0.4 230 119)" fill="#FFFFFF" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- meter dial (doodle anchor) -->
+          <circle cx="90" cy="140" r="20" fill="#FFFFFF"/>
+          <path d="M90 140 L102 128"/>
+          <path d="M112 140 L166 140" marker-end="url(#ip9bAr)"/>
+          <rect x="170" y="112" width="130" height="56" rx="6" transform="rotate(0.8 235 140)" fill="#F3F7EA"/>
+          <path d="M302 140 L476 140" marker-end="url(#ip9bAr)"/>
+          <rect x="480" y="112" width="160" height="56" rx="6" transform="rotate(-0.6 560 140)" fill="url(#ip9bHc)"/>
+          <path d="M642 140 L686 140" marker-end="url(#ip9bAr)"/>
+          <rect x="690" y="112" width="160" height="56" rx="6" transform="rotate(0.7 770 140)" fill="#FFFFFF"/>
+          <!-- the cuts -->
+          <circle cx="140" cy="140" r="11" fill="#FFFFFF"/>
+          <circle cx="365" cy="140" r="11" fill="#FFFFFF"/>
+          <circle cx="664" cy="140" r="11" fill="#FFFFFF"/>
+          <path d="M140 152 L140 212" stroke="#93A86F" stroke-dasharray="4 4"/>
+          <path d="M365 152 L365 212" stroke="#93A86F" stroke-dasharray="4 4"/>
+          <path d="M664 152 L664 212" stroke="#93A86F" stroke-dasharray="4 4"/>
+          <!-- the three cards -->
+          <rect x="30" y="216" width="262" height="130" rx="8" transform="rotate(-0.6 161 281)" fill="#F3F7EA"/>
+          <rect x="309" y="216" width="262" height="130" rx="8" transform="rotate(0.5 440 281)" fill="#F3F7EA"/>
+          <rect x="588" y="216" width="262" height="130" rx="8" transform="rotate(-0.4 719 281)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ip9bB" x="44" y="68">the home's wall</text>
+        <text class="ip9bS" x="44" y="84">everything right of it has left the household</text>
+        <text class="ip9bS" x="90" y="182" text-anchor="middle">meter</text>
+        <text class="ip9bL" x="235" y="136" text-anchor="middle">home device</text>
+        <text class="ip9bS" x="235" y="154" text-anchor="middle">can run the rule</text>
+        <text class="ip9bS" x="480" y="84">outside the home</text>
+        <text class="ip9bL" x="560" y="98" text-anchor="middle">team's store</text>
+        <text class="ip9bS" x="560" y="186" text-anchor="middle">per flat, per slot</text>
+        <text class="ip9bL" x="770" y="136" text-anchor="middle">features</text>
+        <text class="ip9bS" x="770" y="154" text-anchor="middle">who sees what</text>
+        <text class="ip9bL" x="140" y="144" text-anchor="middle">1</text>
+        <text class="ip9bL" x="365" y="144" text-anchor="middle">2</text>
+        <text class="ip9bL" x="664" y="144" text-anchor="middle">3</text>
+
+        <text class="ip9bH" x="44" y="240">1 · Coarsen at the source</text>
+        <text class="ip9bS" x="44" y="260">send hourly or daily totals, not</text>
+        <text class="ip9bS" x="44" y="276">every 15-minute reading</text>
+        <text class="ip9bA" x="44" y="298">keeps: the bill and the trend</text>
+        <text class="ip9bB" x="44" y="318">costs: time-of-day advice, and</text>
+        <text class="ip9bB" x="44" y="334">faults that show only as a spike</text>
+
+        <text class="ip9bH" x="323" y="240">2 · Infer on the device</text>
+        <text class="ip9bS" x="323" y="260">the rule runs in the home; only the</text>
+        <text class="ip9bS" x="323" y="276">answer and a daily total leave</text>
+        <text class="ip9bA" x="323" y="298">keeps: the feature in use</text>
+        <text class="ip9bB" x="323" y="318">costs: device compute and updates;</text>
+        <text class="ip9bB" x="323" y="334">no one outside can audit the rule</text>
+
+        <text class="ip9bH" x="602" y="240">3 · Aggregate before storing</text>
+        <text class="ip9bS" x="602" y="260">keep a building's total, not each</text>
+        <text class="ip9bS" x="602" y="276">flat's own trace</text>
+        <text class="ip9bA" x="602" y="298">keeps: planning, peaks, trends</text>
+        <text class="ip9bB" x="602" y="318">costs: every per-flat feature; a</text>
+        <text class="ip9bB" x="602" y="334">small group can still be unpicked</text>
+
+        <text class="ip9bN" x="30" y="372">Design choices with a price, not a compliance list. Cut 1 is measured on Flat 4B in the build-along; cuts 2</text>
+        <text class="ip9bN" x="30" y="390">and 3 are not measured here. Whether any inference is lawful belongs to the GDPR and PDPA sessions.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper line is the home's wall; a stop placed before it means the inference never leaves, a stop after it means the team is trusted to keep it.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip9-coarse">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Pick a resolution. The page builds Flat 4B's constructed 14-day trace in your browser, averages it into longer readings, runs the same threshold rule on the blurred trace, and scores it against the truth the trace was built from. Constructed data, not a real household; a different seed would give a different household and your numbers would differ.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip9-res">Keep one reading every</label>
+        <select class="sql-code" id="ip9-res">
+          <option value="1" selected>15 minutes (as metered)</option>
+          <option value="2">30 minutes</option>
+          <option value="4">1 hour</option>
+          <option value="8">2 hours</option>
+          <option value="16">4 hours</option>
+          <option value="32">8 hours</option>
+          <option value="96">1 day</option>
+        </select>
+        <div id="ip9-coarse-out"></div>
+        <p class="sql-note" id="ip9-coarse-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip9-coarse-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The household is not a user<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every warehouse habit says to join the row to a customer id and treat it as that customer's behaviour. A meter has no such id. Its identity is a premises, and its reading is the sum of everyone inside: a partner, a child, a lodger, a carer who visits on weekdays. When the rule says "left at 09:00", it is a statement about each of them at once, and the meter cannot say which.</p>
+        <p>The consent problem follows directly. One account holder ticked a box; the others never saw the screen it was on, and the team usually cannot even list who they are. One person's tick cannot be stretched over what the team learns about the rest. Whether that tick is a lawful basis for a given inference is a legal question that depends on where the household is and what the product does: what counts as personal data is taught in <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">learn GDPR, scope</a>, and consent and its exemptions in <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">learn PDPA and DNC, consent and exemptions</a>. Nothing here is legal advice. What a practitioner owns is narrower and earlier: whether the pipeline can compute the inference at all.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>The Flat 4B team (constructed) rewrote its spec, replacing every "the user" with "the household". Three features survived unchanged (monthly usage, usage against last month, a device that never switches off). Two did not: "we noticed you are out from 09:00" and "home-again alerts". Nobody had to argue about them; the rewrite made it obvious who they were about.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three stops, each with a price<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Coarsen at the source.</strong> Keep fewer, longer readings. Set the panel above to 1 hour and the surprise is how little it buys: the rule still reads 92.9 percent of slots right and the leave time within 30 minutes on 13 of 14 days, one more than at 15 minutes, because averaging four readings smooths away some quiet awake slots. At 30 minutes it reads more slots right than the original, 94.9 percent. Coarsening is not a privacy dial that turns smoothly; on this trace it does nothing until it is coarse enough to swallow the absence itself. At 4 hours the leave time is within 30 minutes on only 2 of 14 days. A daily total reads 68.2 percent of slots right, exactly what guessing "out" for every slot scores. The price: anything that needs the shape of a day, such as time-of-use advice or a fault that shows only as a short spike, goes with it.</p>
+        <p><strong>Infer on the device.</strong> Run the rule in the home and send only its answer ("the heating could switch off at 09:00 on weekdays") plus a daily total. The 15-minute trace never crosses the wall. The price is real: compute and updates on a device, a rule nobody outside can re-run or audit, and a harder time finding out when it is wrong. Whether that compute and the link can carry it is a budget, and <a href="p8-edge-or-cloud-budget.html">practitioner session 8</a> builds that budget.</p>
+        <p><strong>Aggregate before storing.</strong> Keep a building's total, not each flat's trace. Per-flat features die, by design. How many households make an aggregate safe is not measured here and no number is quoted; what is known is that a small group can be unpicked, so "aggregate" without a minimum group size is a hope, not a stop.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three positions are held by people who have thought hard about it. The first says data minimisation is the stop: if the pipeline never holds 15-minute readings, no later feature, leak or request can compute a routine from them, and a promise in code is weaker than an inference the data cannot support. The second says that is too blunt: coarse data kills useful features, the household may want them, and the right stop is computation that stays in the home, with the household able to see and switch off each inference. The third says neither is enough on its own, because both are decided by the team; what matters is that every person in the home can learn what is inferred and say no, and the technical stop is secondary.</p>
+        <p>There is a measurement argument underneath too. The panel scores privacy by how well an attacker's rule still works, and that depends on the rule. A cleverer detector might read a 4-hour trace better than this threshold does, so "2 of 14" is an upper bound on what coarsening hides only for this rule, not a guarantee. Some argue privacy should be judged against the best possible inference; others say that is unknowable and a practical test against a realistic one is the only number a team can act on. Each side is right about something; the choice belongs to the team that has to sign the design.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Build the rule, reproduce it, then blur the trace</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the engine is already loaded). Six steps, each with the number you should see. You write the detector yourself, prove it matches the engine slot for slot, then coarsen the trace and measure how fast the inference degrades. The figure is the result you are about to compute, drawn for one day.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 436" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn chart of day 1 of the constructed Flat 4B trace at four resolutions, one row each, with the threshold dashed and a green strip where the rule says someone is up and at home. At 15 minutes the breakfast and evening peaks are sharp and the rule reads morning and evening activity. At 1 hour the peaks are blunted but the same two active stretches are read. At 4 hours only the evening block stands out. At 1 day the trace is one flat line and nothing is read. A column on the right gives the score over all 14 days: 93.0 percent of slots right and leave time within 30 minutes on 12 of 14 days at 15 minutes; 92.9 percent and 13 of 14 at 1 hour, highlighted in copper; 82.5 percent and 2 of 14 at 4 hours; 68.2 percent at 1 day, the same as guessing out for every slot, with the leave time unreadable.">
+        <defs>
+          <filter id="ip9cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip9cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip9cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip9cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip9cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip9cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip9cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip9cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip9cH" x="30" y="26">ONE DAY, FOUR RESOLUTIONS: WHAT THE SAME RULE CAN STILL READ</text>
+        <text class="ip9cH" x="620" y="26">ALL 14 DAYS</text>
+
+        <g filter="url(#ip9cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- meter dial (doodle anchor) -->
+          <circle cx="60" cy="56" r="12" fill="#FFFFFF"/>
+          <path d="M60 56 L68 48"/>
+          <!-- row baselines -->
+          <path d="M110 116 L590 116 M110 196 L590 196 M110 276 L590 276 M110 356 L590 356" stroke="#CDD5C0" stroke-width="1.5"/>
+
+          <!-- 15 minutes -->
+          <path d="M110 105.0 L590 105.0" stroke="#3F6212" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <path d="M112.5 109.7 L117.5 110.3 L122.5 109.0 L127.5 109.4 L132.5 110.9 L137.5 110.3 L142.5 110.2 L147.5 110.8 L152.5 109.5 L157.5 111.0 L162.5 110.6 L167.5 109.7 L172.5 110.9 L177.5 110.9 L182.5 110.8 L187.5 111.0 L192.5 109.4 L197.5 109.9 L202.5 109.8 L207.5 108.7 L212.5 109.9 L217.5 109.0 L222.5 110.6 L227.5 108.5 L232.5 108.8 L237.5 108.5 L242.5 108.5 L247.5 110.0 L252.5 110.5 L257.5 111.1 L262.5 95.3 L267.5 66.5 L272.5 95.3 L277.5 95.8 L282.5 95.1 L287.5 101.8 L292.5 108.8 L297.5 109.3 L302.5 111.0 L307.5 111.0 L312.5 110.0 L317.5 110.2 L322.5 109.2 L327.5 109.8 L332.5 109.2 L337.5 109.6 L342.5 110.3 L347.5 109.7 L352.5 111.2 L357.5 109.6 L362.5 108.8 L367.5 110.3 L372.5 110.0 L377.5 110.8 L382.5 108.4 L387.5 109.8 L392.5 110.6 L397.5 109.6 L402.5 110.7 L407.5 111.0 L412.5 108.3 L417.5 110.6 L422.5 110.6 L427.5 110.3 L432.5 111.0 L437.5 111.2 L442.5 111.1 L447.5 108.5 L452.5 108.5 L457.5 109.1 L462.5 106.2 L467.5 99.3 L472.5 104.5 L477.5 60.6 L482.5 56.8 L487.5 97.3 L492.5 98.1 L497.5 105.8 L502.5 95.6 L507.5 95.8 L512.5 105.7 L517.5 97.3 L522.5 94.8 L527.5 103.3 L532.5 97.8 L537.5 103.0 L542.5 98.0 L547.5 103.3 L552.5 93.7 L557.5 102.0 L562.5 96.5 L567.5 105.3 L572.5 106.4 L577.5 95.9 L582.5 108.7 L587.5 111.3" stroke="#2A410C" stroke-width="1.6"/>
+          <rect x="260" y="122" width="30" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="465" y="122" width="30" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="500" y="122" width="10" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="515" y="122" width="50" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="575" y="122" width="5" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+
+          <!-- 1 hour -->
+          <path d="M110 184.5 L590 184.5" stroke="#3F6212" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <path d="M110 189.6 L130 189.6 L130 190.6 L150 190.6 L150 190.2 L170 190.2 L170 190.9 L190 190.9 L190 189.4 L210 189.4 L210 189.5 L230 189.5 L230 188.9 L250 188.9 L250 175.9 L270 175.9 L270 177.0 L290 177.0 L290 190.0 L310 190.0 L310 189.8 L330 189.8 L330 189.7 L350 189.7 L350 190.0 L370 190.0 L370 189.8 L390 189.8 L390 190.5 L410 190.5 L410 190.0 L430 190.0 L430 190.4 L450 190.4 L450 185.8 L470 185.8 L470 159.8 L490 159.8 L490 178.8 L510 178.8 L510 180.3 L530 180.3 L530 180.5 L550 180.5 L550 179.4 L570 179.4 L570 185.6 L590 185.6" stroke="#2A410C" stroke-width="1.6"/>
+          <rect x="250" y="202" width="40" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+          <rect x="470" y="202" width="100" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+
+          <!-- 4 hours -->
+          <path d="M110 264.3 L590 264.3" stroke="#3F6212" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <path d="M110 270.3 L190 270.3 L190 265.9 L270 265.9 L270 266.6 L350 266.6 L350 270.0 L430 270.0 L430 258.7 L510 258.7 L510 261.4 L590 261.4" stroke="#2A410C" stroke-width="1.6"/>
+          <rect x="430" y="282" width="160" height="7" fill="#93A86F" stroke="#93A86F" stroke-width="1"/>
+
+          <!-- 1 day -->
+          <path d="M110 339.5 L590 339.5" stroke="#3F6212" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <path d="M110 345.5 L590 345.5" stroke="#2A410C" stroke-width="1.6"/>
+
+          <!-- score boxes -->
+          <rect x="620" y="72" width="240" height="52" rx="6" transform="rotate(-0.6 740 98)" fill="#FFFFFF"/>
+          <rect x="620" y="152" width="240" height="52" rx="6" transform="rotate(0.5 740 178)" fill="#FBEFEC" stroke="#9B4D45" stroke-width="2.4"/>
+          <rect x="620" y="232" width="240" height="52" rx="6" transform="rotate(-0.4 740 258)" fill="#FFFFFF"/>
+          <rect x="620" y="312" width="240" height="52" rx="6" transform="rotate(0.6 740 338)" fill="url(#ip9cHc)"/>
+        </g>
+
+        <text class="ip9cL" x="30" y="100">15 minutes</text>
+        <text class="ip9cS" x="30" y="116">96 a day</text>
+        <text class="ip9cL" x="30" y="180">1 hour</text>
+        <text class="ip9cS" x="30" y="196">24 a day</text>
+        <text class="ip9cL" x="30" y="260">4 hours</text>
+        <text class="ip9cS" x="30" y="276">6 a day</text>
+        <text class="ip9cL" x="30" y="340">1 day</text>
+        <text class="ip9cS" x="30" y="356">1 a day</text>
+
+        <text class="ip9cV" x="636" y="98">93.0%</text>
+        <text class="ip9cS" x="700" y="98">slots right</text>
+        <text class="ip9cS" x="636" y="116">leave within 30 min: 12 of 14</text>
+        <text class="ip9cV" x="636" y="178">92.9%</text>
+        <text class="ip9cS" x="700" y="178">slots right</text>
+        <text class="ip9cB" x="636" y="196">leave within 30 min: 13 of 14</text>
+        <text class="ip9cV" x="636" y="258">82.5%</text>
+        <text class="ip9cS" x="700" y="258">slots right</text>
+        <text class="ip9cS" x="636" y="276">leave within 30 min: 2 of 14</text>
+        <text class="ip9cV" x="636" y="338">68.2%</text>
+        <text class="ip9cS" x="700" y="338">= guessing "out"</text>
+        <text class="ip9cS" x="636" y="356">leave time: unreadable</text>
+
+        <text class="ip9cS" x="110" y="384" text-anchor="middle">00:00</text>
+        <text class="ip9cS" x="230" y="384" text-anchor="middle">06:00</text>
+        <text class="ip9cS" x="350" y="384" text-anchor="middle">12:00</text>
+        <text class="ip9cS" x="470" y="384" text-anchor="middle">18:00</text>
+        <text class="ip9cS" x="590" y="384" text-anchor="middle">24:00</text>
+
+        <text class="ip9cN" x="30" y="406">Constructed: Flat 4B's day 1 at four resolutions; green strips mark where the rule says someone is up and home.</text>
+        <text class="ip9cN" x="30" y="424">Scores cover all 14 days; guessing "out" every slot scores 68.2 percent. Another seed gives other numbers.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the finding: an hourly trace hides almost nothing, and the routine only goes when the reading is longer than the absence.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Build the household</h4>
+        <p>IOT.household builds Flat 4B's constructed trace from a seed; 909 is the canon. It returns the watts, the built-in truth, the plan of each day and the engine's own inference, which you are about to reproduce without looking at. You should see 14 days, 96 slots a day, 1,344 readings, and day 1 is a weekday.</p>
+        <div class="prompt-box good"><span class="label">console</span>var h = IOT.household(909);
+[h.days, h.slotsPerDay, h.watts.length, h.plan[0].weekend]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the threshold detector</h4>
+        <p>For each day, sort its 96 readings and take the one at index 9 (the 10th percentile: 0.1 times 95, rounded down) as the floor; a reading above floor plus 120 W is "up and at home". Then check it against the engine's inference and the truth. You should see true (every slot matches the engine), 1,250 slots right, and "93.0".</p>
+        <div class="prompt-box good"><span class="label">console</span>function detect(w) {
+  var out = [];
+  for (var d = 0; d &lt; 14; d++) {
+    var day = w.slice(d * 96, d * 96 + 96);
+    var floor = day.slice().sort(function (a, b) { return a - b; })[9];
+    day.forEach(function (x) { out.push(x &gt; floor + 120 ? 1 : 0); });
+  }
+  return out;
+}
+var mine = detect(h.watts);
+var same = mine.every(function (v, i) { return v === h.inferred[i]; });
+var hit = mine.filter(function (v, i) { return v === h.truth[i]; }).length;
+[same, hit, (100 * hit / 1344).toFixed(1)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read the leave time and reproduce the canon</h4>
+        <p>Leave time is the start of the longest quiet run after the first active slot and before slot 80 (20:00). Score it against each day's plan in minutes. You should see "0 15 0 0 0 0 0 225 45 0 0 15 0 0" and 12: twelve days within 30 minutes, median error 0, and the two bad misses on days 8 and 9.</p>
+        <div class="prompt-box good"><span class="label">console</span>function leave(inf, d) {
+  var first = -1, best = 0, bestStart = -1, run = 0, runStart = -1;
+  for (var s = 0; s &lt; 80; s++) {
+    var a = inf[d * 96 + s];
+    if (a &amp;&amp; first &lt; 0) first = s;
+    if (first &lt; 0) continue;
+    if (!a) { if (run === 0) runStart = s; run++; if (run &gt; best) { best = run; bestStart = runStart; } }
+    else run = 0;
+  }
+  return bestStart;
+}
+var err = h.plan.map(function (p, d) { return Math.abs(leave(mine, d) - p.leave) * 15; });
+[err.join(" "), err.filter(function (e) { return e &lt;= 30; }).length]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Split the errors by mechanism</h4>
+        <p>Count the two kinds of wrong slot: awake at home but read as out (quiet hours), and out but read as home (the timer). Then read when the timer ran on the two bad days. You should see 85 quiet slots missed, 9 phantom slots, and timer starts at slot 43 (10:45) and slot 51 (12:45).</p>
+        <div class="prompt-box good"><span class="label">console</span>var missed = 0, phantom = 0;
+mine.forEach(function (v, i) {
+  if (h.truth[i] &amp;&amp; !v) missed++;
+  if (!h.truth[i] &amp;&amp; v) phantom++;
+});
+[missed, phantom, h.plan[7].timer, h.plan[8].timer]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Coarsen the trace and rerun the rule</h4>
+        <p>Average each block of k readings and repeat the average k times, so the blurred trace still has one value per slot and the same detector and leave reader run unchanged. You should see 93.0 / 12 at 15 minutes, 94.9 / 12 at 30, 92.9 / 13 at 60, 87.9 / 6 at 120, 82.5 / 2 at 240, 81.2 / 0 at 480 and 68.2 / 0 at a day. The live panel in Part 2 runs the same code.</p>
+        <div class="prompt-box good"><span class="label">console</span>function coarsen(w, k) {
+  var out = [];
+  for (var i = 0; i &lt; w.length; i += k) {
+    var m = 0;
+    for (var j = 0; j &lt; k; j++) m += w[i + j];
+    for (j = 0; j &lt; k; j++) out.push(m / k);
+  }
+  return out;
+}
+[1, 2, 4, 8, 16, 32, 96].map(function (k) {
+  var inf = detect(coarsen(h.watts, k)), ok = 0, near = 0;
+  inf.forEach(function (v, i) { if (v === h.truth[i]) ok++; });
+  h.plan.forEach(function (p, d) {
+    var l = leave(inf, d);
+    if (l &gt;= 0 &amp;&amp; Math.abs(l - p.leave) * 15 &lt;= 30) near++;
+  });
+  return k * 15 + " min: " + (100 * ok / 1344).toFixed(1) + "%, " + near + " of 14";
+})</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Score against knowing nothing</h4>
+        <p>A slot score means nothing without its floor. Guess "out" for every slot and count how often that is right. You should see 917 slots and "68.2": the daily total scores exactly that, so it reads no better than knowing nothing, while the 4-hour trace's 82.5 sits well above it. Write one line: the resolution at which the leave time stops being readable, and what the product loses there.</p>
+        <div class="prompt-box good"><span class="label">console</span>var out = h.truth.filter(function (t) { return t === 0; }).length;
+[out, (100 * out / 1344).toFixed(1)]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before you call a step a privacy protection, attack it with the simplest inference you fear and score it against knowing nothing. On Flat 4B, the hourly trace looked like a protection and was not; the four-hour trace was, for this rule, and only the measurement could tell them apart.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">A teammate proposes keeping hourly averages instead of 15-minute readings "so we can't see when people are home". On the constructed Flat 4B trace, what does the measurement say?</p>
+      <div class="qopt">A · It works: hourly averages blur the trace, so the threshold rule can no longer find the leave time</div>
+      <div class="qopt">B · It barely helps: at 1 hour the same rule reads 92.9 percent of slots right and the leave time within 30 minutes on 13 of 14 days, so on this trace hourly coarsening is not a privacy stop</div>
+      <div class="qopt">C · It makes things worse for the household because hourly data is more accurate than 15-minute data</div>
+      <q class="qwhy">The absence lasts hours; an hourly average cannot hide something longer than itself. Averaging even smoothed some quiet awake slots, which is why the hourly leave time is within 30 minutes on one more day. The leave time only went on most days at 4 hours.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">At 4-hour resolution the rule still reads 82.5 percent of slots right. How should a practitioner read that number?</p>
+      <div class="qopt">A · As a privacy failure: 82.5 percent is close to 93.0, so the routine is still exposed</div>
+      <div class="qopt">B · As proof that coarsening does not matter</div>
+      <div class="qopt">C · Against its floor: guessing "out" every slot scores 68.2 percent, and the leave time is within 30 minutes on only 2 of 14 days, so measure the specific inference you fear rather than a slot score</div>
+      <q class="qwhy">A slot score is inflated by the many easy night and empty-day slots. The inference that matters, when the flat stands empty, mostly disappears at 4 hours. And the measurement holds for this rule only; a cleverer detector could read more.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The Flat 4B team decides to run the rule on a device in the home and send only its answer and a daily total. Which statement is right?</p>
+      <div class="qopt">A · The 15-minute trace no longer crosses the home's wall, at the cost of device compute, updates and a rule nobody outside can audit; it does not settle whether everyone in the home agreed, which the team asks first and the law sessions answer</div>
+      <div class="qopt">B · Running on the device means consent is no longer needed from anyone</div>
+      <div class="qopt">C · The account holder's tick now covers everyone, because the data stays in their home</div>
+      <q class="qwhy">On-device inference moves where the trace lives; it does not change who the inference is about. The household is not a user, and one tick does not stretch over the others. The legal question is not answered here.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 10</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the console on this page and on paper.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Try another household</h4>
+        <p>Run your detect, leave and coarsen functions on IOT.household(1) and IOT.household(42). These are exploration, not canon: your numbers will differ from Flat 4B's. Find the coarsest resolution at which the leave time is still within 30 minutes on at least half the days, for each seed. Does the hour that failed to protect Flat 4B fail on the others too?</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Make the rule smarter, then re-attack</h4>
+        <p>Change one thing in the detector (the margin, the percentile, or a rule that ignores a raised stretch shorter than an hour) and rerun the coarsening ladder. If your rule reads the 4-hour trace better than 2 of 14, write down what that says about trusting a privacy number measured with one attacker.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the stop sheet for one device</h4>
+        <p>For a home device your organisation ships, supports or buys data from: the resolution it keeps, where its inferences run, what is stored per home, and the price of each choice in features lost. One page. Practitioner session 10 returns to the engine bench, where the same habit (measure against a floor, never against a feeling) runs every rung.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The Flat 4B meter trace</span><span class="note">Constructed: 14 days of 15-minute average power, 1,344 readings, with the truth built in.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The occupancy threshold, built by hand</span><span class="note">The day's 10th percentile plus 120 W; matches the engine on every slot.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">How well it reads the household</span><span class="note">93.0 percent of slots right; leave time within 30 minutes on 12 of 14 days; median error 0 minutes.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Where it slips</span><span class="note">85 quiet awake slots missed, 9 timer slots read as home; the two bad misses (225 and 45 minutes) both on timed-appliance days.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What the trace reveals beyond occupancy</span><span class="note">Giaconi, Gunduz and Poor (2018), read at source; Molina-Markham et al. (2010), reported.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The household is not a user</span><span class="note">One account holder's tick against everyone the trace describes; consent from people who never signed up.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Coarsening, measured</span><span class="note">1 hour: 92.9 percent and 13 of 14; 4 hours: 82.5 percent and 2 of 14; 1 day: 68.2 percent, the guess-"out" floor.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Inference on the device</span><span class="note">Named with its price; the link and compute budget is built in <a href="p8-edge-or-cloud-budget.html">practitioner session 8</a>.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Aggregation across households</span><span class="note">Named with its price; no safe group size is measured or quoted.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Law: personal data, lawful basis, consent</span><span class="note">Not legal advice. Live in <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">learn GDPR, scope</a> and <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">learn PDPA and DNC, consent and exemptions</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real households, devices or products</span><span class="note">Flat 4B is constructed, not a real household; no device or product is named. The engine rows elsewhere are real public rows from NASA's simulation, not real engines.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The rule.</strong> Floor = the day's 10th percentile; above floor + 120 W = up and at home. No model.</div>
+      <div class="cheat-item"><strong>The canon.</strong> Flat 4B, constructed: 93.0 percent of slots, leave within 30 minutes on 12 of 14 days, median 0.</div>
+      <div class="cheat-item"><strong>The slips.</strong> Quiet awake hours are most wrong slots; the timer cut day 8's absence in two, 225 minutes off.</div>
+      <div class="cheat-item"><strong>The unit.</strong> The household, not a user. One tick never covers everyone the trace describes.</div>
+      <div class="cheat-item"><strong>Coarsening.</strong> An hour hides almost nothing here; 4 hours hides leave time on most days; a day reads like guessing.</div>
+      <div class="cheat-item"><strong>The floor.</strong> Score every privacy step against knowing nothing: guessing "out" scores 68.2 percent.</div>
+      <div class="cheat-item"><strong>Three stops.</strong> Coarsen at the source, infer on the device, aggregate before storing. Each costs features.</div>
+      <div class="cheat-item"><strong>The seam.</strong> Whether it is lawful: the GDPR and PDPA sessions and a lawyer. Whether the pipeline can compute it: you.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 9 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p8-edge-or-cloud-budget.html">← Practitioner session 8 · Edge or cloud: a bandwidth and latency budget</a>
+        <a href="p10-the-rul-bench.html">Practitioner session 10 · The remaining-useful-life bench →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined") return;
+  var sel = document.getElementById("ip9-res");
+  var out = document.getElementById("ip9-coarse-out");
+  var verdict = document.getElementById("ip9-coarse-verdict");
+  var self = document.getElementById("ip9-coarse-self");
+
+  /* constructed household at its canon seed */
+  var h = IOT.household(909), S = h.slotsPerDay, D = h.days, N = S * D;
+
+  function hm(s) {
+    var m = s * 15, hh = Math.floor(m / 60), mm = m % 60;
+    return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+  }
+  function detect(w) {
+    var res = [];
+    for (var d = 0; d < D; d++) {
+      var day = w.slice(d * S, d * S + S);
+      var floor = day.slice().sort(function (a, b) { return a - b; })[Math.floor(0.1 * (S - 1))];
+      day.forEach(function (x) { res.push(x > floor + 120 ? 1 : 0); });
+    }
+    return res;
+  }
+  function leave(inf, d) {
+    var first = -1, best = 0, bestStart = -1, run = 0, runStart = -1;
+    for (var s = 0; s < 80; s++) {
+      var a = inf[d * S + s];
+      if (a && first < 0) first = s;
+      if (first < 0) continue;
+      if (!a) { if (run === 0) runStart = s; run++; if (run > best) { best = run; bestStart = runStart; } }
+      else run = 0;
+    }
+    return bestStart;
+  }
+  function coarsen(w, k) {
+    var res = [];
+    for (var i = 0; i < w.length; i += k) {
+      var m = 0, j;
+      for (j = 0; j < k; j++) m += w[i + j];
+      for (j = 0; j < k; j++) res.push(m / k);
+    }
+    return res;
+  }
+  function score(k) {
+    var inf = detect(coarsen(h.watts, k)), ok = 0, near = 0, readable = 0, days = [];
+    inf.forEach(function (v, i) { if (v === h.truth[i]) ok++; });
+    h.plan.forEach(function (p, d) {
+      var l = leave(inf, d), off = l >= 0 ? Math.abs(l - p.leave) * 15 : null;
+      if (off !== null) { readable++; if (off <= 30) near++; }
+      days.push({ d: d, p: p, l: l, off: off });
+    });
+    return { acc: 100 * ok / N, near: near, readable: readable, days: days };
+  }
+
+  var floorShare = 100 * h.truth.filter(function (t) { return t === 0; }).length / N;
+  var base = score(1);
+  var canonOk = base.acc.toFixed(1) === (100 * h.accuracy).toFixed(1) && base.near === h.leaveWithin30;
+  var LABEL = { 1: "15 minutes", 2: "30 minutes", 4: "1 hour", 8: "2 hours", 16: "4 hours", 32: "8 hours", 96: "1 day" };
+
+  function render() {
+    var k = Number(sel.value), r = score(k);
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Day</th><th>Truth: left</th><th>Rule says</th><th>Off by</th></tr></thead><tbody>';
+    r.days.forEach(function (x) {
+      html += "<tr><td>Day " + (x.d + 1) + (x.p.weekend ? " · weekend" : "") + (x.p.timer >= 0 ? ' · <span class="ip9-timer">timer ran</span>' : "") + "</td><td>" + hm(x.p.leave) + "</td><td><b>" +
+        (x.l >= 0 ? hm(x.l) : "unreadable") + "</b></td><td>" + (x.off === null ? "-" : x.off === 0 ? "exact" : x.off + " min") + "</td></tr>";
+    });
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+
+    verdict.textContent = "One reading every " + LABEL[k] + ": the same rule reads " + r.acc.toFixed(1) + "% of all " + N +
+      " slots right (guessing \"out\" for every slot scores " + floorShare.toFixed(1) + "%) and puts the leave time within 30 minutes on " + r.near + " of " + D +
+      " days; it can read a leave time at all on " + r.readable + ". At 15 minutes it was " + base.acc.toFixed(1) + "% and " + base.near + " of " + D + "." +
+      (canonOk ? "" : " Warning: this page's detector disagrees with the engine's own reading.") +
+      " Constructed household, not a real one.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Flat 4B is constructed: no real household, meter or device is behind these numbers."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ip9-coarse .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip9-coarse table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ip9-coarse .ip9-timer { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

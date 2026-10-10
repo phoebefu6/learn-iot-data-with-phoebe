@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 5 of 6. Five warehouse habits and the mechanism that breaks each one on a sensor floor: the source, the identity, the ground truth, the feedback loop and the cost of being wrong. Harrow Lane Overhaul, a constructed shop, reviews a constructed proposal. Real public rows from NASA's simulation. Not purchasing advice.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Why the warehouse playbook breaks here - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 5 of 6. A device that drifts, a unit with no user, a failure seen once, a loop that hides its own outcome, and a miss priced by its side. Shuffle time and the bench goes from 3,366 to 46,145.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a5-why-the-warehouse-playbook-breaks-here.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why the warehouse playbook breaks here - learn iot data with phoebe">
+<meta name="twitter:description" content="Five habits a data team brings from the warehouse, and the mechanism that breaks each one on a sensor floor.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 5 · Why the warehouse playbook breaks here - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 5 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 5 of 6</div>
+    <h1>Why the warehouse playbook <span class="accent">breaks here</span></h1>
+    <p class="sub">A data team that has shipped dashboards, churn models and demand forecasts arrives on a sensor floor with a playbook that works. Five of its habits quietly fail here, and each fails for a reason you can draw: the row has no author, the unit has no user, the truth arrives once, acting on the answer removes the question, and a miss is priced by which side it lands on. Harrow Lane Overhaul, a constructed engine-overhaul shop, has a proposal on the table written from that playbook. Tonight is the five mechanisms, then a review of the proposal against everything sessions 1 to 4 taught. The rows are real public rows from NASA's simulation, not real engines, and nothing here is purchasing advice.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Data leads arriving from the warehouse</span>
+      <span class="chip audience">Anyone asked to sign off a predictive-maintenance project</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-18 · Source, identity, truth</span>
+      <span class="a3" style="flex:3">18-28 · The loop and the price</span>
+      <span class="a4" style="flex:4">28-45 · Proposal review and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane, the week the warehouse team offers to help</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed shop whose planners decide, each week, which engines to pull for maintenance. Its fleet, as in every session, is the 100 turbofan engines of NASA's FD001 training set: real public rows from NASA's simulation, the degradation simulated with C-MAPSS, every engine run cycle by cycle until it failed. A data team from the group's retail side (constructed too, and unnamed) has offered to "do predictive maintenance" with the playbook that served it well on orders and customers. The proposal is short, confident and built entirely from good habits. Each habit meets a mechanism on the sensor floor that it was never designed for.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> Five contrasts you can draw on a whiteboard: where the row comes from, what the unit is, when the truth arrives, what acting on a prediction does to the next dataset, and how a miss is priced. A measured proof that time order is load-bearing: shuffle the cycles inside each engine and the bench's top rung goes from an error of 23.64 cycles to 40.41, and from a score of 3,366 to 46,145. And a seven-line checklist, drawn from sessions 1 to 4 and tonight, that you can hold against any proposal before it is funded. Nothing here is advice on what to buy or which machine to service.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why a good playbook misfires here<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The warehouse playbook is not wrong; it is tuned to a world with five quiet properties. A row is written by a person or a system that meant it. Every row joins to someone who can be asked. The outcome you predict is a column you can look up. Acting on a prediction changes behaviour but still lets you see what happened. And a mistake costs about the same in either direction, so an average error is a fair summary.</p>
+        <p>A sensor floor removes all five, one at a time. None of the removals shows up as a failed data-quality check, which is why a capable team walks straight past them. The rest of the session takes them in order and draws the mechanism behind each, because a slogan ("IoT is different") changes nobody's plan, and a drawing of where the outcome goes missing does.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Source.</strong> What wrote the row. In a warehouse, a person or a system acting on purpose; here, a device that reports whatever it reads.</li>
+          <li><strong>Device baseline.</strong> The minimum capabilities a connected device should have before anyone trusts it. NIST IR 8259A names six.</li>
+          <li><strong>Unit.</strong> The thing a row is about. Here an engine and its cycle count, or a household; never a user.</li>
+          <li><strong>Ground truth.</strong> The outcome you check a prediction against. For a run-to-failure engine it is one event, at the end.</li>
+          <li><strong>Censored.</strong> Known only as "not yet". Every cycle before failure says the engine has not failed, and nothing about when it will.</li>
+          <li><strong>Feedback loop.</strong> Acting on a prediction changes the data the next model learns from. On a maintenance floor it removes the very outcome.</li>
+          <li><strong>The lean.</strong> Which side of a miss the score punishes harder. Harrow Lane's bench uses late is worse: divide by 10 when late, by 13 when early.</li>
+          <li><strong>Constructed.</strong> Harrow Lane, Flat 4B, the retail data team and its proposal are invented so that the truth is knowable. No figure describes a real engine, plant, household or team.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the source, the identity and the ground truth</span>
+      <h2>Who wrote the row, who it is about, and when you find out</h2>
+      <span class="tag concept">15 min live</span>
+    </div>
+    <p class="lede">Three contrasts sit side by side in the figure. Each column puts the warehouse habit on top and the sensor-floor mechanism underneath. Read down a column, not across: the top box is what the playbook assumes without saying so, and the copper mark below is the thing that assumption cannot see.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 444" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in three columns. Column one, the source: in a warehouse an order row is typed by a clerk who meant it; on the plant floor a probe on a duct writes a reading that drifts away from what the engine did, and no column says so; the device baseline is NIST IR 8259A. Column two, the identity: a customer id joins to a person who can be asked; engine 69 has 362 rows and no person, and the whole engine goes to the held-out side of a split of 70 training and 30 held-out engines, never row by row; Flat 4B has one meter and several people. Column three, the ground truth: a status column can be looked up any day; an engine fails once, at the end, the health index is not in the data, every earlier row says only not yet, and the PHM08 test truth ranged 10 to 150 cycles while validation ranged 6 to 190, not announced.">
+        <defs>
+          <filter id="ia5aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="51" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia5aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia5aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia5aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia5aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia5aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia5aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia5aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia5aH" x="30" y="26">THREE WAREHOUSE HABITS, AND WHAT A SENSOR FLOOR DOES TO EACH</text>
+        <text class="ia5aH" x="30" y="54">1 · THE SOURCE</text>
+        <text class="ia5aH" x="310" y="54">2 · THE IDENTITY</text>
+        <text class="ia5aH" x="590" y="54">3 · THE GROUND TRUTH</text>
+
+        <g filter="url(#ia5aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- column 1: the source -->
+          <rect x="30" y="66" width="260" height="124" rx="8" transform="rotate(-0.6 160 128)" fill="#FFFFFF"/>
+          <rect x="44" y="98" width="232" height="34" rx="6" transform="rotate(0.5 160 115)" fill="#F3F7EA"/>
+          <rect x="30" y="206" width="260" height="176" rx="8" transform="rotate(0.4 160 294)" fill="#F3F7EA"/>
+          <path d="M44 242 L276 242"/>
+          <path d="M44 258 L276 258"/>
+          <path d="M120 250 L196 250" stroke="#93A86F" marker-end="url(#ia5aAr)"/>
+          <path d="M70 258 L70 270"/>
+          <circle cx="70" cy="274" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M90 314 L276 314" stroke="#3F6212" stroke-width="2.6"/>
+          <path d="M90 314 L276 293" stroke="#9B4D45" stroke-width="2.6" stroke-dasharray="7 5"/>
+
+          <!-- column 2: the identity -->
+          <rect x="310" y="66" width="260" height="124" rx="8" transform="rotate(0.7 440 128)" fill="#FFFFFF"/>
+          <rect x="324" y="98" width="104" height="34" rx="6" transform="rotate(-0.8 376 115)" fill="#F3F7EA"/>
+          <path d="M434 115 L480 115" marker-end="url(#ia5aAr)"/>
+          <rect x="486" y="98" width="76" height="34" rx="6" transform="rotate(0.9 524 115)" fill="#FFFFFF"/>
+          <rect x="310" y="206" width="260" height="176" rx="8" transform="rotate(-0.5 440 294)" fill="#F3F7EA"/>
+          <path d="M458 244 L458 258 M470 244 L470 258 M482 244 L482 258 M494 244 L494 258 M506 244 L506 258 M518 244 L518 258 M530 244 L530 258 M542 244 L542 258 M554 244 L554 258" stroke="#3F6212"/>
+          <path d="M506 264 L506 286" marker-end="url(#ia5aAr)"/>
+          <path d="M470 264 L404 286" stroke="#9B4D45" stroke-dasharray="5 5"/>
+          <path data-strike="1" d="M428 266 L446 284" stroke="#9B4D45" stroke-width="2.4"/>
+          <rect x="324" y="290" width="112" height="32" rx="6" transform="rotate(0.6 380 306)" fill="#FFFFFF"/>
+          <rect x="450" y="290" width="112" height="32" rx="6" transform="rotate(-0.6 506 306)" fill="url(#ia5aHc)"/>
+
+          <!-- column 3: the ground truth -->
+          <rect x="590" y="66" width="260" height="124" rx="8" transform="rotate(-0.7 720 128)" fill="#FFFFFF"/>
+          <rect x="604" y="98" width="232" height="34" rx="6" transform="rotate(0.4 720 115)" fill="#F3F7EA"/>
+          <rect x="590" y="206" width="260" height="176" rx="8" transform="rotate(0.5 720 294)" fill="#F3F7EA"/>
+          <rect x="604" y="240" width="220" height="24" rx="5" transform="rotate(-0.4 714 252)" fill="#FFFFFF" stroke-dasharray="6 5"/>
+          <path d="M604 290 L814 290"/>
+          <path d="M616 284 L616 296 M632 284 L632 296 M648 284 L648 296 M664 284 L664 296 M680 284 L680 296 M696 284 L696 296 M712 284 L712 296 M728 284 L728 296 M744 284 L744 296 M760 284 L760 296 M776 284 L776 296 M792 284 L792 296 M808 284 L808 296" stroke="#3F6212"/>
+          <circle cx="826" cy="290" r="6" fill="#9B4D45" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia5aA" x="44" y="88">warehouse</text>
+        <text class="ia5aL" x="56" y="120">order row, typed by a clerk</text>
+        <text class="ia5aS" x="44" y="154">an author who meant it; a wrong row</text>
+        <text class="ia5aS" x="44" y="172">shows up as a key that will not join</text>
+        <text class="ia5aB" x="44" y="228">plant floor: a probe on a duct</text>
+        <text class="ia5aB" x="276" y="284" text-anchor="end">what the probe wrote</text>
+        <text class="ia5aA" x="90" y="334">what the engine did</text>
+        <text class="ia5aS" x="44" y="356">no column says the probe drifted</text>
+        <text class="ia5aS" x="44" y="373">device baseline: NIST IR 8259A</text>
+
+        <text class="ia5aA" x="324" y="88">warehouse</text>
+        <text class="ia5aL" x="336" y="120">customer id</text>
+        <text class="ia5aL" x="496" y="120">a person</text>
+        <text class="ia5aS" x="324" y="154">one key, one person who can be asked</text>
+        <text class="ia5aS" x="324" y="172">whether the row is right</text>
+        <text class="ia5aB" x="324" y="228">plant floor: a unit, not a user</text>
+        <text class="ia5aS" x="324" y="255">engine 69, 362 rows</text>
+        <text class="ia5aL" x="380" y="311" text-anchor="middle">70 train</text>
+        <text class="ia5aL" x="506" y="311" text-anchor="middle">30 held out</text>
+        <text class="ia5aS" x="324" y="348">a whole engine goes to one side</text>
+        <text class="ia5aS" x="324" y="366">Flat 4B: one meter, several people</text>
+
+        <text class="ia5aA" x="604" y="88">warehouse</text>
+        <text class="ia5aL" x="616" y="120">a status column, looked up</text>
+        <text class="ia5aS" x="604" y="154">the label sits in a table, any day,</text>
+        <text class="ia5aS" x="604" y="172">and a second query can check it</text>
+        <text class="ia5aB" x="604" y="228">plant floor: one failure, at the end</text>
+        <text class="ia5aS" x="614" y="256">health index: not in the data</text>
+        <text class="ia5aB" x="836" y="314" text-anchor="end">fails, once</text>
+        <text class="ia5aS" x="604" y="332">each earlier row says only "not yet"</text>
+        <text class="ia5aS" x="604" y="352">PHM08 test truth: 10 to 150 cycles;</text>
+        <text class="ia5aS" x="604" y="370">validation 6 to 190, not announced</text>
+
+        <text class="ia5aN" x="30" y="410">Top: the warehouse habit. Below: what a sensor floor does to it. Copper marks what the habit cannot see.</text>
+        <text class="ia5aS" x="30" y="430">Engine rows: real public rows from NASA's simulation (C-MAPSS). Flat 4B is constructed. Split: seed 2008.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - a reading that drifts with nobody to ask, an engine that must go to one side of the split whole, and a truth that arrives once, at the end, for engines run in a simulation.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The source: a device that drifts and never says so<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>In a warehouse a row has an author. A clerk typed the order, a system raised the invoice because a rule told it to. When the row is wrong, it is usually wrong in a way a check can catch: a key that does not join, a total that does not reconcile, a date in the future. And there is someone to ask.</p>
+        <p>A probe on a duct has no intent. It writes what it reads, once a cycle, and when it drifts it writes a perfectly formatted number that is slightly off, forever. Leader session 1 showed the two sides of that in the same file: the exhaust temperature that climbs as the compressor degrades is the signal, and a probe ageing would produce the same shape. No column in the row says which.</p>
+        <p>What a leader can ask for is a device baseline. NIST IR 8259A sets out six capabilities a connected device should have: Device Identification, Device Configuration, Data Protection, Logical Access to Interfaces, Software Update, and Cybersecurity State Awareness. Its authors call the core baseline "a default for minimally securable devices", and say it "does not specify how" each capability is achieved. Notice what the six are about: knowing which device wrote the row, what it was set to, who could reach it and whether it was changed. None of them promises the reading is right. The baseline makes the source accountable; drift stays the data team's problem.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's retail data team (constructed) asked its usual first question: "who owns this data?" In the warehouse that question has a name for an answer. Here the honest answer was a list: the probe, the unit it is fitted to, whoever last configured it, and the software it is running. The reliability engineer could answer the first two from the file. The last two were not recorded anywhere, and that blank is what the team wrote down first.</p>
+        </div>
+        <p>Drift in a pipeline (a feed that changes shape, volume or freshness) is a different object, taught in <a href="https://phoebefu6.github.io/learn-data-observability-with-phoebe/courses/b5-distribution-drift.html">learn data observability, distribution drift</a>. Here the drift is in the physical sensor, and no pipeline monitor can see it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The identity: a unit, not a user<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A warehouse row joins to a customer id, and a customer id joins to a person. That join carries two things nobody writes down: someone can confirm the row, and rows from different customers are roughly interchangeable, so splitting them at random into training and test is usually harmless.</p>
+        <p>On the sensor floor the unit is an engine and a cycle count. Engine 69 is 362 rows of one machine, each cycle sharing that engine's own starting wear; the dataset's readme says every engine "starts with different degrees of initial wear and manufacturing variation which is unknown to the user". Split those rows at random and some of engine 69's cycles land in training while its neighbours land in test. The model is then marked on an engine it has already seen, and the score flatters it. Harrow Lane's bench avoids that by holding out whole engines: a seeded split puts 70 engines in training and 30 in the held-out set, and no engine is on both sides.</p>
+        <p>At home the unit is a household. Leader session 4 showed Flat 4B's meter (constructed) writing one reading every 15 minutes for everyone in the flat at once. There is no user id to join to, and "the user" is the wrong word in any spec built on that trace.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The ground truth: one failure, at the end<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A churn label, a return flag, a delivered status: in a warehouse the outcome is a column, there any day you query it, and a second query can check it. You can label last month's customers this morning.</p>
+        <p>An engine in FD001 fails exactly once, at its last cycle. Every row before that is censored: it says "not yet" and nothing about when. The quantity that would tell you how close each engine was, the health index, exists inside the simulation (the lowest of four normalised operating margins, 1 healthy and 0 failed) and was deliberately not given to anyone using the data; it has to be inferred from the readings. And in the 2008 challenge the truth moved under the participants' feet: Saxena and colleagues report that the test set's true remaining lives ran from 10 to 150 cycles, while the validation set's ran from 6 to 190, a widening that was not announced.</p>
+        <p>For a leader the consequence is plain. You cannot label the fleet this morning, the label you get arrives once per machine, and the range of truth your model will face is itself something you may not be told.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the feedback loop and the cost of being wrong</span>
+      <h2>Acting on the answer, and pricing the miss</h2>
+      <span class="tag concept">10 min live</span>
+    </div>
+    <p class="lede">The last two contrasts are about what happens after a model is trusted. On the left, the loop that starts the day a planner acts on a prediction. On the right, the price of a miss, which depends on its side, and the measured cost of the one warehouse habit that throws time order away.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 478" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in two panels. Left, the feedback loop: the model flags an engine, the planner pulls it, no failure is logged and nobody learns whether it would have failed, so the next training set holds fewer failures and only the misses fail. FD001 has no loop because every engine ran to failure in the simulation. Right, the cost of being wrong: the published score curve, about 46 at 50 cycles early and about 147 at 50 cycles late, late divided by 10 and early by 13 as the paper's figure and prose say, while its printed equation pairs them the other way. Below, the break: with cycle order kept the top rung scores RMSE 23.64 and 3,366; with cycle order shuffled inside each engine, 40.41 and 46,145, over 300 cut points under the late-is-worse lean.">
+        <defs>
+          <filter id="ia5bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="57" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia5bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia5bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia5bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia5bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia5bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia5bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia5bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia5bH" x="30" y="26">TWO MORE HABITS: ACTING ON THE ANSWER, AND PRICING THE MISS</text>
+        <text class="ia5bH" x="30" y="54">4 · THE FEEDBACK LOOP</text>
+        <text class="ia5bH" x="470" y="54">5 · THE COST OF BEING WRONG</text>
+
+        <g filter="url(#ia5bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M450 40 L450 400" stroke="#CDD5C0" stroke-width="1.5"/>
+          <!-- the loop -->
+          <rect x="40" y="76" width="170" height="46" rx="8" transform="rotate(-0.8 125 99)" fill="#FFFFFF"/>
+          <rect x="250" y="76" width="170" height="46" rx="8" transform="rotate(0.7 335 99)" fill="#FFFFFF"/>
+          <rect x="250" y="186" width="170" height="56" rx="8" transform="rotate(-0.6 335 214)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="40" y="186" width="170" height="56" rx="8" transform="rotate(0.8 125 214)" fill="url(#ia5bHc)"/>
+          <path d="M214 99 L246 99" marker-end="url(#ia5bAr)"/>
+          <path d="M335 126 L335 182" marker-end="url(#ia5bAr)"/>
+          <path d="M246 214 L214 214" marker-end="url(#ia5bAr)"/>
+          <path d="M125 182 L125 126" marker-end="url(#ia5bAr)"/>
+          <!-- gauge doodle at the centre of the loop -->
+          <path d="M214 168 A16 16 0 0 1 246 168"/>
+          <path d="M230 168 L240 154"/>
+          <!-- the cost curve -->
+          <path d="M480 200 L846 200"/>
+          <path d="M660 206 L660 96" stroke="#CDD5C0" stroke-dasharray="4 5"/>
+          <path d="M510 163 L540 183 L570 193 L600 197 L630 199 L660 200" stroke="#3F6212" stroke-width="2.6"/>
+          <path d="M660 200 L690 199 L720 195 L750 185 L780 157 L810 82" stroke="#9B4D45" stroke-width="2.6"/>
+          <circle cx="510" cy="163" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="810" cy="82" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- the break -->
+          <rect x="590" y="321" width="11" height="18" rx="2" fill="#3F6212" stroke="#3F6212"/>
+          <rect x="590" y="351" width="150" height="18" rx="3" transform="rotate(-0.4 665 360)" fill="#9B4D45" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia5bL" x="54" y="104">model flags an engine</text>
+        <text class="ia5bL" x="264" y="104">planner pulls it</text>
+        <text class="ia5bB" x="264" y="208">no failure is logged</text>
+        <text class="ia5bS" x="264" y="226">would it have failed?</text>
+        <text class="ia5bL" x="54" y="208">next training set</text>
+        <text class="ia5bS" x="54" y="226">only the misses fail</text>
+        <text class="ia5bS" x="40" y="276">FD001 has no loop: every engine ran to failure,</text>
+        <text class="ia5bS" x="40" y="294">because it is a simulation. A shop's own log will not.</text>
+        <text class="ia5bA" x="40" y="322">warehouse: an offer changes what sells,</text>
+        <text class="ia5bA" x="40" y="340">and every sale is still logged</text>
+
+        <text class="ia5bV" x="486" y="150">about 46</text>
+        <text class="ia5bV" x="800" y="80" text-anchor="end">about 147</text>
+        <text class="ia5bS" x="510" y="220" text-anchor="middle">50 cycles early</text>
+        <text class="ia5bS" x="660" y="220" text-anchor="middle">on time</text>
+        <text class="ia5bS" x="800" y="220" text-anchor="middle">50 cycles late</text>
+        <text class="ia5bB" x="480" y="246">late divided by 10, early by 13</text>
+        <text class="ia5bS" x="480" y="264">the paper's figure and prose agree on this;</text>
+        <text class="ia5bS" x="480" y="280">its printed equation pairs them the other way</text>
+        <text class="ia5bA" x="480" y="310">order matters: the break button</text>
+        <text class="ia5bL" x="480" y="334">order kept</text>
+        <text class="ia5bL" x="608" y="334">23.64 · 3,366</text>
+        <text class="ia5bL" x="480" y="364">order shuffled</text>
+        <text class="ia5bL" x="748" y="364">40.41 · 46,145</text>
+        <text class="ia5bS" x="480" y="390">RMSE · score over 300 cut points, late-is-worse lean</text>
+
+        <text class="ia5bN" x="30" y="424">Left: acting on a prediction removes the outcome it predicted, so the log fills up with the misses.</text>
+        <text class="ia5bN" x="30" y="442">Right: the price of a miss depends on its side, and shuffling time inside each engine multiplies the score.</text>
+        <text class="ia5bS" x="30" y="464">Real public rows from NASA's simulation (C-MAPSS); 30 held-out engines, not the NASA test set.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the failure nobody gets to see once the planner acts, and the copper bar is what throwing away time order costs on Harrow Lane's bench.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia5-break">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The break button from practitioner session 10, small. Pick whether the cycles inside each engine keep their recorded order or are shuffled before the top rung (health index, capped target, lag-free smoothing) is fitted and scored. Computed in your browser at the canon settings (seed 2008) on real public rows from NASA's simulation; 300 cut points on 30 held-out engines, not the NASA test set. The shuffle is modelled, and labelled so.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia5-order">Cycle order inside each engine</label>
+        <select class="sql-code" id="ia5-order">
+          <option value="smooth" selected>Kept as recorded (the top rung)</option>
+          <option value="shuffleSmooth">Shuffled inside each engine (the break)</option>
+        </select>
+        <div id="ia5-out"></div>
+        <p class="sql-note" id="ia5-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia5-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The feedback loop: acting removes the outcome<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Warehouse models have feedback loops too. A recommendation changes what people buy; a discount changes demand. But the outcome is still logged: the sale happens or it does not, and next quarter's data records it.</p>
+        <p>On a maintenance floor the loop is harsher. The day Harrow Lane's planner starts acting on a model, every engine the model flags is pulled before it fails, and its failure is never observed. Would it have failed next week, or run safely to the check after next? The log cannot say. The engines that do fail in service are the ones the model missed. Retrain on that log and the model learns from a dataset its own decisions shaped, with the clearest failures removed.</p>
+        <p>FD001 has none of this, and that is exactly why it exists: every engine ran to failure because it is a simulation. A shop's own records never will, because the point of maintenance is that machines do not run to failure. Treat any training set drawn from a maintained fleet as censored by the maintenance, and ask what the log writes when an engine is pulled early.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The cost of being wrong: priced by its side<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A warehouse forecast that is too high by some amount costs roughly what one too low by the same amount costs, so an average error is a fair summary. A remaining-life estimate does not work that way. Too early pulls an engine with life left in it: hangar time, a spare, a line that waits. Too late leaves an engine in service past the point it fails. The costs are physical, and they are not equal.</p>
+        <p>The 2008 benchmark prices that directly. Its score grows exponentially with the error and leans on lateness: late misses are divided by 10 and early ones by 13 before the exponential, so a miss of 50 cycles costs about 46 when early and about 147 when late. That is the lean Harrow Lane's bench uses throughout, and leader session 3 set out how to choose it as a business decision.</p>
+        <p>The break button is the proof that time order carries the signal. Shuffle the cycles inside every engine, leave the labels where they were, and fit the same top rung. RMSE goes from 23.64 to 40.41 and, under the late-is-worse lean, the summed score from 3,366 to 46,145, over 300 cut points on 30 held-out engines. A warehouse table can usually be reordered without changing what it means. This one cannot: order is the data.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>The retail team's first draft (constructed) built its training table the way it always had: one row per cycle, every column a feature, rows shuffled before a random split. Every cell value was correct. The reliability engineer asked them to run the widget above before arguing the point. Nobody argued.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Which way does the score lean?</strong> The paper that defines it says in prose that late predictions are punished more heavily, and its plotted curve agrees: about 46 at 50 cycles early, about 147 at 50 cycles late. Its printed equation pairs the two constants the other way round, which, read literally, would punish early harder. The figure matches the stated intent, and the bench follows the figure and the prose. Later papers you meet may have picked either reading, so ask which one a number was scored under.</p>
+        <p>The lean matters for more than the size of a number. With the constants swapped, the score can rank a model fed by a heat-driven dropout above the clean one, as <a href="p7-the-asymmetric-score.html">practitioner session 7</a> shows; RMSE gets worse under both readings. That is why every score on these pages names its lean.</p>
+        <p><strong>One number or several?</strong> The same paper argues for weighting short remaining lives more and for a correlation measure beside the score, because a summed score can hide uneven units. The bench prints RMSE, score, bias and late share and does not crown one. Neither does this page.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the break proves, and what it does not<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Everything except time order is held fixed: the same 100 engines, the same channel values, the same split, the same code. A bench that scored about the same with time destroyed would be measuring something other than degradation. This one collapses, which is the evidence that its other numbers mean what they say.</p>
+        <p>It does not prove the model is good enough for any decision. It proves that an evaluation which ignores time order, a random row split or a shuffled feature table, is testing something else. The full ladder, with the break beside the anti-lever and the cap toggle, is in <a href="p10-the-rul-bench.html">practitioner session 10</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Review a predictive-maintenance proposal in seven lines</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">No code. The retail team's proposal (constructed) is six lines long, each one ordinary good practice in a warehouse. Read it against a checklist built from sessions 1 to 4 and tonight. The seventh line is the one the proposal does not contain, and it is the one that matters most. The figure is the review sheet to keep.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 454" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn review sheet. On the left, a constructed proposal with six numbered lines and a seventh dashed blank: use all 21 sensor channels as features; drop any row with a gap before training; report one accuracy figure to the board; score risk per operator account; split the rows at random into train and test; retrain each quarter on the shop's own log; and, blank, nothing about time order. An arrow from each line points to a check. Session 1, 7 of 21 channels never move. Session 2, gaps cluster when it runs hot, and deleting them makes the engine look healthier. Session 3, set the lean before the number. Session 4, the unit is not a user. Tonight, split by engine, 70 train and 30 held out. Tonight, the loop censors the log. Tonight, shuffle time and rescore: 23.64 and 3,366 become 40.41 and 46,145.">
+        <defs>
+          <filter id="ia5cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="63" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia5cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia5cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia5cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia5cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia5cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia5cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia5cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia5cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia5cH" x="30" y="26">A CONSTRUCTED PROPOSAL, READ AGAINST FOUR SESSIONS AND TONIGHT</text>
+
+        <g filter="url(#ia5cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="42" width="470" height="352" rx="8" transform="rotate(-0.4 265 218)" fill="#FFFFFF"/>
+          <!-- gauge doodle on the proposal's corner -->
+          <path d="M456 70 A14 14 0 0 1 484 70"/>
+          <path d="M470 70 L478 58"/>
+          <circle cx="50" cy="96" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="140" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="184" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="228" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="272" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="316" r="10" fill="#F3F7EA"/>
+          <circle cx="50" cy="360" r="10" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="62" y="346" width="250" height="26" rx="5" transform="rotate(0.5 187 359)" fill="url(#ia5cHc)" stroke="#9B4D45" stroke-dasharray="6 5"/>
+          <path d="M480 96 L530 96" marker-end="url(#ia5cAr)"/>
+          <path d="M480 140 L530 140" marker-end="url(#ia5cAr)"/>
+          <path d="M480 184 L530 184" marker-end="url(#ia5cAr)"/>
+          <path d="M480 228 L530 228" marker-end="url(#ia5cAr)"/>
+          <path d="M480 272 L530 272" marker-end="url(#ia5cAr)"/>
+          <path d="M480 316 L530 316" marker-end="url(#ia5cAr)"/>
+          <path d="M330 360 L530 360" stroke="#9B4D45" marker-end="url(#ia5cAr)"/>
+        </g>
+
+        <text class="ia5cL" x="48" y="72">Proposal: predict failures at Harrow Lane</text>
+
+        <text class="ia5cA" x="50" y="100" text-anchor="middle">1</text>
+        <text class="ia5cL" x="70" y="100">Use all 21 sensor channels as features</text>
+        <text class="ia5cA" x="50" y="144" text-anchor="middle">2</text>
+        <text class="ia5cL" x="70" y="144">Drop any row with a gap before training</text>
+        <text class="ia5cA" x="50" y="188" text-anchor="middle">3</text>
+        <text class="ia5cL" x="70" y="188">Report one accuracy figure to the board</text>
+        <text class="ia5cA" x="50" y="232" text-anchor="middle">4</text>
+        <text class="ia5cL" x="70" y="232">Score risk per operator account</text>
+        <text class="ia5cA" x="50" y="276" text-anchor="middle">5</text>
+        <text class="ia5cL" x="70" y="276">Split the rows at random into train and test</text>
+        <text class="ia5cA" x="50" y="320" text-anchor="middle">6</text>
+        <text class="ia5cL" x="70" y="320">Retrain each quarter on the shop's own log</text>
+        <text class="ia5cB" x="50" y="364" text-anchor="middle">7</text>
+        <text class="ia5cB" x="74" y="364">(nothing about time order)</text>
+
+        <text class="ia5cA" x="540" y="100">session 1: 7 of 21 channels never move</text>
+        <text class="ia5cS" x="540" y="116">keep them out here, and write down why</text>
+        <text class="ia5cA" x="540" y="144">session 2: gaps cluster when it runs hot</text>
+        <text class="ia5cS" x="540" y="160">deleting them makes the engine look healthier</text>
+        <text class="ia5cA" x="540" y="188">session 3: set the lean before the number</text>
+        <text class="ia5cS" x="540" y="204">add bias, late share and the worst units</text>
+        <text class="ia5cA" x="540" y="232">session 4: the unit is not a user</text>
+        <text class="ia5cS" x="540" y="248">here it is the engine; at home, the household</text>
+        <text class="ia5cA" x="540" y="276">tonight: split by engine, not by row</text>
+        <text class="ia5cS" x="540" y="292">70 train, 30 held out, no engine on both sides</text>
+        <text class="ia5cA" x="540" y="320">tonight: the loop censors the log</text>
+        <text class="ia5cS" x="540" y="336">a pulled engine never shows its failure</text>
+        <text class="ia5cB" x="540" y="364">tonight: shuffle time, then rescore</text>
+        <text class="ia5cS" x="540" y="380">23.64 and 3,366 become 40.41 and 46,145</text>
+
+        <text class="ia5cN" x="30" y="422">Each line is ordinary warehouse practice; each check names its session. The blank line is the finding.</text>
+        <text class="ia5cS" x="30" y="440">Proposal constructed. Numbers: seed 2008, 300 cut points on 30 held-out engines, late-is-worse lean.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - six lines of good warehouse practice, six checks that each come from a session, and a copper blank where the proposal says nothing about time.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Read the proposal once, as written</h4>
+        <p>Six lines: use all 21 channels; drop rows with gaps; report one accuracy figure; score risk per operator account; split rows at random; retrain each quarter on the shop's own log. Before checking anything, write one sentence on what decision the model is meant to change and who makes it. If the proposal does not say, that is the first finding.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the channels and the gaps (sessions 1 and 2)</h4>
+        <p>Seven of the 21 channels never move under FD001's single operating condition; ask that they stay out here, with the reason written down. Then ask when the feed goes missing. If the answer is "when it runs hot", dropping rows with gaps removes the end of every engine's life and makes it look healthier than it is. Write the line "the readings go missing when..." and refuse the proposal until it is filled in.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the number and the unit (sessions 3 and 4)</h4>
+        <p>"One accuracy figure" hides which side the misses land on. Ask the team to set the lean first, signed by whoever owns the decision, and to report bias, late share and the worst few engines beside any summed score. Then replace "operator account" with the unit the rows are about: the engine. If the same proposal is reused for a home product, the unit is the household, and nobody in it is "the user".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the split (tonight, identity)</h4>
+        <p>A random row split puts cycles of one engine on both sides, and the test then marks the model on engines it has seen. Ask for a split by whole engine, the way the bench holds out 30 of 100. Write the rule as one line the team can be held to: "no unit appears in both training and test".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the log it will learn from (tonight, the loop)</h4>
+        <p>"Retrain on the shop's own log" sounds like good hygiene. Once the planner acts on the model, the engines it flags are pulled and their failures never happen. Ask what the log records for an engine pulled early, and how the team will tell "would have failed" from "was fine". If nobody knows, the retraining plan teaches the model from its own blind spot.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask for the line that is not there, and write the review</h4>
+        <p>The proposal says nothing about time order. Ask for the break test before anything else: shuffle cycle order inside each unit and rescore. On Harrow Lane's bench the top rung goes from 23.64 and 3,366 to 40.41 and 46,145 (the score under the late-is-worse lean). A model whose numbers barely move under that shuffle is not measuring degradation. Then write the review as seven lines, one per check, each marked pass, fix, or blank.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> When a proposal arrives in warehouse language, translate each line back into its mechanism before judging it: who wrote the row, what the unit is, when the truth arrives, what acting will hide, and which miss costs more. Then ask for the one test the warehouse never needed: shuffle time and show me the numbers.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Harrow Lane's retail data team proposes splitting the 20,631 rows of the fleet at random into training and test. What is the right objection?</p>
+      <div class="qopt">A · None; a random split is the standard way to avoid bias</div>
+      <div class="qopt">B · A random split is fine as long as the test set is large enough</div>
+      <div class="qopt">C · Cycles of the same engine would land on both sides, so the model is marked on engines it has already seen; split by whole engine, as the bench does with 70 training and 30 held-out engines</div>
+      <q class="qwhy">The unit is the engine, not the row. Each engine carries its own unknown initial wear, so its cycles are not interchangeable with another engine's. A large test set full of seen engines is still a flattering test.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The planner starts pulling every engine the model flags. A year later the team retrains on the shop's own maintenance log. What has happened to the data?</p>
+      <div class="qopt">A · The pulled engines never failed, so their outcomes are unknown; the failures that remain in the log are mostly the model's misses, and the new model learns from a dataset its own decisions shaped</div>
+      <div class="qopt">B · Nothing; a failure is a failure, and the log is as good as before</div>
+      <div class="qopt">C · The log now has more failures than before, because maintenance adds wear</div>
+      <q class="qwhy">Acting on a prediction removes the outcome it predicted. FD001 runs every engine to failure only because it is a simulation; a maintained fleet's log is censored by the maintenance itself.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Shuffling cycle order inside each engine takes the bench's top rung from RMSE 23.64 to 40.41, and its score from 3,366 to 46,145 under the late-is-worse lean. What should a leader take from it?</p>
+      <div class="qopt">A · The model is broken and should be scrapped</div>
+      <div class="qopt">B · The bench measures time: with everything else held fixed, destroying the order collapses both numbers, so an evaluation that ignores time order is testing something else</div>
+      <div class="qopt">C · RMSE is the better number, because it moved less than the score</div>
+      <q class="qwhy">The shuffle is a deliberate break that proves the bench's numbers depend on degradation over time. The score moves more because it is exponential and leans on lateness; that is a property of the lean, not evidence that either number is better.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 6</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, on a proposal you have seen and on the log your own operation keeps.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Run the seven-line review on a real proposal</h4>
+        <p>The last sensor or maintenance project you approved, or the next one on your desk. One line per check: channels, gaps, the number, the unit, the split, the log, time order. Mark each pass, fix or blank, and count the blanks.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find out what your log writes when a machine is serviced early</h4>
+        <p>Ask the people who keep the maintenance records. Is an early pull recorded as a pull, a failure, or nothing? Could anyone later tell an engine that would have failed from one that was fine? The answer decides whether your data can ever train a model honestly.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Hold one device against the baseline</h4>
+        <p>Pick one connected device you depend on and ask which of NIST IR 8259A's six capabilities it has: identification, configuration, data protection, logical access to interfaces, software update, cybersecurity state awareness. Bring the list to session 6, where the transfer map sorts what you already know from what you must learn.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The source</span><span class="note">A device with no intent that drifts and never says so. The NIST IR 8259A core baseline of six device capabilities, read at source; none of them promises a right reading.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The identity</span><span class="note">The unit is an engine or a household, never a user. Split by whole engine: 70 training, 30 held out, seed 2008.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The ground truth</span><span class="note">One failure per engine, at the end; the health index withheld; PHM08 test truth 10 to 150 cycles, validation 6 to 190, not announced. Saxena et al. (2008), read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The feedback loop</span><span class="note">Acting on a prediction removes the outcome; a maintained fleet's log is censored by the maintenance. FD001 has no loop because it is a simulation.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The cost of being wrong</span><span class="note">Late divided by 10, early by 13; about 46 against about 147 at 50 cycles. The printed equation and the figure disagree; the figure matches the prose.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Order matters: the break</span><span class="note">Cycle order shuffled inside each engine: RMSE 23.64 to 40.41, score 3,366 to 46,145 under the late-is-worse lean. 300 cut points on 30 held-out engines, not the NASA test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The seven-line proposal review</span><span class="note">Channels, gaps, the number, the unit, the split, the log, time order; drawn from sessions 1 to 4 and tonight.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The transfer map</span><span class="note">What carries over, what to learn, what to unlearn. <a href="a6-from-warehouse-to-plant-floor.html">Leader session 6</a>.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The device baseline as a requirement list</span><span class="note">Named tonight. <a href="p8-edge-or-cloud-budget.html">Practitioner session 8</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Pipeline drift monitors</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-data-observability-with-phoebe/courses/b5-distribution-drift.html">learn data observability, distribution drift</a>. Here the drift is in the physical sensor.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines, plants or incidents</span><span class="note">Out of scope by design. Real public rows from NASA's simulation, not real engines; the proposal and the teams are constructed; nothing here is purchasing advice.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one sentence.</strong> The warehouse playbook assumes an author, a user, a lookup, a visible outcome and an even price; a sensor floor removes all five.</div>
+      <div class="cheat-item"><strong>The source.</strong> A device writes the row and never says it drifted. NIST IR 8259A's six capabilities make it accountable, not right.</div>
+      <div class="cheat-item"><strong>The identity.</strong> The unit is an engine or a household. Split by whole unit: 70 training engines, 30 held out.</div>
+      <div class="cheat-item"><strong>The ground truth.</strong> One failure, at the end; every earlier row says "not yet". The health index was never given out.</div>
+      <div class="cheat-item"><strong>The feedback loop.</strong> Pull an engine and its failure never happens. A maintained fleet's log is censored by the maintenance.</div>
+      <div class="cheat-item"><strong>The cost of being wrong.</strong> Late divided by 10, early by 13: about 147 against about 46 at 50 cycles. Name the lean.</div>
+      <div class="cheat-item"><strong>The break.</strong> Shuffle time inside each engine: 23.64 and 3,366 become 40.41 and 46,145 (late-is-worse lean, 300 cut points).</div>
+      <div class="cheat-item"><strong>Seven lines.</strong> Channels, gaps, the number, the unit, the split, the log, time order. A blank is the finding.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 5 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="a4-the-home-is-a-sensor-network.html">← Leader session 4 · The home is a sensor network</a>
+        <a href="a6-from-warehouse-to-plant-floor.html">Leader session 6 · From warehouse to plant floor: the transfer map →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var sel = document.getElementById("ia5-order");
+  var out = document.getElementById("ia5-out");
+  var verdict = document.getElementById("ia5-verdict");
+  var self = document.getElementById("ia5-self");
+
+  /* canon settings: seed 2008 and every default; only the two rungs this widget needs */
+  var res = IOT.ladder(IOT_SAMPLE, { only: ["smooth", "shuffleSmooth"] });
+  var kept = res.smooth, brk = res.shuffleSmooth;
+
+  function perEngine(r) {
+    var by = {};
+    res.cuts.forEach(function (c, i) {
+      by[c.u] = (by[c.u] || 0) + IOT.phmScore(r.preds[i] - c.rul, res.opts.aEarly, res.opts.aLate);
+    });
+    return by;
+  }
+  var ek = perEngine(kept), eb = perEngine(brk), worse = 0;
+  res.testIds.forEach(function (u) { if (eb[u] > ek[u]) worse++; });
+
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function int(x) { return Math.round(x).toLocaleString("en-GB"); }
+
+  function render() {
+    var r = res[sel.value], isBreak = sel.value === "shuffleSmooth";
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Quantity</th><th>This run</th><th>Order kept</th></tr></thead><tbody>';
+    html += "<tr><td>RMSE</td><td><b>" + r.rmse.toFixed(2) + "</b></td><td>" + kept.rmse.toFixed(2) + "</td></tr>";
+    html += '<tr><td>Asymmetric score, summed</td><td><b class="' + (isBreak ? "ia5-brk" : "") + '">' + int(r.score) + "</b></td><td>" + int(kept.score) + "</td></tr>";
+    html += "<tr><td>Mean error (bias)</td><td>" + sgn(r.bias) + " cycles</td><td>" + sgn(kept.bias) + " cycles</td></tr>";
+    html += "<tr><td>Share predicted late</td><td>" + (100 * r.lateShare).toFixed(0) + "%</td><td>" + (100 * kept.lateShare).toFixed(0) + "%</td></tr>";
+    html += "<tr><td>Units under test</td><td>" + r.n + "</td><td>" + kept.n + "</td></tr>";
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+    if (isBreak) {
+      verdict.textContent = "Shuffled: RMSE " + kept.rmse.toFixed(2) + " becomes " + brk.rmse.toFixed(2) + " (" + (brk.rmse / kept.rmse).toFixed(1) +
+        " times), and the summed score " + int(kept.score) + " becomes " + int(brk.score) + " (" + (brk.score / kept.score).toFixed(1) +
+        " times, under the late-is-worse lean: late divided by " + res.opts.aLate + ", early by " + res.opts.aEarly + "). " + worse + " of the " + res.testIds.length +
+        " held-out engines score worse. Same engines, same values, same code; only the time order is gone. 300 cut points on 30 held-out engines, not the NASA test set.";
+    } else {
+      verdict.textContent = "Order kept: the top rung scores RMSE " + kept.rmse.toFixed(2) + " and " + int(kept.score) +
+        " over " + kept.n + " units, under the late-is-worse lean. Switch to the shuffle to see what the same fit does when the cycles inside each engine lose their order. 300 cut points on 30 held-out engines, not the NASA test set.";
+    }
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, including that late costs more than early at equal size, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia5-break .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia5-break table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ia5-break .ia5-brk { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 2 of 6. A sensor goes quiet exactly when conditions are worst, and deleting the gaps makes a failing engine look healthier. Harrow Lane Overhaul, a constructed shop, measures it on 300 cut points. Real public rows from NASA's simulation.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Missing is never random - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 2 of 6. When the hottest readings vanish and the rows with gaps are dropped, the error barely moves and the asymmetric score rises 38 percent.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a2-missing-is-never-random.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Missing is never random - learn iot data with phoebe">
+<meta name="twitter:description" content="Why a gap is missing decides whether you may ignore it. Three questions to put to every gap in a sensor feed.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 2 · Missing is never random - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 2 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 2 of 6</div>
+    <h1>Missing is <span class="accent">never random</span></h1>
+    <p class="sub">A warehouse analyst meets a blank cell and drops the row: a few rows fewer, the same answer. A sensor goes quiet for a reason, and the commonest reason is that conditions got bad: heat, load, vibration, the last weeks of a machine's life. Tonight Harrow Lane Overhaul, a constructed engine-overhaul shop, plants exactly that kind of dropout in its fleet's readings, drops the rows with gaps the way any tidy pipeline would, and watches its failing engines start to look healthier. The rows are real public rows from NASA's simulation, not real engines.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Anyone who signs off a maintenance or reliability model</span>
+      <span class="chip audience">Data leads arriving from the warehouse</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-14 · May you ignore the gap?</span>
+      <span class="a3" style="flex:4">14-30 · Worst conditions, healthier engine</span>
+      <span class="a4" style="flex:4">30-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane, the week the probe started going quiet</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed shop, and its fleet is the 100 turbofan engines in NASA's FD001 training set: simulated engines, each run cycle by cycle until it failed. In leader session 1 the file had no nulls at all. Tonight the shop asks what happens when it does: when the exhaust probe stops reporting on its hottest cycles, as struggling devices do, and the pipeline quietly drops every row with a gap before the model ever sees it.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> One idea from statistics, at a leader's depth: you may ignore why a reading is missing only under conditions, and a sensor that quits when it runs hot breaks them. A picture of where the gaps land in a machine's life: almost none early, most of them at the end. A measured result on Harrow Lane's bench: when the hottest readings vanish and the gappy rows are dropped, the error a data team usually reports barely moves while the cost of being late jumps. And three questions to put to every gap in a feed you own.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why "drop the blanks" misfires here<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>In a warehouse, a blank is usually somebody's slip: a field not filled, an import that skipped a column. Slips happen to orders of every size and every customer, so dropping those rows leaves a smaller table that still looks like the business. That instinct is sound there, and it is why "drop rows with nulls" is the first line of so many cleaning scripts.</p>
+        <p>A sensor does not slip at random. It goes quiet when its link is saturated, when its housing overheats, when the machine shakes hardest, when the power dips. Those are not ordinary moments in the machine's life; they cluster where the machine is struggling. Drop those rows and you have not removed noise, you have removed the end of the story, and the model will read what is left as a calmer machine than the one on the stand.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) reports that the new exhaust feed is "about 85 percent complete, and the cleaning step handles the rest". The planning lead asks the question tonight is about: which 15 percent? The answer, once someone plots it, is that almost all of the missing cycles sit in the last few weeks of each engine's life, the weeks the planner actually has to decide about.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Missingness.</strong> The pattern of which readings are absent, treated as data in its own right: when, where, and next to what.</li>
+          <li><strong>Ignorable.</strong> A gap you may analyse around without modelling why it happened. Rubin's 1976 paper sets out when that is allowed.</li>
+          <li><strong>Missing completely at random.</strong> The gap has nothing to do with the engine or the reading: a link hiccup that strikes any cycle alike.</li>
+          <li><strong>Missing at random.</strong> The gap depends only on something you did record, such as a logged test mode, so you can account for it.</li>
+          <li><strong>Missing not at random.</strong> The gap depends on the value that went missing: the probe quits because the reading is hot. The three names are the shorthand of later texts.</li>
+          <li><strong>Dropout.</strong> A device that stops writing for a while and then resumes. Tonight's dropout is planted, so its rule is known.</li>
+          <li><strong>Deletion.</strong> Dropping every row with a gap before modelling. Also called complete-case analysis. The cheapest fix, and the one measured tonight.</li>
+          <li><strong>Constructed.</strong> Harrow Lane is invented so that the truth is knowable. The engine rows are NASA's simulation; no figure describes a real engine or plant.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers when a gap may be ignored</span>
+      <h2>Why it is missing decides what you may do</h2>
+      <span class="tag concept">11 min live</span>
+    </div>
+    <p class="lede">The same probe can lose the same reading for three different reasons, and the reason, not the size of the hole, decides whether the rows you still have tell the truth. The figure draws the three: what decides whether a reading arrives, and what that means for the analyst who never sees the missing value.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in three rows, one per reason a sensor reading goes missing. Row one, completely at random: nothing about the engine decides, a link hiccup by chance; yes, the gap may be ignored, the sample is smaller with the same shape. Row two, at random given what you hold: something recorded decides, such as a logged test mode; yes, if you account for that column. Row three, shown in copper, not at random: the reading itself decides, the probe quits when the exhaust runs hot; no, the gap is shaped like the answer. A note says Rubin in 1976 gave the weakest general conditions under which the reason may be ignored.">
+        <defs>
+          <filter id="ia2aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia2aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia2aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia2aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia2aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia2aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia2aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia2aH" x="30" y="26">ONE PROBE, ONE MISSING READING, THREE REASONS</text>
+        <text class="ia2aA" x="210" y="58">the reading</text>
+        <text class="ia2aA" x="372" y="58">what decides whether it arrives</text>
+        <text class="ia2aA" x="642" y="58">may you ignore why?</text>
+
+        <g filter="url(#ia2aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- row 1 -->
+          <circle cx="186" cy="100" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M192 100 L208 100"/>
+          <rect x="210" y="76" width="120" height="48" rx="6" transform="rotate(-0.8 270 100)" fill="#FFFFFF" stroke-dasharray="6 5"/>
+          <path d="M332 100 L366 100" marker-end="url(#ia2aAr)"/>
+          <rect x="372" y="74" width="240" height="52" rx="6" transform="rotate(0.6 492 100)" fill="#FFFFFF"/>
+          <path d="M614 100 L636 100" marker-end="url(#ia2aAr)"/>
+          <rect x="642" y="74" width="214" height="52" rx="6" transform="rotate(-0.5 749 100)" fill="#F3F7EA"/>
+          <!-- row 2 -->
+          <circle cx="186" cy="190" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M192 190 L208 190"/>
+          <rect x="210" y="166" width="120" height="48" rx="6" transform="rotate(0.7 270 190)" fill="#FFFFFF" stroke-dasharray="6 5"/>
+          <path d="M332 190 L366 190" marker-end="url(#ia2aAr)"/>
+          <rect x="372" y="164" width="240" height="52" rx="6" transform="rotate(-0.6 492 190)" fill="#FFFFFF"/>
+          <path d="M614 190 L636 190" marker-end="url(#ia2aAr)"/>
+          <rect x="642" y="164" width="214" height="52" rx="6" transform="rotate(0.5 749 190)" fill="#F3F7EA"/>
+          <!-- row 3: the one the figure is about -->
+          <circle cx="186" cy="280" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M180 270 Q176 264 180 258 M188 268 Q184 262 188 256" stroke="#9B4D45" stroke-width="1.6"/>
+          <path d="M192 280 L208 280"/>
+          <rect x="210" y="256" width="120" height="48" rx="6" transform="rotate(-0.7 270 280)" fill="url(#ia2aHc)" stroke="#9B4D45" stroke-dasharray="6 5"/>
+          <path d="M332 280 L366 280" marker-end="url(#ia2aAr)"/>
+          <rect x="372" y="254" width="240" height="52" rx="6" transform="rotate(0.5 492 280)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M614 280 L636 280" marker-end="url(#ia2aAr)"/>
+          <rect x="642" y="254" width="214" height="52" rx="6" transform="rotate(-0.6 749 280)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <!-- feedback loop: the value decides its own absence -->
+          <path d="M270 306 Q270 330 330 330 L470 330 Q492 330 492 310" stroke="#9B4D45" stroke-dasharray="4 5" marker-end="url(#ia2aAr)"/>
+        </g>
+
+        <text class="ia2aH" x="30" y="96">Completely</text>
+        <text class="ia2aH" x="30" y="112">at random</text>
+        <text class="ia2aH" x="30" y="186">At random,</text>
+        <text class="ia2aH" x="30" y="202">given what you hold</text>
+        <text class="ia2aB" x="30" y="276">Not at random</text>
+        <text class="ia2aS" x="30" y="292">the sensor case</text>
+
+        <text class="ia2aS" x="270" y="104" text-anchor="middle">T50, gone</text>
+        <text class="ia2aS" x="270" y="194" text-anchor="middle">T50, gone</text>
+        <text class="ia2aB" x="270" y="284" text-anchor="middle">T50, gone</text>
+
+        <text class="ia2aL" x="386" y="96">nothing about the engine</text>
+        <text class="ia2aS" x="386" y="114">a link hiccup, by chance</text>
+        <text class="ia2aL" x="386" y="186">something you recorded</text>
+        <text class="ia2aS" x="386" y="204">such as a logged test mode</text>
+        <text class="ia2aB" x="386" y="276">the reading itself</text>
+        <text class="ia2aS" x="386" y="294">the probe quits when T50 runs hot</text>
+
+        <text class="ia2aL" x="656" y="96">yes: a smaller sample</text>
+        <text class="ia2aS" x="656" y="114">with the same shape</text>
+        <text class="ia2aL" x="656" y="186">yes, if you account</text>
+        <text class="ia2aS" x="656" y="204">for that recorded column</text>
+        <text class="ia2aB" x="656" y="276">no: the gap is shaped</text>
+        <text class="ia2aS" x="656" y="294">like the answer you wanted</text>
+
+        <text class="ia2aB" x="520" y="334">the value decides its own absence</text>
+
+        <text class="ia2aN" x="30" y="366">Rubin (1976) set out when the reason for a gap may be ignored; the conditions he called the weakest general ones</text>
+        <text class="ia2aN" x="30" y="384">start from missing at random. A probe that quits because its own reading is hot is outside them.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the same hole, three reasons; only in the copper row does the missing value decide its own absence, and that row is the sensor case.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Rubin's question, in a leader's words<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>In 1976 Donald Rubin asked a question every data team answers by habit without noticing: when is it acceptable to analyse the values you have and simply ignore the process that made the others go missing? His answer, in the abstract of the paper, is that it is acceptable only under conditions, and he described the ones he gave as "the weakest general conditions" under which ignoring that process is appropriate. For the usual kinds of estimate, the core one is that the data are missing at random.</p>
+        <p>For a leader, the translation is one sentence: <strong>dropping the gaps is a claim about why they happened.</strong> If the gaps strike any cycle alike, or depend only on something you recorded and can account for, the rows you keep still describe the machine. If the gaps depend on the very reading that went missing, no amount of careful analysis of the surviving rows recovers what was lost, because the survivors are a filtered sample: the filter is the thing you were trying to measure.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Three reasons a reading vanishes, on a real feed<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Completely at random.</strong> A radio link drops a packet now and then, regardless of what the engine is doing. Rare in practice, because even a link is more likely to struggle under heat or vibration, but it is the case most cleaning scripts silently assume.</p>
+        <p><strong>At random, given what you hold.</strong> The feed is switched off during a logged test procedure, and the log is in your data. The gap is explainable from a column you have, so you can account for it: compare like with like, or weight the rows you kept.</p>
+        <p><strong>Not at random.</strong> The probe's electronics cut out when the exhaust runs hot, so the hot readings are exactly the ones that never arrive. Nothing in the surviving rows says so. A sensor that stops reporting at the worst moment is the default assumption a leader should make about any device until someone shows otherwise.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>At Harrow Lane (constructed), the reliability engineer and the analyst argue for a while about whether 15 percent missing is "a lot". The planning lead stops them: the number is not the question. If the missing 15 percent were the quiet mid-life cycles, the planner would barely care. If it is the last weeks of each engine, it is all of the planner's decision. The size of a gap never tells you which.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the 1976 paper says, and what it does not<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Only the abstract of Rubin (1976) was read at source for tonight. It states two sets of conditions: for estimates built from sampling distributions, that the data are missing at random and observed at random; for likelihood or Bayesian estimates, that the data are missing at random and the parameter of the missing-data process is distinct from the one being estimated. It calls these the weakest general conditions under which ignoring the process is always appropriate.</p>
+        <p>The formal definitions, and the three-way naming used on this page (completely at random, at random, not at random), come from the full paper and from later texts; that is reported here, not read. The leader-level reading above does not depend on the fine print: if the gap depends on the missing value itself, you are outside the conditions, and the surviving rows are no longer a fair sample.</p>
+        <p>Imputation methods and missingness as a model feature are taught in <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">learn feature engineering, practitioner session 7, missing data as signal</a>. They are not retaught here.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers dropout when conditions are worst</span>
+      <h2>A sensor goes quiet when the machine is struggling</h2>
+      <span class="tag concept">8 min live</span>
+    </div>
+    <p class="lede">In leader session 1 the exhaust temperature, T50, barely moved for seven tenths of each engine's life and then climbed. So "the probe quits when it runs hot" is not a rule about temperature; it is a rule about age. The figure draws one life from first cycle to failure, the line where a reading counts as hot, and the readings that never arrive.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 390" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn schematic of one engine life. The exhaust temperature T50 stays nearly flat for most of the life and climbs steeply near failure, crossing a dashed copper line at 1416.2 degrees Rankine, the hottest 20 percent of all readings. Below, a row of reading dots: all present early, and near the end most are hollow, meaning they vanished. Labels say 1.6 percent of rows in the first half of life are hot, against 88.8 percent in the last 30 cycles. A copper panel states the planted rule: a reading at or above 1416.2 vanishes with probability 0.7, so 3,073 of 20,631 rows, 14.9 percent, vanish.">
+        <defs>
+          <filter id="ia2bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia2bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia2bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia2bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia2bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia2bV { font: 800 17px Inter, sans-serif; fill: #2A410C; }
+          .ia2bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia2bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia2bH" x="30" y="26">ONE LIFE, FIRST CYCLE TO FAILURE: WHERE THE READINGS GO MISSING</text>
+
+        <g filter="url(#ia2bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes -->
+          <path d="M60 50 L60 230 L600 230"/>
+          <!-- the hot line -->
+          <path d="M60 130 L600 130" stroke="#9B4D45" stroke-dasharray="7 6"/>
+          <!-- T50, schematic -->
+          <path d="M70 206 L130 205 L190 204 L250 202 L310 199 L370 193 L420 182 L470 165 L510 145 L545 120 L575 92 L592 72" stroke="#3F6212" stroke-width="2.6"/>
+          <!-- the probe at the hot end -->
+          <circle cx="592" cy="72" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M600 66 Q606 60 600 54 M608 70 Q614 64 608 58" stroke="#9B4D45" stroke-width="1.6"/>
+          <!-- bracket over the last 30 cycles -->
+          <path d="M520 248 L520 243 L596 243 L596 248" stroke="#9B4D45"/>
+          <!-- readings that arrived -->
+          <circle cx="70" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="82" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="94" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="106" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="118" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="130" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="142" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="154" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="166" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="178" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="190" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="202" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="214" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="226" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="238" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="250" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="262" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="274" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="286" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="298" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="310" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="322" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="334" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="346" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="358" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="370" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="382" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="394" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="406" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="418" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="430" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="442" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="454" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="466" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="478" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="490" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="502" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="514" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="526" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="550" cy="262" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <!-- readings that vanished -->
+          <circle cx="538" cy="262" r="3.5" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="2 2"/>
+          <circle cx="562" cy="262" r="3.5" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="2 2"/>
+          <circle cx="574" cy="262" r="3.5" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="2 2"/>
+          <circle cx="586" cy="262" r="3.5" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="2 2"/>
+          <!-- the planted rule -->
+          <rect x="652" y="50" width="204" height="190" rx="8" transform="rotate(0.8 754 145)" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia2bS" x="68" y="64">T50, schematic</text>
+        <text class="ia2bB" x="70" y="122">1416.2: the hottest 20% of all readings</text>
+        <text class="ia2bS" x="604" y="234">failure</text>
+        <text class="ia2bA" x="70" y="286">first half of life: 1.6% of rows are hot</text>
+        <text class="ia2bB" x="600" y="286" text-anchor="end">last 30 cycles: 88.8% hot</text>
+        <text class="ia2bS" x="70" y="304">filled dot = reading arrived · hollow dot = reading vanished</text>
+
+        <text class="ia2bH" x="668" y="76">THE PLANTED RULE</text>
+        <text class="ia2bS" x="668" y="94">modelled, and declared</text>
+        <text class="ia2bL" x="668" y="122">if T50 is at or above</text>
+        <text class="ia2bL" x="668" y="140">1416.2, the reading</text>
+        <text class="ia2bL" x="668" y="158">vanishes with probability 0.7</text>
+        <text class="ia2bV" x="668" y="196">3,073 rows</text>
+        <text class="ia2bS" x="668" y="216">of 20,631 vanish (14.9%)</text>
+
+        <text class="ia2bN" x="30" y="334">The rule never looks at the engine's age, only at the reading. Hot readings live near the end of life, so the</text>
+        <text class="ia2bN" x="30" y="352">holes land there too: missing because of the value, the case Rubin's conditions leave out.</text>
+        <text class="ia2bS" x="30" y="374">Curve drawn to shape; shares from all 100 engines, real public rows from NASA's simulation (C-MAPSS). Dropout planted.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the rule only looks at temperature, yet the hollow dots all land in the last stretch of life, because that is where the heat is.</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Worst conditions are the conditions that matter<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Across all 100 engines, 1.6 percent of the rows in the first half of each life are at or above 1416.2 degrees Rankine, the threshold that marks the hottest fifth of all readings. In each engine's last 30 cycles, 88.8 percent are. A device that struggles with heat therefore loses almost nothing while the engine is healthy and most of what it would have said in the cycles before failure.</p>
+        <p>The leader's point is general. Whatever makes a device quit (heat, vibration, a saturated link, a sagging supply) tends to peak when the machine is under stress, and a machine is most under stress near the end of its life. The rows a remaining-life model most needs are the rows most likely to be absent. That is why the title of the session is a working assumption, not a slogan: treat every gap as not at random until someone shows you the reason.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>How Harrow Lane plants the dropout<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The NASA file has no gaps, so Harrow Lane (constructed) adds them on purpose, with a rule written down before anything is measured. Every reading of T50 at or above 1416.2 is removed with probability 0.7, using a seeded random draw so the same rows vanish every time. That removes 3,073 of the 20,631 rows, 14.9 percent. Nothing else is changed: the cooler readings all arrive, and the other thirteen channels are not touched except that a row missing its T50 is a row with a gap.</p>
+        <p>Planting it is the point. On a real feed the reason for each gap is unknown and has to be argued about. Here the reason is declared, so the bench can show exactly what the cheapest response does to the estimate. The dropout is modelled, labelled modelled; the readings it removes are real public rows from NASA's simulation, in which the degradation itself is simulated (C-MAPSS).</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's reliability engineer (constructed) is the first to notice something off: the feed's dashboard shows the fleet's exhaust readings getting steadier and cooler over the quarter, while the hangar is busier than ever. The readings are not wrong. Each one that arrives is accurate. The ones that would have shown the climb are the ones that never arrive.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why a file with no nulls can hide the same problem<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Plenty of pipelines never show a null at all. A gateway that loses a reading may send the last value again, or a default, or simply nothing, so the row is never written and the table has no hole to count. Each of those makes the same kind of gap as tonight's, only harder to see: the completeness check reports 100 percent while the hot end of the story is missing or frozen.</p>
+        <p>The question to ask the people who maintain a device is therefore not "how many nulls" but "what does the device do when it struggles", which was the homework from leader session 1. The build-along below turns the answer into a line in a ledger.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers what deletion does to the estimate</span>
+      <h2>Drop the gaps and the engine looks healthier</h2>
+      <span class="tag concept">8 min live</span>
+    </div>
+    <p class="lede">Now the pipeline does the tidy thing: it drops every row with a gap and hands the rest to the model, which estimates each engine's remaining life from its most recent readings. The figure traces one estimate through that step, then shows what it did to all 300 estimates on Harrow Lane's bench: 300 cut points on 30 held-out engines, not the NASA test set.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline. Top left, the last ten cycles before today: seven cool readings arrive and the three hot ones vanish. Below, after dropping rows with gaps, seven rows remain and the newest is older and cooler, but is read as today. Top right, a number line of remaining life with the true value marked: with every reading the estimate lands 1.4 cycles late on average; after deletion it lands 4.7 cycles late. Bottom, three result boxes for all 300 units under test: square error 23.64 to 24.89, up 1.25 or about 5 percent; asymmetric score 3,366 to 4,656, up 1,290 or about 38 percent, shown in copper; late share 56 to 60 percent.">
+        <defs>
+          <filter id="ia2cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia2cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia2cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia2cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia2cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia2cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia2cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia2cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia2cH" x="30" y="26">WHAT "DROP ROWS WITH GAPS" DOES TO TODAY'S ESTIMATE</text>
+        <text class="ia2cA" x="30" y="56">what the probe saw, last 10 cycles before today</text>
+        <text class="ia2cA" x="30" y="156">what the model is handed after the drop</text>
+        <text class="ia2cH" x="480" y="56">WHICH SIDE OF THE TRUTH IT LANDS</text>
+
+        <g filter="url(#ia2cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- row A: ten cycles -->
+          <rect x="30" y="66" width="36" height="34" rx="4" transform="rotate(-0.8 48 83)" fill="url(#ia2cHc)"/>
+          <rect x="70" y="66" width="36" height="34" rx="4" transform="rotate(0.6 88 83)" fill="url(#ia2cHc)"/>
+          <rect x="110" y="66" width="36" height="34" rx="4" transform="rotate(-0.5 128 83)" fill="url(#ia2cHc)"/>
+          <rect x="150" y="66" width="36" height="34" rx="4" transform="rotate(0.7 168 83)" fill="url(#ia2cHc)"/>
+          <rect x="190" y="66" width="36" height="34" rx="4" transform="rotate(-0.6 208 83)" fill="url(#ia2cHc)"/>
+          <rect x="230" y="66" width="36" height="34" rx="4" transform="rotate(0.5 248 83)" fill="url(#ia2cHc)"/>
+          <rect x="270" y="66" width="36" height="34" rx="4" transform="rotate(-0.7 288 83)" fill="url(#ia2cHc)"/>
+          <rect x="310" y="66" width="36" height="34" rx="4" transform="rotate(0.8 328 83)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <rect x="350" y="66" width="36" height="34" rx="4" transform="rotate(-0.6 368 83)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <rect x="390" y="66" width="36" height="34" rx="4" transform="rotate(0.6 408 83)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <!-- the drop -->
+          <path d="M312 108 L312 160" marker-end="url(#ia2cAr)"/>
+          <!-- row B: seven survivors -->
+          <rect x="30" y="166" width="36" height="34" rx="4" transform="rotate(0.6 48 183)" fill="url(#ia2cHc)"/>
+          <rect x="70" y="166" width="36" height="34" rx="4" transform="rotate(-0.7 88 183)" fill="url(#ia2cHc)"/>
+          <rect x="110" y="166" width="36" height="34" rx="4" transform="rotate(0.5 128 183)" fill="url(#ia2cHc)"/>
+          <rect x="150" y="166" width="36" height="34" rx="4" transform="rotate(-0.6 168 183)" fill="url(#ia2cHc)"/>
+          <rect x="190" y="166" width="36" height="34" rx="4" transform="rotate(0.7 208 183)" fill="url(#ia2cHc)"/>
+          <rect x="230" y="166" width="36" height="34" rx="4" transform="rotate(-0.5 248 183)" fill="url(#ia2cHc)"/>
+          <rect x="270" y="166" width="36" height="34" rx="4" transform="rotate(0.8 288 183)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M310 183 L340 183" stroke="#9B4D45" marker-end="url(#ia2cAr)"/>
+          <!-- number line of remaining life -->
+          <path d="M490 150 L846 150"/>
+          <path d="M560 140 L560 160" stroke-width="2.6"/>
+          <circle cx="588" cy="150" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="654" cy="150" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M594 140 Q622 124 648 140" stroke="#9B4D45" marker-end="url(#ia2cAr)"/>
+          <!-- gauge doodle -->
+          <path d="M796 104 A20 20 0 0 1 836 104"/>
+          <path d="M816 106 L830 92" stroke="#9B4D45"/>
+          <!-- results -->
+          <rect x="30" y="262" width="258" height="84" rx="8" transform="rotate(-0.6 159 304)" fill="#FFFFFF"/>
+          <rect x="310" y="262" width="258" height="84" rx="8" transform="rotate(0.5 439 304)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="590" y="262" width="258" height="84" rx="8" transform="rotate(-0.4 719 304)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ia2cS" x="30" y="118">cool readings arrive</text>
+        <text class="ia2cB" x="426" y="118" text-anchor="end">hot ones vanish</text>
+        <text class="ia2cB" x="350" y="188">newest row left: older, cooler,</text>
+        <text class="ia2cB" x="350" y="204">and read as today</text>
+        <text class="ia2cS" x="30" y="224">nothing in the seven rows says three were removed</text>
+
+        <text class="ia2cS" x="490" y="132">early</text>
+        <text class="ia2cS" x="846" y="132" text-anchor="end">late</text>
+        <text class="ia2cL" x="560" y="128" text-anchor="middle">true</text>
+        <text class="ia2cA" x="588" y="178" text-anchor="middle">+1.4</text>
+        <text class="ia2cB" x="654" y="178" text-anchor="middle">+4.7</text>
+        <text class="ia2cS" x="490" y="204">mean error in cycles, all 300 units</text>
+        <text class="ia2cS" x="490" y="222">green: every reading · copper: after the drop</text>
+
+        <text class="ia2cH" x="46" y="288">Square error (RMSE)</text>
+        <text class="ia2cV" x="46" y="314">23.64 → 24.89</text>
+        <text class="ia2cS" x="46" y="334">+1.25, about 5 percent</text>
+        <text class="ia2cH" x="326" y="288">Asymmetric score, summed</text>
+        <text class="ia2cV" x="326" y="314">3,366 → 4,656</text>
+        <text class="ia2cB" x="326" y="334">+1,290, about 38 percent</text>
+        <text class="ia2cH" x="606" y="288">Share predicted late</text>
+        <text class="ia2cV" x="606" y="314">56% → 60%</text>
+        <text class="ia2cS" x="606" y="334">mean error +1.4 → +4.7 cycles</text>
+
+        <text class="ia2cN" x="30" y="376">Square error barely notices a late shift; the score, which punishes late harder, prices it. 300 cut points on</text>
+        <text class="ia2cN" x="30" y="394">30 held-out engines, not the NASA test set. Dropout planted; real public rows from NASA's simulation.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three cycles vanish, the model reads an older row as today, and the estimate slides to the late side, where the score bites hardest.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia2-gap">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Pick one of the 30 held-out engines. The page plants the declared dropout (T50 at or above 1416.2 vanishes with probability 0.7, seeded), drops the rows with gaps, refits the bench's best model and compares its 10 estimates for that engine with and without the drop. Real public rows from NASA's simulation, computed in your browser.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia2-unit">Held-out engine</label>
+        <select class="sql-code" id="ia2-unit"></select>
+        <div id="ia2-out"></div>
+        <p class="sql-note" id="ia2-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia2-self">...</div>
+    </div>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why deletion flatters a failing engine<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The model estimates remaining life from the most recent readings it holds. After the drop, the most recent row it holds is often not today's: it is the last cycle that was cool enough to be reported. The model treats that older, cooler row as the engine's current state, so it sees more health and predicts more life than is left. Across the 300 units under test the mean error moves from 1.4 cycles late to 4.7 cycles late, and the share of estimates that land late rises from 56 to 60 percent.</p>
+        <p>Not every engine moves the same way: pick a few in the widget and some barely shift or even move earlier, because a seeded random draw decides which hot readings vanish and each engine's model error starts from a different place. The pattern across the fleet is what the planner lives with, and it leans late. For an engine-overhaul shop, late is the expensive direction: an engine left in service that fails there.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Two numbers, two different stories<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The bench reports the same 300 estimates two ways. Root mean square error moves from 23.64 to 24.89: up 1.25, about 5 percent. A data team glancing at that would call the dropout a rounding problem. The PHM08 asymmetric score, the one published with this data, moves from 3,366 to 4,656: up 1,290, about 38 percent. The score grows exponentially with the error and punishes late more steeply than early (it divides a late miss by 10 and an early miss by 13 before exponentiating), so a modest slide to the late side costs far more than square error admits.</p>
+        <p>So the same planted fault is "about 5 percent worse" or "about 38 percent worse" depending on which number the report leads with. A leader who only ever sees RMSE will never learn that the cleaning step pushed the fleet's estimates late. Leader session 3 takes the score apart; tonight the habit is to ask for both numbers, and for the bias.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Should a bench report one score or several? The paper that published this data used one summed asymmetric score to rank the 2008 challenge entries, and in the same paper its authors argued for more than one number: weighting short true lives more heavily, and adding a correlation measure, because a single summed score can hide uneven performance across units. Tonight's two-number gap is a live example of why.</p>
+        <p>Others prefer one headline number precisely because several let a team pick the flattering one. Harrow Lane's bench prints RMSE, the summed score, the bias and the share predicted late side by side and crowns none of them. Which one your organisation leads with is a decision about what kind of mistake it most needs to see, and it should be made before the dropout, not after.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the model in the widget is<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It is the best rung of Harrow Lane's bench: the fourteen moving channels combined into one health index, a remaining-life target capped at 125 cycles (a convention chosen on this subset; 130 is also in use, and the bench prints both), and a short lag-free smoothing over the last ten health-index values. The smoothing's gain is small, 0.36 of RMSE at the canon settings, and a trailing mean over the same ten values lags and makes both numbers worse; it is not a fix for noise, and it is no fix for dropout either.</p>
+        <p>The model is fitted on 70 training engines and tested at 10 seeded cut points on each of the 30 held-out engines, so n = 300 units under test. The held-out engines stand in for the NASA test set, which is not used. Practitioner session 6 builds the planting and the measurement step by step.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 4 ============ -->
+  <section class="section" id="part-4">
+    <div class="section-kicker">
+      <span class="klabel">Part 4 · build-along</span>
+      <h2>A gap ledger for one feed you own</h2>
+      <span class="tag build">15 min hands on</span>
+    </div>
+    <p class="lede">No code. One feed, one page, three questions per gap: when does it go missing, what does the pipeline put in its place, and which way does that push the decision. The figure is the mechanism behind the second question: the same gap, filled three ways, and only one of them was measured tonight.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram. On the left, a rising sensor trace that stops before its end, leaving a gap where the probe went quiet. Three arrows lead to three cards. Card one, in copper: drop the row; the newest row left is older, so the engine looks healthier; measured tonight, score 3,366 to 4,656 and a later bias. Card two: repeat the last value; a frozen reading reads as a steady engine; not measured here. Card three: write a default; a placeholder can read as a fault or as nothing; not measured here, ask what the default is.">
+        <defs>
+          <filter id="ia2dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia2dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia2dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia2dH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2dL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia2dS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia2dB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia2dA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia2dN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia2dH" x="30" y="26">ONE GAP, THREE THINGS A PIPELINE CAN PUT IN IT</text>
+
+        <g filter="url(#ia2dSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the feed, with its gap -->
+          <rect x="30" y="56" width="230" height="160" rx="8" transform="rotate(-0.8 145 136)" fill="#F3F7EA"/>
+          <path d="M46 186 L80 184 L114 181 L148 175 L176 166" stroke="#3F6212" stroke-width="2.6"/>
+          <path d="M176 166 L202 150 L226 126 L244 98" stroke="#9B4D45" stroke-dasharray="4 6"/>
+          <circle cx="176" cy="166" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M184 202 L184 196 L246 196 L246 202" stroke="#9B4D45"/>
+          <!-- three arrows -->
+          <path d="M262 120 L298 88" marker-end="url(#ia2dAr)"/>
+          <path d="M262 136 L298 174" marker-end="url(#ia2dAr)"/>
+          <path d="M262 152 L298 258" marker-end="url(#ia2dAr)"/>
+          <!-- card 1: drop -->
+          <rect x="304" y="52" width="552" height="74" rx="8" transform="rotate(0.4 580 89)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M320 104 L350 102 L376 96" stroke="#3F6212"/>
+          <circle cx="376" cy="96" r="3.5" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- card 2: repeat last value -->
+          <rect x="304" y="138" width="552" height="74" rx="8" transform="rotate(-0.5 580 175)" fill="#FFFFFF"/>
+          <path d="M320 190 L350 188 L376 182" stroke="#3F6212"/>
+          <path d="M376 182 L412 182" stroke="#3F6212" stroke-dasharray="3 4"/>
+          <!-- card 3: default -->
+          <rect x="304" y="224" width="552" height="74" rx="8" transform="rotate(0.5 580 261)" fill="#FFFFFF"/>
+          <path d="M320 276 L350 274 L376 268 L380 288 L410 288" stroke="#3F6212"/>
+        </g>
+
+        <text class="ia2dL" x="46" y="80">the feed, near the end</text>
+        <text class="ia2dB" x="184" y="214">the gap</text>
+        <text class="ia2dS" x="46" y="234">the probe went quiet here</text>
+
+        <text class="ia2dB" x="430" y="78">1 · Drop the row</text>
+        <text class="ia2dS" x="430" y="96">the newest row left is older, so the engine looks healthier</text>
+        <text class="ia2dB" x="430" y="114">measured tonight: score 3,366 → 4,656, bias later</text>
+
+        <text class="ia2dL" x="430" y="164">2 · Repeat the last value</text>
+        <text class="ia2dS" x="430" y="182">a frozen reading reads as a steady engine</text>
+        <text class="ia2dA" x="430" y="200">not measured here: reason it through with the team</text>
+
+        <text class="ia2dL" x="430" y="250">3 · Write a default</text>
+        <text class="ia2dS" x="430" y="268">a placeholder can read as a fault, or as nothing at all</text>
+        <text class="ia2dA" x="430" y="286">not measured here: ask what the default value is</text>
+
+        <text class="ia2dN" x="30" y="332">Every choice hides the gap from the model; only the first was measured on Harrow Lane's bench. For the</text>
+        <text class="ia2dN" x="30" y="350">other two, the ledger records what the pipeline does and which way you expect it to push the estimate.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three fills for one gap; the copper card is the one the bench measured, and the ledger asks which of the three your pipeline does.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Pick one feed and one decision</h4>
+        <p>The same feed you used for leader session 1's homework, or any device-written feed that drives a decision: pull a machine, dispatch a crew, raise an alarm. Write the decision in one sentence and name who makes it.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask when it goes missing</h4>
+        <p>Not how often: when. Ask the people who maintain the device and the people who run the pipeline. Write the answer as "readings go missing when..." and mark whether that moment is near the conditions your decision is about. If it is, assume not at random until shown otherwise.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask what the pipeline puts in the gap</h4>
+        <p>Drop the row, repeat the last value, or write a default: pick the one your pipeline actually does, from the people who wrote it, not from the dashboard. Many feeds do more than one at different stages. Write each down.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask which way it pushes the decision</h4>
+        <p>For each fill, say in plain words whether it makes the machine look healthier, sicker or merely steadier than it is. On Harrow Lane's bench, dropping the rows pushed the fleet's estimates late. Mark the direction your team believes, and whether anyone has measured it.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask which number would show it</h4>
+        <p>Find the one accuracy figure your team reports for this model. Would it move if the estimates slid late by a few cycles? Tonight RMSE moved about 5 percent while the asymmetric score moved about 38 percent. If the reported number is RMSE alone, ask for the bias beside it.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the one line for the planner</h4>
+        <p>"This feed goes missing when ..., the pipeline fills the gap by ..., and that probably makes our estimates ... ." One line, in the planner's words. A blank in that line is the finding to take to leader session 3.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Never accept a completeness percentage on its own. Ask when the gaps happen, what fills them, and which way that pushes the decision. A gap is never just smaller data; it is a claim about why the data is not there.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Harrow Lane's analyst says the exhaust feed is 85 percent complete and proposes dropping the rows with gaps, because "15 percent is small". What should a leader ask first?</p>
+      <div class="qopt">A · Whether 15 percent is under the usual threshold for acceptable missing data</div>
+      <div class="qopt">B · Which tool the team will use to fill the gaps instead</div>
+      <div class="qopt">C · When the readings go missing, and whether the reason depends on the reading itself, such as a probe that quits when it runs hot</div>
+      <q class="qwhy">The size of a gap never says whether it may be ignored; the reason does. If the probe quits on hot cycles, the missing 15 percent is the end of each engine's life, and dropping it is a claim Rubin's conditions do not support.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">On Harrow Lane's bench, after the planted dropout and deletion, RMSE moves from 23.64 to 24.89 and the asymmetric score from 3,366 to 4,656. What is the right reading?</p>
+      <div class="qopt">A · Square error barely notices that the estimates slid late; the score, which punishes late harder, prices it. Report both, with the bias</div>
+      <div class="qopt">B · The dropout is harmless, since RMSE moved only about 5 percent</div>
+      <div class="qopt">C · The score is unreliable, since it disagrees with RMSE</div>
+      <q class="qwhy">The mean error went from +1.4 to +4.7 cycles. A late slide of a few cycles adds little to square error but a lot to an exponential score that divides a late miss by 10 and an early one by 13. Both numbers are honest; they answer different questions.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Why does dropping the rows with gaps make a failing engine look healthier?</p>
+      <div class="qopt">A · Because deletion adds random noise, which averages out to a healthier reading</div>
+      <div class="qopt">B · Because the hot readings are the ones that vanished, so the newest row left is older and cooler, and the model reads it as today</div>
+      <div class="qopt">C · Because the model was fitted on different engines from the ones it is tested on</div>
+      <q class="qwhy">The planted rule removes only hot readings, and hot readings live near the end of life. After the drop the model's "latest" view of the engine is a cooler moment from earlier, so it predicts more life than is left.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 3</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Twenty minutes, on the ledger you started tonight.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Finish the gap ledger for one real feed</h4>
+        <p>When it goes missing, what fills the gap, which way that pushes the decision. One line each, with the name of whoever told you. Mark every line nobody could answer.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find the number your reports lead with</h4>
+        <p>Look at the last model review you sat through. Was the accuracy figure a square error, a hit rate, something else? Would it have moved if the estimates slid late? Bring the answer to leader session 3, which is about that choice.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Rank the two mistakes, again</h4>
+        <p>In leader session 1 you ranked a false alarm against a missed failure. Now that you know a cleaning step can push estimates late, does the ranking change what you would tolerate from the pipeline? Write one sentence.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">When a gap may be ignored</span><span class="note">Rubin (1976): the weakest general conditions for ignoring the missing-data process start from missing at random. Abstract read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Three reasons a reading vanishes</span><span class="note">Completely at random, at random given what you hold, not at random, at leader depth. The names are later texts' shorthand (reported).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Dropout when conditions are worst</span><span class="note">1.6 percent of first-half rows are hot against 88.8 percent of rows in the last 30 cycles, all 100 engines.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The planted dropout</span><span class="note">T50 at or above 1416.2 vanishes with probability 0.7, seeded: 3,073 of 20,631 rows, 14.9 percent. Modelled and declared.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Deletion makes the engine look healthier</span><span class="note">RMSE 23.64 to 24.89, score 3,366 to 4,656, bias +1.4 to +4.7, late share 56 to 60 percent. 300 cut points on 30 held-out engines, not the NASA test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The gap ledger</span><span class="note">When it goes missing, what fills the gap, which way it pushes the decision, which number would show it.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The asymmetric score</span><span class="note">Used tonight, late punished harder. Leader session 3, practitioner session 7.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Planting and measuring dropout by hand</span><span class="note">Named tonight. Practitioner session 6.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Imputation methods, missingness as a feature</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">learn feature engineering, practitioner session 7</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines, plants or incidents</span><span class="note">Out of scope by design. Real public rows from NASA's simulation, not real engines; the dropout is planted.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one sentence.</strong> Dropping a gap is a claim about why it happened.</div>
+      <div class="cheat-item"><strong>Rubin's condition.</strong> You may ignore why data is missing only under conditions that start from missing at random (Rubin, 1976).</div>
+      <div class="cheat-item"><strong>The sensor default.</strong> Assume not at random: devices quit under heat, load and vibration, which peak near failure.</div>
+      <div class="cheat-item"><strong>Where the gaps land.</strong> 1.6 percent of first-half rows are hot; 88.8 percent of last-30-cycle rows are.</div>
+      <div class="cheat-item"><strong>The planted rule.</strong> T50 at or above 1416.2 vanishes with probability 0.7: 3,073 of 20,631 rows.</div>
+      <div class="cheat-item"><strong>What deletion does.</strong> The newest row left is older and cooler, so the engine looks healthier and estimates slide late (+1.4 to +4.7).</div>
+      <div class="cheat-item"><strong>Two numbers.</strong> RMSE up about 5 percent, the asymmetric score up about 38 percent. Ask for both, and the bias.</div>
+      <div class="cheat-item"><strong>The ledger.</strong> When does it go missing? What fills the gap? Which way does that push the decision?</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 2 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="a1-the-sensor-is-the-source-of-truth.html">← Leader session 1 · The sensor is the source of truth until it drifts</a>
+        <a href="a3-a-false-alarm-stops-the-line.html">Leader session 3 · A false alarm stops the line →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var sel = document.getElementById("ia2-unit");
+  var out = document.getElementById("ia2-out");
+  var verdict = document.getElementById("ia2-verdict");
+  var self = document.getElementById("ia2-self");
+
+  /* canon settings: seed 2008 and every default; only the two rungs this widget needs */
+  var res = IOT.ladder(IOT_SAMPLE, { only: ["smooth", "mnarSmooth"] });
+  var units = IOT.decode(IOT_SAMPLE);
+  var planted = IOT.prepare(units, res.opts, "mnar", IOT_SAMPLE.channels).units;
+  var clean = res.smooth, mnar = res.mnarSmooth;
+
+  function lostIn(u, from, to) {
+    var kept = {}, pu = planted[u - 1], c, n = 0;
+    for (var t = 0; t < pu.cyc.length; t++) kept[pu.cyc[t]] = 1;
+    for (c = from; c <= to; c++) if (!kept[c]) n++;
+    return n;
+  }
+  function perEngine(u) {
+    var dc = 0, dm = 0, sc = 0, sm = 0, qc = 0, qm = 0, n = 0;
+    res.cuts.forEach(function (c, i) {
+      if (c.u !== u) return;
+      var a = clean.preds[i] - c.rul, b = mnar.preds[i] - c.rul;
+      dc += a; dm += b; qc += a * a; qm += b * b;
+      sc += IOT.phmScore(a, res.opts.aEarly, res.opts.aLate);
+      sm += IOT.phmScore(b, res.opts.aEarly, res.opts.aLate);
+      n++;
+    });
+    return { n: n, bc: dc / n, bm: dm / n, rc: Math.sqrt(qc / n), rm: Math.sqrt(qm / n), sc: sc, sm: sm };
+  }
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function int(x) { return Math.round(x).toLocaleString("en-GB"); }
+
+  var fleetLate30 = 0, fleetRows30 = 0, movedLater = 0;
+  units.forEach(function (u) { fleetLate30 += lostIn(u.u, u.n - 29, u.n); fleetRows30 += 30; });
+  var ids = res.testIds.slice().sort(function (a, b) { return a - b; });
+  ids.forEach(function (u) { var e = perEngine(u); if (e.bm > e.bc) movedLater++; });
+
+  ids.forEach(function (u) {
+    var o = document.createElement("option");
+    o.value = u;
+    o.textContent = "Engine " + u + " · " + units[u - 1].n + " cycles";
+    if (u === 39) o.selected = true;
+    sel.appendChild(o);
+  });
+
+  function render() {
+    var u = Number(sel.value), n = units[u - 1].n, e = perEngine(u);
+    var lost = n - planted[u - 1].rows.length, late30 = lostIn(u, n - 29, n);
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Quantity</th><th>Engine ' + u + '</th><th>Across the bench</th></tr></thead><tbody>';
+    html += "<tr><td>Rows that vanish</td><td><b>" + lost + "</b> of " + n + "</td><td>" + int(res.mnar.dropped) + " of " + int(res.mnar.total) + " (all 100 engines)</td></tr>";
+    html += "<tr><td>Of those, in the last 30 cycles</td><td><b>" + late30 + "</b> of 30</td><td>" + int(fleetLate30) + " of " + int(fleetRows30) + " (all 100 engines)</td></tr>";
+    html += "<tr><td>Mean error, every reading arrives</td><td><b>" + sgn(e.bc) + "</b> cycles</td><td>" + sgn(clean.bias) + " cycles (300 units)</td></tr>";
+    html += '<tr><td>Mean error, after the drop</td><td><b class="ia2-late">' + sgn(e.bm) + "</b> cycles</td><td>" + sgn(mnar.bias) + " cycles</td></tr>";
+    html += "<tr><td>RMSE, every reading → after the drop</td><td>" + e.rc.toFixed(2) + " → " + e.rm.toFixed(2) + "</td><td>" + clean.rmse.toFixed(2) + " → " + mnar.rmse.toFixed(2) + "</td></tr>";
+    html += "<tr><td>Asymmetric score, summed</td><td>" + int(e.sc) + " → " + int(e.sm) + "</td><td>" + int(clean.score) + " → " + int(mnar.score) + "</td></tr>";
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+    var shift = e.bm - e.bc;
+    verdict.textContent = "Engine " + u + " loses " + lost + " of its " + n + " rows, " + late30 + " of them in its last 30 cycles. After the drop its 10 estimates move " +
+      (shift >= 0 ? "later by " : "earlier by ") + Math.abs(shift).toFixed(1) + " cycles on average (positive error = late). " +
+      movedLater + " of the 30 held-out engines move later, and across all 300 units the mean error goes from " + sgn(clean.bias) + " to " + sgn(mnar.bias) +
+      ". Dropout planted and declared; 300 cut points on 30 held-out engines, not the NASA test set.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia2-gap .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia2-gap table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ia2-gap .ia2-late { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

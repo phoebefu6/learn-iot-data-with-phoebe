@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 1 of 6. A sensor row is written by a device that drifts, goes flat or drops out, and never says so. Harrow Lane Overhaul, a constructed shop, reads 100 simulated engines run to failure. Real public rows from NASA's simulation. Not purchasing or investment advice.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The sensor is the source of truth until it drifts - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 1 of 6. Seven of 21 channels never move; the hottest readings live in the last tenth of life. What a leader asks before trusting a sensor dataset.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a1-the-sensor-is-the-source-of-truth.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The sensor is the source of truth until it drifts - learn iot data with phoebe">
+<meta name="twitter:description" content="No author, no intent, no user id. Four questions to put to any sensor dataset.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 1 · The sensor is the source of truth until it drifts - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 1 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 1 of 6</div>
+    <h1>The sensor is the source of truth <span class="accent">until it drifts</span></h1>
+    <p class="sub">A warehouse row is written by a person or a system that meant it. A sensor row is written by a device that drifts, goes flat or drops out exactly when conditions are worst, and the row never says which. Harrow Lane Overhaul, a constructed engine-overhaul shop, has 100 engines' worth of readings from first cycle to failure and a planner who wants to know which engines to pull next week. Tonight is what those readings are, what they are not, and the four questions a leader puts to any sensor dataset before a model is discussed. The rows are real public rows from NASA's simulation, not real engines, and nothing here is purchasing or investment advice.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Anyone who owns a maintenance or reliability decision</span>
+      <span class="chip audience">Data leads arriving from the warehouse</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-18 · A row nobody meant</span>
+      <span class="a3" style="flex:3">18-28 · Harrow Lane's fleet</span>
+      <span class="a4" style="flex:4">28-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane, on the morning the sensor feed arrives</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed shop: a planning lead, two reliability engineers, a data analyst who came from a retail warehouse, and a hangar that can take a limited number of engines a week. Its fleet, for every session here, is the 100 turbofan engines in NASA's FD001 training set: simulated engines, each started with its own unknown wear, each run cycle by cycle until it failed. The analyst opens the file and sees what looks like a tidy fact table. It is not one, and the ways it is not are the subject of the six leader sessions.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A clear picture of what a sensor row is: a reading taken at a place in a machine, by a device with no intent, at a moment chosen by a clock. Where the 21 channels of a simulated turbofan are read, and why 7 of them never move in this data. What drift looks like across a fleet: the exhaust temperature that barely changes for seven tenths of an engine's life and then climbs. And four questions to put to any sensor dataset before anyone shows you a model. Nothing here is advice on what to buy or which machine to service.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why the warehouse instinct misfires here<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A warehouse analyst trusts three things without naming them. A row has an author: an order was placed by a customer, an invoice raised by a clerk, a status changed by a system that was told to change it. A row has an identity: a customer id, an order id, something a person can be asked about. And a wrong row is visible: a negative quantity, a missing key, a total that does not reconcile.</p>
+        <p>A sensor row has none of the three. Its author is a device bolted to a machine, and the device meant nothing by it. Its identity is a machine and a cycle count, not a person who can be phoned. And a wrong row looks exactly like a right one: a temperature probe that has drifted two degrees writes a perfectly formatted number two degrees off, every cycle, forever. Each absence on its own is a caveat. Together they make the table a different kind of object.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst ran the checks she always ran: nulls, duplicates, ranges, keys. Every one passed. The file has no nulls at all, every unit has every cycle from 1 to its last, and every value sits in a plausible range. The planning lead took that as a clean bill of health. What the checks could not see is that seven columns carry no information in this operating condition and that the information in the other fourteen is concentrated in the last few tenths of each engine's life. Neither is a data-quality failure. Both change what any model can learn.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Channel.</strong> One sensor's stream of readings. FD001 has 21 sensor channels and 3 operational settings per row.</li>
+          <li><strong>Cycle.</strong> One operating cycle of the engine, one row. Time is counted in cycles, not in clock time.</li>
+          <li><strong>Run to failure.</strong> A series that starts with a healthy machine and ends when it fails. The training set is all run to failure; the test set stops some time before.</li>
+          <li><strong>Remaining useful life (RUL).</strong> Cycles left before failure. The target every practitioner session is built around.</li>
+          <li><strong>Health index.</strong> One number for how close a machine is to its limits. In the simulation it exists, and it was deliberately not given to anyone using the data.</li>
+          <li><strong>Drift.</strong> A slow movement in a reading that is not the thing you care about changing, or is, and looks the same either way.</li>
+          <li><strong>Flat channel.</strong> A channel that never moves under the conditions in the data. Not broken, just silent here.</li>
+          <li><strong>Constructed.</strong> Harrow Lane and Flat 4B are invented so that the truth is knowable. The engine rows are NASA's simulation; no figure describes a real engine, plant or household.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers what a sensor row is</span>
+      <h2>A row nobody meant to write</h2>
+      <span class="tag concept">15 min live</span>
+    </div>
+    <p class="lede">The clearest way to see what a sensor row is, is to draw where it comes from. Air enters the fan and passes through two compressors, the burner and two turbines. Probes sit between the stages and read temperature, pressure and shaft speed once a cycle. The simulation degrades one stage, the high-pressure compressor, and the readings downstream move because of it. The table on the right is all that reaches the analyst.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn schematic of a turbofan's gas path. Seven stages in a row, left to right: fan, low-pressure compressor, high-pressure compressor shown hatched in copper as the degrading stage, burner, high-pressure turbine, low-pressure turbine, nozzle. Sensor dots below the stages read fan speed, LPC exit temperature, HPC exit temperature and pressure, core speed and LPT exit temperature. A dashed box below says the health index is the lowest of four margins and is not in the data. On the right, one row card for unit 1, cycle 1 shows three temperatures and says 14 channels move and 7 are flat, with no author and no intent.">
+        <defs>
+          <filter id="ia1aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia1aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia1aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia1aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia1aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia1aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia1aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia1aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia1aH" x="30" y="26">WHERE THE CHANNELS ARE READ</text>
+        <text class="ia1aH" x="620" y="26">WHAT REACHES THE TABLE</text>
+        <text class="ia1aA" x="30" y="52">air flows this way</text>
+
+        <g filter="url(#ia1aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M140 48 L560 48" marker-end="url(#ia1aAr)"/>
+          <!-- seven stages -->
+          <rect x="30" y="70" width="70" height="60" rx="6" transform="rotate(-0.8 65 100)" fill="#FFFFFF"/>
+          <rect x="110" y="70" width="70" height="60" rx="6" transform="rotate(0.6 145 100)" fill="#FFFFFF"/>
+          <rect x="190" y="70" width="80" height="60" rx="6" transform="rotate(-0.5 230 100)" fill="url(#ia1aHc)" stroke="#9B4D45"/>
+          <rect x="280" y="70" width="70" height="60" rx="6" transform="rotate(0.7 315 100)" fill="#FFFFFF"/>
+          <rect x="360" y="70" width="70" height="60" rx="6" transform="rotate(-0.6 395 100)" fill="#FFFFFF"/>
+          <rect x="440" y="70" width="70" height="60" rx="6" transform="rotate(0.5 475 100)" fill="#FFFFFF"/>
+          <rect x="520" y="70" width="70" height="60" rx="6" transform="rotate(-0.4 555 100)" fill="#F3F7EA"/>
+          <!-- sensor stems and dots -->
+          <path d="M65 130 L65 150"/><circle cx="65" cy="154" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M145 130 L145 150"/><circle cx="145" cy="154" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M230 130 L230 150"/><circle cx="230" cy="154" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M395 130 L395 150"/><circle cx="395" cy="154" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M475 130 L475 150"/><circle cx="475" cy="154" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <!-- the health index box, dashed: it exists and is not in the data -->
+          <rect x="30" y="236" width="560" height="62" rx="8" transform="rotate(-0.3 310 267)" stroke-dasharray="7 6" fill="#FFFFFF"/>
+          <!-- the row card -->
+          <rect x="620" y="44" width="232" height="190" rx="8" transform="rotate(0.8 736 139)" fill="#F3F7EA"/>
+          <path d="M636 82 L836 82" stroke="#CDD5C0" stroke-width="1.5"/>
+          <!-- the stamp -->
+          <rect x="640" y="252" width="192" height="44" rx="6" transform="rotate(-1.2 736 274)" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia1aL" x="65" y="105" text-anchor="middle">Fan</text>
+        <text class="ia1aL" x="145" y="105" text-anchor="middle">LPC</text>
+        <text class="ia1aB" x="230" y="105" text-anchor="middle">HPC</text>
+        <text class="ia1aL" x="315" y="105" text-anchor="middle">Burner</text>
+        <text class="ia1aL" x="395" y="105" text-anchor="middle">HPT</text>
+        <text class="ia1aL" x="475" y="105" text-anchor="middle">LPT</text>
+        <text class="ia1aL" x="555" y="105" text-anchor="middle">Nozzle</text>
+
+        <text class="ia1aL" x="65" y="178" text-anchor="middle">Nf</text>
+        <text class="ia1aS" x="65" y="194" text-anchor="middle">fan rpm</text>
+        <text class="ia1aL" x="145" y="178" text-anchor="middle">T24</text>
+        <text class="ia1aS" x="145" y="194" text-anchor="middle">LPC exit</text>
+        <text class="ia1aB" x="230" y="178" text-anchor="middle">T30, P30</text>
+        <text class="ia1aS" x="230" y="194" text-anchor="middle">HPC exit</text>
+        <text class="ia1aL" x="395" y="178" text-anchor="middle">Nc</text>
+        <text class="ia1aS" x="395" y="194" text-anchor="middle">core rpm</text>
+        <text class="ia1aL" x="475" y="178" text-anchor="middle">T50</text>
+        <text class="ia1aS" x="475" y="194" text-anchor="middle">LPT exit</text>
+
+        <text class="ia1aB" x="30" y="222">copper: FD001 simulates one fault, the HPC losing flow and efficiency</text>
+
+        <text class="ia1aL" x="48" y="262">The health index exists in the simulation and is not in the data</text>
+        <text class="ia1aS" x="48" y="282">the lowest of four margins (fan, LPC and HPC stall, EGT); 1 healthy, 0 failed</text>
+
+        <text class="ia1aL" x="636" y="70">unit 1 · cycle 1</text>
+        <text class="ia1aS" x="636" y="104">T24 (LPC exit)</text>
+        <text class="ia1aL" x="836" y="104" text-anchor="end">641.81</text>
+        <text class="ia1aS" x="636" y="126">T30 (HPC exit)</text>
+        <text class="ia1aL" x="836" y="126" text-anchor="end">1589.59</text>
+        <text class="ia1aS" x="636" y="148">T50 (LPT exit)</text>
+        <text class="ia1aL" x="836" y="148" text-anchor="end">1400.89</text>
+        <text class="ia1aS" x="636" y="170">... 11 more that move</text>
+        <text class="ia1aA" x="636" y="196">14 channels move</text>
+        <text class="ia1aA" x="636" y="216">7 never move in FD001</text>
+        <text class="ia1aB" x="736" y="270" text-anchor="middle">no author, no intent</text>
+        <text class="ia1aS" x="736" y="287" text-anchor="middle">and no field that says "drifted"</text>
+
+        <text class="ia1aN" x="30" y="350">The fault sits in one stage; the evidence of it arrives as small moves in readings taken elsewhere. The one number that would</text>
+        <text class="ia1aN" x="30" y="368">say how close each engine is to its limit was kept back on purpose, so it has to be inferred from the readings.</text>
+        <text class="ia1aS" x="30" y="392">Temperatures in degrees Rankine as in the source; values from the shipped sample, kept to the step of each channel.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the fault is in the copper stage, the evidence is in the green dots, and the health index sits in a dashed box because nobody using the data ever sees it.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Three ways a sensor misleads without lying<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Noise.</strong> Every reading carries measurement noise. Saxena and colleagues, who built the simulation, contaminated it in stages on purpose: the degradation path was masked by a mixture of two random distributions, passed through the engine's own dynamics, and then measurement noise was added to every output channel. The result is noise that is harder to characterise than a single clean bell curve, which is the point: real data looks like that too.</p>
+        <p><strong>Drift.</strong> A reading that moves slowly for a reason you did not plan for. Here the drift is the signal: the exhaust temperature creeps up as the compressor degrades. In a real plant it can just as easily be the probe ageing. The row cannot tell you which, and nothing in it changes when the cause does.</p>
+        <p><strong>Silence.</strong> Seven of the 21 channels never move in FD001: the fan-inlet temperature and pressure, the bypass-duct pressure (two distinct values in 20,631 rows), the engine pressure ratio, the burner fuel-air ratio and the two demanded fan speeds. FD001 is a single operating condition at sea level, so inlet conditions and demands are constant. They are not broken; they are uninformative here, and a model that is handed them gains nothing.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The number you would want, and why you never get it<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Inside the simulation, every engine has a health index at every cycle. It is computed from operating margins: how far the engine is from fan, low-pressure and high-pressure compressor stall, and from its exhaust temperature limit. Each margin is normalised so that 1 is healthy and 0 is the limit; the stall limits were set at 15 percent and the temperature margin at about 2 percent, and whichever margin is lowest is the health index. The simulation stopped each engine when its health index reached zero.</p>
+        <p>Participants in the 2008 challenge were not given the health index. They had to infer it from the sensed variables. That is the ordinary condition of sensor work: the quantity you care about is upstream of the readings, and you only ever see its shadow in channels placed for other reasons. Practitioner session 4 builds a health index from the fourteen moving channels; tonight the point is that one exists and was withheld.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The paper that defines the data says, for an engine, "an early prediction is preferred over late predictions", and builds its scoring rule to punish lateness harder. It also says, in the same section, that "in specific situations where failures may not pose life threatening situations and early predictions may instead involve significant economic burden", the preference can change and one may not prefer conservative predictions.</p>
+        <p>So the authors of the benchmark hold both positions, for different machines. A leader cannot borrow the answer. Whether a false alarm (pull the engine early, lose the remaining life) or a missed failure (the engine fails in service) is worse is a property of the asset, the operation and the people near it, and it has to be decided before anyone reads a model's accuracy. Leader session 3 is that decision.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers Harrow Lane's fleet</span>
+      <h2>One hundred engines, one failure each</h2>
+      <span class="tag concept">10 min live</span>
+    </div>
+    <p class="lede">The fleet is 100 engines and 20,631 rows. The shortest engine lasted 128 cycles and the longest 362, with a mean of 206.31. Every engine fails exactly once, at the end, and that single event is the only ground truth in the file. The figure plots what the exhaust temperature does on the way there, averaged across the fleet by tenth of each engine's life.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn line chart. The fleet mean of T50, the low-pressure turbine exit temperature, by tenth of each engine's life: 1402.57, 1402.75, 1403.41, 1404.35, 1405.48, 1406.96, 1409.16, 1412.57, 1417.50, 1425.04 degrees Rankine. A dashed copper line marks 1416.2, the hottest 20 percent of all readings. Under each tenth, the share of readings at or above that line: 0.8, 0.8, 1.4, 1.8, 3.4, 6.7, 12.0, 27.1, 63.8 and 96.4 percent. On the right, three bars for engine life: engine 39 at 128 cycles, the fleet mean at 206.31, engine 69 at 362.">
+        <defs>
+          <filter id="ia1bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="23" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia1bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia1bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia1bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia1bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia1bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia1bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia1bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia1bH" x="30" y="26">EXHAUST TEMPERATURE ACROSS A LIFE, FLEET MEAN BY TENTH (T50, DEGREES RANKINE)</text>
+
+        <g filter="url(#ia1bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes -->
+          <path d="M80 50 L80 260 L640 260"/>
+          <!-- threshold -->
+          <path d="M80 144 L640 144" stroke="#9B4D45" stroke-dasharray="7 6"/>
+          <!-- the fleet mean line -->
+          <path d="M108 242 L164 240 L220 236 L276 229 L332 221 L388 210 L444 195 L500 170 L556 135 L612 81" stroke="#3F6212" stroke-width="2.6"/>
+          <circle cx="108" cy="242" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="164" cy="240" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="220" cy="236" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="276" cy="229" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="332" cy="221" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="388" cy="210" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="444" cy="195" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="500" cy="170" r="3.5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="556" cy="135" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="612" cy="81" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- the gauge doodle -->
+          <path d="M644 82 A16 16 0 0 1 668 68"/>
+          <path d="M656 84 L664 72"/>
+          <!-- life bars -->
+          <rect x="690" y="92" width="56" height="20" rx="4" transform="rotate(-0.6 718 102)" fill="#F3F7EA"/>
+          <rect x="690" y="152" width="92" height="20" rx="4" transform="rotate(0.5 736 162)" fill="url(#ia1bHc)"/>
+          <rect x="690" y="212" width="160" height="20" rx="4" transform="rotate(-0.4 770 222)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ia1bS" x="72" y="64" text-anchor="end">1428</text>
+        <text class="ia1bS" x="72" y="264" text-anchor="end">1400</text>
+        <text class="ia1bB" x="90" y="136">1416.2: the hottest 20% of all readings</text>
+        <text class="ia1bV" x="132" y="222">1402.57</text>
+        <text class="ia1bV" x="540" y="66" text-anchor="end">1425.04</text>
+        <text class="ia1bA" x="80" y="300">share of readings at or above 1416.2, by tenth of life</text>
+        <text class="ia1bS" x="108" y="282" text-anchor="middle">0.8%</text>
+        <text class="ia1bS" x="164" y="282" text-anchor="middle">0.8%</text>
+        <text class="ia1bS" x="220" y="282" text-anchor="middle">1.4%</text>
+        <text class="ia1bS" x="276" y="282" text-anchor="middle">1.8%</text>
+        <text class="ia1bS" x="332" y="282" text-anchor="middle">3.4%</text>
+        <text class="ia1bS" x="388" y="282" text-anchor="middle">6.7%</text>
+        <text class="ia1bS" x="444" y="282" text-anchor="middle">12.0%</text>
+        <text class="ia1bS" x="500" y="282" text-anchor="middle">27.1%</text>
+        <text class="ia1bB" x="556" y="282" text-anchor="middle">63.8%</text>
+        <text class="ia1bB" x="612" y="282" text-anchor="middle">96.4%</text>
+
+        <text class="ia1bH" x="690" y="70">LIFE, IN CYCLES</text>
+        <text class="ia1bL" x="754" y="107">128</text>
+        <text class="ia1bS" x="690" y="130">engine 39, the shortest</text>
+        <text class="ia1bL" x="790" y="167">206.31</text>
+        <text class="ia1bS" x="690" y="190">the fleet mean</text>
+        <text class="ia1bL" x="690" y="250">362</text>
+        <text class="ia1bS" x="722" y="250">engine 69, the longest</text>
+
+        <text class="ia1bN" x="30" y="336">For seven tenths of a life the exhaust barely moves; most of the 22-degree rise comes in the last three tenths. The readings</text>
+        <text class="ia1bN" x="30" y="354">a model most needs are the hot ones near the end, which is exactly where a struggling sensor is most likely to drop out.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper points are where the evidence lives; the dashed line is where a "drop the hottest readings" fault would bite, in leader session 2.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia1-engine">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Pick any of the 100 simulated engines. The page decodes its rows from the shipped sample and compares its first 20 cycles with its last 20. Real public rows from NASA's simulation, read in your browser.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia1-unit">Engine</label>
+        <select class="sql-code" id="ia1-unit"></select>
+        <div id="ia1-out"></div>
+        <p class="sql-note" id="ia1-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia1-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading three engines<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Engine 1 runs 192 cycles. Its exhaust averages 1400.85 over the first 20 and 1424.85 over the last 20. Engine 69, the longest at 362, goes from 1402.38 to 1427.58. Engine 39, the shortest at 128, starts hotter than both at 1407.14 and ends at 1426.68. The fleet mean of first-20 averages is 1402.75 and of last-20 averages 1424.95, a rise of 22.20 degrees.</p>
+        <p>Two things follow for a leader. The starting point varies by engine (the readme says each engine begins with its own unknown initial wear and manufacturing variation), so an absolute threshold that suits one engine is wrong for another. And the end-of-life signal is large and late, so a sensor that drops out under heat removes precisely the rows that matter. Leader session 2 is about that second fact.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The cost of being wrong, both ways<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Harrow Lane's planner makes one kind of decision: pull an engine now or leave it another week. A false alarm pulls an engine with life left in it: hangar time, a spare, a line that waits. A missed failure leaves an engine in service that fails there. Neither has a user id attached, and neither shows up as a bad row in any table; each shows up later as an event the data did not warn about.</p>
+        <p>The benchmark that comes with this data prices that asymmetry directly: a prediction that is too late is punished more steeply than one that is too early by the same number of cycles. Leader session 3 takes that score apart. For tonight, the habit is to ask which mistake costs more before anyone shows you an accuracy figure. This is a framework for a decision, not advice on any purchase, contract or asset.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why simulated rows, and what they let you claim<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Real run-to-failure data is rare, because the point of maintenance is that machines do not run to failure. NASA's prognostics group built these sets with C-MAPSS, a turbofan simulation, so that a whole fleet could be run to the end with the truth recorded. The repository describes four sets "simulated under different combinations of operational conditions and fault modes"; FD001 is the simplest, one condition and one fault.</p>
+        <p>That makes the rows real public rows from a simulation, not real engines. Everything here about mechanisms (drift, silent channels, end-of-life concentration, dropout bias) transfers. Any specific number (a temperature, a life, a score) is a property of this simulation and is quoted as one. The second turbofan set in the same repository, generated under real flight conditions, is self-study.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Four questions to put to any sensor dataset</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">No code. Four questions, asked in order, on a sensor feed your organisation already has or is about to buy into. Each has an answer that can be written down, and a blank is itself the finding. The figure is the card to keep.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four hand drawn note cards in a row. Card one, where does each channel sit, with the FD001 answer: 21 channels read between seven stages. Card two, which channels never move, with the answer 7 of 21 in one operating condition. Card three, when does the data go missing, with the answer that 96.4 percent of readings in the last tenth of life are in the hottest fifth. Card four, which mistake costs more, with the answer that late is punished harder: divide by 10 when late, by 13 when early. A note says a blank answer is the finding.">
+        <defs>
+          <filter id="ia1cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="31" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia1cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia1cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia1cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia1cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia1cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia1cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia1cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia1cH" x="30" y="26">FOUR QUESTIONS, EACH WITH AN ANSWER THAT CAN BE WRITTEN DOWN</text>
+
+        <g filter="url(#ia1cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="48" width="196" height="190" rx="8" transform="rotate(-1.1 128 143)" fill="#FFFFFF"/>
+          <rect x="242" y="48" width="196" height="190" rx="8" transform="rotate(0.8 340 143)" fill="#FFFFFF"/>
+          <rect x="454" y="48" width="196" height="190" rx="8" transform="rotate(-0.6 552 143)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="666" y="48" width="196" height="190" rx="8" transform="rotate(1 764 143)" fill="#FFFFFF"/>
+          <circle cx="128" cy="56" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="340" cy="56" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="552" cy="56" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="764" cy="56" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <!-- small mechanism marks on each card -->
+          <path d="M50 186 L90 186 M98 186 L138 186" stroke="#3F6212"/>
+          <circle cx="94" cy="186" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M262 186 L382 186" stroke="#CDD5C0" stroke-width="3"/>
+          <path d="M474 200 L520 198 L556 192 L590 178" stroke="#9B4D45" stroke-dasharray="3 5"/>
+          <path d="M686 186 L726 186" stroke="#3F6212" stroke-width="3"/>
+          <path d="M752 186 L832 186" stroke="#9B4D45" stroke-width="3"/>
+        </g>
+
+        <text class="ia1cV" x="46" y="90">1 · Where is it?</text>
+        <text class="ia1cS" x="46" y="112">Which stage, which side of</text>
+        <text class="ia1cS" x="46" y="128">the fault, read how often.</text>
+        <text class="ia1cB" x="46" y="160">FD001: 21 channels</text>
+        <text class="ia1cS" x="46" y="214">No map, no reading.</text>
+
+        <text class="ia1cV" x="258" y="90">2 · Which never move?</text>
+        <text class="ia1cS" x="258" y="112">Under the conditions in</text>
+        <text class="ia1cS" x="258" y="128">this file, not in general.</text>
+        <text class="ia1cB" x="258" y="160">FD001: 7 of 21 flat</text>
+        <text class="ia1cS" x="258" y="214">Silent is not broken.</text>
+
+        <text class="ia1cV" x="470" y="90">3 · When is it missing?</text>
+        <text class="ia1cS" x="470" y="112">And is that when it</text>
+        <text class="ia1cS" x="470" y="128">matters most?</text>
+        <text class="ia1cB" x="470" y="160">last tenth: 96.4% hot</text>
+        <text class="ia1cS" x="470" y="214">Gaps cluster at the end.</text>
+
+        <text class="ia1cV" x="682" y="90">4 · Which miss costs?</text>
+        <text class="ia1cS" x="682" y="112">Early pulls life; late</text>
+        <text class="ia1cS" x="682" y="128">fails in service.</text>
+        <text class="ia1cB" x="682" y="160">late: /10, early: /13</text>
+        <text class="ia1cS" x="682" y="214">Decide before the model.</text>
+
+        <text class="ia1cN" x="30" y="272">Ask them in this order: the first is about the machine, the second about the conditions, the third about the device,</text>
+        <text class="ia1cN" x="30" y="290">the fourth about the business. A blank answer to any of them is the finding, and sessions 2, 3 and 5 put a number on each.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper card is the question nobody asks, because a file with no nulls looks complete.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Pick one sensor feed your organisation relies on</h4>
+        <p>A line, a building, a fleet, a set of meters: anything where a device writes rows nobody types. Write down what decision those rows feed, in one sentence, and who makes it.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask where each channel is read</h4>
+        <p>Not the column names: the physical places. Draw the machine as a row of boxes, as in the first figure, and put a dot where each probe sits. Mark the stage that fails most often. If nobody can draw it, the data team is modelling channels it cannot explain.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask which channels never move</h4>
+        <p>Under the operating conditions in the file, which columns are constant or nearly so? In FD001 it is 7 of 21. Write them down with the reason, so nobody later mistakes "flat here" for "broken" or for "safe to drop everywhere".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask when the data goes missing</h4>
+        <p>Does the feed drop out under heat, vibration, load, a full buffer, a weak link? Those are the conditions nearest failure. Write the answer as a sentence that starts "the readings go missing when...". If the honest answer is "we do not know", that is the most important line on the page.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask which mistake costs more</h4>
+        <p>Pulling a machine too early or leaving it too long. Put each in plain terms your planner would use: lost life, downtime, a failure in service. Do not convert either to money on the page; rank them, and say who agreed to the ranking.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Commit to a guess about Harrow Lane</h4>
+        <p>A model that always predicts the fleet's average life, minus the cycles already run, is the simplest thing anyone could ship. Write down whether you expect it to be late more often or early more often, and why. Leader session 3 checks the guess against the bench.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> When someone hands you a sensor dataset, do not ask whether it is clean. Ask where each number was read, which ones are silent here, and when the device stops writing. A file with no nulls can still be missing the end of every story.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Harrow Lane's analyst reports that the sensor file passed every check: no nulls, no duplicate keys, every value in range. What is the right reading for a leader?</p>
+      <div class="qopt">A · The data is ready for modelling</div>
+      <div class="qopt">B · The checks found what they look for; they cannot see silent channels, drift, or where the information sits in time, and in FD001 seven channels never move and most of the exhaust rise comes in the last three tenths of life</div>
+      <div class="qopt">C · The data must have been tampered with, since real data always has nulls</div>
+      <q class="qwhy">Warehouse checks test structure. A sensor row can be structurally perfect and still drifted, silent or concentrated in the last few tenths of a life. The simulated rows really do have no nulls; that is not evidence of tampering.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Seven of the 21 channels in FD001 never move. What should the team conclude?</p>
+      <div class="qopt">A · Those sensors are broken and should be replaced</div>
+      <div class="qopt">B · Those channels are useless in every dataset and can be dropped everywhere</div>
+      <div class="qopt">C · Under FD001's single sea-level operating condition they carry no information; they may matter in data with several operating conditions, so drop them here and write down why</div>
+      <q class="qwhy">Inlet conditions and demanded speeds are constant when the engine runs at one condition. That says nothing about the probes and nothing about other subsets, which the readme describes as six conditions.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">Why does it matter that 96.4 percent of readings in the last tenth of life are in the hottest fifth of all readings, against 0.8 percent in the first tenth?</p>
+      <div class="qopt">A · Because any device that drops out under heat will remove the end-of-life rows first, which are the rows a remaining-life model most needs</div>
+      <div class="qopt">B · Because the hot readings are errors and should be removed</div>
+      <div class="qopt">C · Because it proves every engine fails at the same temperature</div>
+      <q class="qwhy">The hot rows are the signal, not the noise. Starting temperatures vary by engine, so no single temperature marks failure. The point is where in time the evidence sits, and therefore what missing data would cost.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 2</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Twenty minutes, on one sensor feed you rely on and on the guess you just wrote down.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Write the four answers for one real feed</h4>
+        <p>Where each channel is read, which never move, when the feed goes missing, which mistake costs more. One line each. Mark the ones nobody could answer.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find out what the device does when it struggles</h4>
+        <p>Ask the people who maintain it: does it send nothing, send the last value again, or send a default? Each of the three makes a different kind of hole, and leader session 2 shows what the cheapest one does to a remaining-life estimate.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What a sensor row is</span><span class="note">A reading at a place in a machine, by a device with no intent; no author, no user id, no flag when it drifts.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The FD001 fleet</span><span class="note">100 simulated engines, 20,631 cycles, one condition, one fault (HPC degradation), life 128 to 362. Readme read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Where the channels are read</span><span class="note">Table 2 of Saxena et al. (2008): 21 sensed outputs and their units, read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Noise, drift and silence</span><span class="note">The multistage noise described in the source; 7 of 21 channels flat in FD001.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The withheld health index</span><span class="note">Lowest of four normalised margins, 1 healthy, 0 failed; not given to participants. Read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Where the evidence sits in time</span><span class="note">Fleet T50 rises 22.20 degrees from first to last 20 cycles; 96.4 percent of last-tenth readings in the hottest fifth.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Four questions to ask first</span><span class="note">Where is it read, which never move, when is it missing, which mistake costs more.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">What missing data does to a remaining-life estimate</span><span class="note">Named tonight. Leader session 2, practitioner session 6.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The asymmetric score</span><span class="note">Named tonight. Leader session 3, practitioner session 7.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">General anomaly detectors</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/b7-timeseries-anomalies.html">learn anomaly detection, builder session 7</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines, plants or incidents</span><span class="note">Out of scope by design. Real public rows from NASA's simulation, not real engines; nothing here is purchasing or investment advice.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one sentence.</strong> A sensor row is written by a device that meant nothing by it, and it never says when it drifted.</div>
+      <div class="cheat-item"><strong>The three absences.</strong> No author, no user id, no visible wrong row.</div>
+      <div class="cheat-item"><strong>The fleet.</strong> 100 simulated engines, 20,631 cycles, life 128 to 362, mean 206.31. One failure each.</div>
+      <div class="cheat-item"><strong>Silence.</strong> 7 of 21 channels never move in FD001's one operating condition. Flat here is not broken.</div>
+      <div class="cheat-item"><strong>The withheld number.</strong> The health index exists in the simulation and was never given out. It has to be inferred.</div>
+      <div class="cheat-item"><strong>Where the evidence sits.</strong> Exhaust 1402.57 in the first tenth, 1425.04 in the last; 96.4 percent of last-tenth readings in the hottest fifth.</div>
+      <div class="cheat-item"><strong>Four questions.</strong> Where is it read? Which never move? When is it missing? Which mistake costs more?</div>
+      <div class="cheat-item"><strong>The disagreement.</strong> Early is preferred for engines; the same paper says that can flip when failure is not dangerous. Decide per asset.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 1 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="../index.html">← All sessions</a>
+        <a href="a2-missing-is-never-random.html">Leader session 2 · Missing is never random →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var sel = document.getElementById("ia1-unit");
+  var out = document.getElementById("ia1-out");
+  var verdict = document.getElementById("ia1-verdict");
+  var self = document.getElementById("ia1-self");
+  var units = IOT.decode(IOT_SAMPLE);
+  var k = IOT_SAMPLE.channels.indexOf("s4");
+  var HOT = 1416.196518; /* the anti-lever threshold: the hottest 20 percent of all 20,631 readings */
+
+  units.forEach(function (u) {
+    var o = document.createElement("option");
+    o.value = u.u;
+    o.textContent = "Engine " + u.u + " · " + u.n + " cycles";
+    if (u.u === 1) o.selected = true;
+    sel.appendChild(o);
+  });
+
+  function mean(a) { var s = 0; for (var i = 0; i < a.length; i++) s += a[i]; return s / a.length; }
+
+  function render() {
+    var u = units[Number(sel.value) - 1];
+    var t50 = u.rows.map(function (r) { return r[k]; });
+    var first = mean(t50.slice(0, 20)), last = mean(t50.slice(-20));
+    var hot = 0, firstHot = -1, late = 0;
+    for (var t = 0; t < t50.length; t++) if (t50[t] >= HOT) { hot++; if (t >= 0.7 * u.n) late++; if (firstHot < 0) firstHot = t + 1; }
+    var html = '<table class="sql-table"><thead><tr><th>Quantity</th><th>Value</th><th>What it is</th></tr></thead><tbody>';
+    html += "<tr><td>Life</td><td><b>" + u.n + "</b> cycles</td><td>the fleet runs from 128 to 362</td></tr>";
+    html += "<tr><td>T50, first 20 cycles</td><td><b>" + first.toFixed(2) + "</b></td><td>exhaust (LPT exit), degrees Rankine</td></tr>";
+    html += "<tr><td>T50, last 20 cycles</td><td><b>" + last.toFixed(2) + "</b></td><td>the fleet mean of these is 1424.95</td></tr>";
+    html += '<tr><td>Rise</td><td><b class="ia1-rise">' + (last - first).toFixed(2) + "</b></td><td>the fleet mean rise is 22.20</td></tr>";
+    html += "<tr><td>Readings at or above 1416.2</td><td><b>" + hot + "</b> of " + u.n + "</td><td>the first one at cycle " + (firstHot > 0 ? firstHot : "none") + "</td></tr>";
+    html += "</tbody></table>";
+    out.innerHTML = html;
+    verdict.textContent = "Engine " + u.u + " first reads at or above the hot line at cycle " + (firstHot > 0 ? firstHot : "none") + " of " + u.n + ", and " + hot + " of its cycles are at or above it. If the probe stopped reporting whenever it ran that hot, those " + hot + " rows would vanish, and " + late + " of them sit in the last three tenths of its life, where the evidence is.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia1-engine .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia1-engine table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ia1-engine .ia1-rise { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

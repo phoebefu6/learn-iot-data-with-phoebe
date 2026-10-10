@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 4 of 6. Smart home is the consumer face of the same problem: the household, not a person, is the unit, and occupancy is inferred from a meter without anyone being asked. Flat 4B, a constructed household, shows what one threshold prints. Not legal advice.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="The home is a sensor network - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 4 of 6. One meter reading every 15 minutes and one threshold print a household's routine and the hours its home is empty. Which inferences a product team should refuse to make.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a4-the-home-is-a-sensor-network.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The home is a sensor network - learn iot data with phoebe">
+<meta name="twitter:description" content="The household is not a user. Three gates every inference passes before anyone builds it.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 4 · The home is a sensor network - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 4 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 4 of 6</div>
+    <h1>The home is a <span class="accent">sensor network</span></h1>
+    <p class="sub">Three sessions on engines taught that a sensor row has no author, no intent and no user id. Smart home is the consumer face of the same problem, and it moves the stakes into the living room. The unit is a household, not a person; nobody types a row; and what the readings say about the people inside is inferred, not asked. Flat 4B, a constructed household with an electricity meter that reports every 15 minutes, shows how much one simple rule prints about its routine. Tonight is where the inference goes, who it is about, and which inferences a product team should refuse to make. Nothing here is legal advice; the law lives in the GDPR and PDPA sessions linked below.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Product and data leads near consumer devices</span>
+      <span class="chip audience">Anyone who signs off what a product may infer</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-17 · One meter, one routine</span>
+      <span class="a3" style="flex:3">17-28 · The privacy line</span>
+      <span class="a4" style="flex:4">28-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Flat 4B, the week a product team is handed its meter trace</h2>
+    </div>
+    <p class="lede">Flat 4B is a constructed household: a flat whose electricity meter writes one average-power reading every 15 minutes, 96 a day, for 14 days. A product team (constructed too, and unnamed) has been offered the trace and wants to build an "energy insights" feature on it. The account holder ticked a box. Nobody else who lives in, visits or works in the flat did. The team's analyst writes one threshold rule in an afternoon, and by evening the trace is telling her when the household wakes, leaves, comes back and goes to bed.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A clear picture of why the household, not a person, is the unit of home telemetry, and why that makes "the user" the wrong word. A measured case of inference without asking: on the constructed Flat 4B trace, one threshold on one meter reads 93.0 percent of 15-minute slots right and puts the leave time within 30 minutes on 12 of 14 days. A ladder of what a trace can be made to say, from the bill to the hours the home is empty, with the line where the bill ends drawn on it. And three gates to run every proposed inference through, ending in a written list of the ones your team refuses to make. Nothing here is legal advice.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why this is the engine problem in a living room<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Harrow Lane's engines (real public rows from NASA's simulation, the degradation simulated with C-MAPSS) taught three absences. No author: a device writes the row and means nothing by it. No user id: the unit is an engine and a cycle count. No visible wrong row: a drifted reading looks exactly like a good one. Every one of the three holds in a home.</p>
+        <p>The meter at Flat 4B writes a number nobody typed. Its identity is a meter on a premises, not a person: whoever is home, the reading is the sum of all of them. And the number that matters, who is in and awake, is never in the data. It has to be inferred from a channel installed for another reason, the way the engine's health index had to be inferred from temperatures. What changes is who pays for a wrong or an unwanted inference. On an engine it is a hangar. In a home it is the people the trace describes.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>The Flat 4B product team (constructed) opened the trace expecting a bill: kilowatt-hours by day. The analyst noticed that every weekday the readings drop to a low floor for most of the working day and climb again in the early evening. She did not need a model to see it; nobody would. That flat stretch is the household's absence, and the team had not asked for it, had not been told it would be there, and had no one to ask about it except the person who ticked the box.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Household.</strong> Everyone whose life passes through one premises: residents, children, visitors, carers. The unit a home meter measures.</li>
+          <li><strong>Account holder.</strong> The one person who signed for the service. Not the same thing as the household.</li>
+          <li><strong>Telemetry.</strong> Readings a device sends on its own schedule, without anyone typing them. Here, one average-power figure every 15 minutes.</li>
+          <li><strong>Occupancy.</strong> Whether someone is in, and here, in and awake. Never in the data; always inferred.</li>
+          <li><strong>Inference.</strong> A fact about people derived from readings that do not state it. The trace says watts; the inference says "the flat was empty from 09:00".</li>
+          <li><strong>Threshold rule.</strong> Flat 4B's whole method: a reading above the day's 10th percentile plus 120 W counts as someone up and at home.</li>
+          <li><strong>Confounder.</strong> Something that moves the reading without the thing you infer: a timed appliance that runs with nobody home, a quiet hour when someone is in.</li>
+          <li><strong>Constructed.</strong> Flat 4B and its product team are invented so that the truth is knowable. No figure describes a real household, meter, device or product.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the household as the unit and occupancy inferred</span>
+      <h2>One meter prints a routine</h2>
+      <span class="tag concept">14 min live</span>
+    </div>
+    <p class="lede">The clearest way to see the inference is to draw where it comes from. Every appliance in the flat hangs off one wire, and the wire passes one meter. The meter does not know which room drew the power or who switched it on; it writes one number every 15 minutes. Below the floor plan is that number across day 1, and on the right is what one threshold reads off it.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 456" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn floor plan of the constructed Flat 4B: kitchen with fridge, kettle and cooker, living room with lights and screens, bedroom with a timed appliance and lights. Every room's wire joins one bus that runs to a single meter dial outside the flat. An arrow goes down from the meter to a line chart of day 1: 96 readings, a low night floor, a kettle spike at about 07:30, a long low stretch from 09:00, cooking at about 18:00, and evening activity until 23:30. A dashed copper threshold line sits just above the night floor. Under the chart, a copper strip shows the slots the threshold marks as someone up and at home, and a hatched strip shows the built-in truth. A card on the right reads the routine off the trace: woke 07:30, left home 09:00, came back 17:45, went to sleep 23:30, and a copper stamp says the flat is empty from 09:00 to 17:45. The built-in truth has the return at 17:30; the other three times match.">
+        <defs>
+          <filter id="ia4aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia4aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia4aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia4aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia4aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia4aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia4aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia4aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia4aH" x="30" y="26">FLAT 4B (CONSTRUCTED): ONE WIRE, ONE METER</text>
+        <text class="ia4aH" x="640" y="26">WHAT THE TRACE PRINTS</text>
+
+        <g filter="url(#ia4aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- floor plan -->
+          <rect x="30" y="44" width="440" height="100" rx="6" transform="rotate(-0.5 250 94)" fill="#FFFFFF"/>
+          <path d="M180 46 L180 142 M330 46 L330 142" stroke="#CDD5C0"/>
+          <!-- wires to one bus, out to the meter -->
+          <path d="M105 112 L105 128 M255 112 L255 128 M400 112 L400 128"/>
+          <path d="M60 128 L470 128 L496 128 L496 94 L506 94" stroke="#3F6212"/>
+          <!-- the meter dial (doodle anchor) -->
+          <circle cx="530" cy="94" r="24" fill="#FFFFFF"/>
+          <path d="M530 94 L544 80"/>
+          <path d="M512 82 L516 85 M530 74 L530 78 M548 82 L544 85"/>
+          <path d="M530 144 L530 172" marker-end="url(#ia4aAr)"/>
+          <!-- chart axes -->
+          <path d="M150 180 L150 330 L600 330"/>
+          <!-- threshold for day 1 -->
+          <path d="M150 304.5 L600 304.5" stroke="#9B4D45" stroke-dasharray="7 6"/>
+          <!-- the 96 readings of day 1 -->
+          <path d="M152.3 315.3 L157 316.8 L161.7 313.8 L166.4 314.8 L171.1 318.2 L175.8 317 L180.5 316.5 L185.2 318.1 L189.8 314.9 L194.5 318.3 L199.2 317.5 L203.9 315.3 L208.6 318.2 L213.3 318.2 L218 318.1 L222.7 318.3 L227.3 314.8 L232 315.9 L236.7 315.6 L241.4 313.2 L246.1 315.9 L250.8 314 L255.5 317.5 L260.2 312.7 L264.8 313.3 L269.5 312.8 L274.2 312.6 L278.9 316 L283.6 317.3 L288.3 318.7 L293 282.3 L297.7 215.8 L302.3 282.3 L307 283.5 L311.7 281.8 L316.4 297.3 L321.1 313.3 L325.8 314.5 L330.5 318.5 L335.2 318.5 L339.8 316 L344.5 316.5 L349.2 314.2 L353.9 315.6 L358.6 314.2 L363.3 315.2 L368 316.8 L372.7 315.3 L377.3 318.9 L382 315.2 L386.7 313.4 L391.4 316.8 L396.1 316.2 L400.8 318.1 L405.5 312.5 L410.2 315.8 L414.8 317.5 L419.5 315.2 L424.2 317.8 L428.9 318.5 L433.6 312.2 L438.3 317.5 L443 317.5 L447.7 317 L452.3 318.5 L457 318.8 L461.7 318.7 L466.4 312.8 L471.1 312.6 L475.8 314.1 L480.5 307.3 L485.2 291.6 L489.8 303.3 L494.5 202.3 L499.2 193.4 L503.9 286.8 L508.6 288.7 L513.3 306.5 L518 282.9 L522.7 283.3 L527.3 306.2 L532 286.8 L536.7 281.1 L541.4 300.7 L546.1 287.9 L550.8 300.1 L555.5 288.6 L560.2 300.7 L564.8 278.4 L569.5 297.8 L574.2 284.9 L578.9 305.4 L583.6 307.8 L588.3 283.6 L593 313.2 L597.7 319" stroke="#3F6212" stroke-width="1.8"/>
+          <!-- inferred: up and at home (copper) -->
+          <rect x="290.6" y="340" width="28.2" height="12" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <rect x="482.8" y="340" width="28.1" height="12" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <rect x="515.6" y="340" width="9.4" height="12" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <rect x="529.7" y="340" width="46.9" height="12" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <rect x="585.9" y="340" width="4.7" height="12" fill="#9B4D45" stroke="#9B4D45" stroke-width="1"/>
+          <!-- built-in truth (hatched) -->
+          <rect x="290.6" y="360" width="28.2" height="12" fill="url(#ia4aHc)" stroke-width="1"/>
+          <rect x="478.1" y="360" width="112.5" height="12" fill="url(#ia4aHc)" stroke-width="1"/>
+          <!-- the card -->
+          <rect x="640" y="44" width="220" height="274" rx="8" transform="rotate(0.7 750 181)" fill="#F3F7EA"/>
+          <path d="M656 188 L844 188" stroke="#CDD5C0" stroke-width="1.5"/>
+          <rect x="654" y="200" width="192" height="60" rx="6" transform="rotate(-1.1 750 230)" fill="#FBEFEC" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia4aL" x="105" y="66" text-anchor="middle">kitchen</text>
+        <text class="ia4aS" x="105" y="88" text-anchor="middle">fridge, always on</text>
+        <text class="ia4aS" x="105" y="104" text-anchor="middle">kettle, cooker</text>
+        <text class="ia4aL" x="255" y="66" text-anchor="middle">living room</text>
+        <text class="ia4aS" x="255" y="88" text-anchor="middle">lights, screens</text>
+        <text class="ia4aL" x="400" y="66" text-anchor="middle">bedroom</text>
+        <text class="ia4aS" x="400" y="88" text-anchor="middle">timed appliance</text>
+        <text class="ia4aS" x="400" y="104" text-anchor="middle">lights</text>
+        <text class="ia4aL" x="530" y="136" text-anchor="middle">meter</text>
+        <text class="ia4aA" x="522" y="162" text-anchor="end">one reading every 15 minutes</text>
+
+        <text class="ia4aS" x="142" y="195" text-anchor="end">1,200 W</text>
+        <text class="ia4aS" x="142" y="334" text-anchor="end">0 W</text>
+        <text class="ia4aB" x="154" y="299">threshold</text>
+        <text class="ia4aB" x="30" y="350">meter says</text>
+        <text class="ia4aA" x="30" y="370">truth, built in</text>
+        <text class="ia4aS" x="150" y="392" text-anchor="middle">00:00</text>
+        <text class="ia4aS" x="262.5" y="392" text-anchor="middle">06:00</text>
+        <text class="ia4aS" x="375" y="392" text-anchor="middle">12:00</text>
+        <text class="ia4aS" x="487.5" y="392" text-anchor="middle">18:00</text>
+        <text class="ia4aS" x="600" y="392" text-anchor="middle">24:00</text>
+
+        <text class="ia4aL" x="656" y="70">Day 1 of 14, a weekday</text>
+        <text class="ia4aS" x="656" y="100">woke</text>
+        <text class="ia4aV" x="844" y="101" text-anchor="end">07:30</text>
+        <text class="ia4aS" x="656" y="124">left home</text>
+        <text class="ia4aV" x="844" y="125" text-anchor="end">09:00</text>
+        <text class="ia4aS" x="656" y="148">came back</text>
+        <text class="ia4aV" x="844" y="149" text-anchor="end">17:45</text>
+        <text class="ia4aS" x="656" y="172">went to sleep</text>
+        <text class="ia4aV" x="844" y="173" text-anchor="end">23:30</text>
+        <text class="ia4aB" x="750" y="226" text-anchor="middle">the flat is empty</text>
+        <text class="ia4aS" x="750" y="245" text-anchor="middle">09:00 to 17:45 on day 1</text>
+        <text class="ia4aS" x="656" y="284">built-in truth: back at 17:30;</text>
+        <text class="ia4aS" x="656" y="302">the other three times match.</text>
+
+        <text class="ia4aN" x="30" y="420">Constructed: Flat 4B's meter on day 1 of 14, 96 readings. The rule: a reading above the day's 10th percentile</text>
+        <text class="ia4aN" x="30" y="438">plus 120 W means someone is up and at home. Nobody was asked, and no reading names a person.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - every room hangs off one wire, so the meter cannot say who; one threshold still says when, and the copper strip is the household's day read back to it.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia4-day">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Pick any of Flat 4B's 14 days. The page builds the constructed household's meter trace in your browser, applies the one threshold rule, and sets the routine it reads beside the truth the trace was built from. Constructed data, not a real household; a different seed would give a different household and your numbers would differ.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia4-pick">Day</label>
+        <select class="sql-code" id="ia4-pick"></select>
+        <div id="ia4-out"></div>
+        <p class="sql-note" id="ia4-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia4-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>How one rule prints a routine<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The rule has two parts and no model. Find the day's quiet floor: the 10th percentile of its 96 readings, which is the fridge and whatever sits on standby. Then call any reading more than 120 W above that floor "someone up and at home". The first such slot is when the household woke; the longest quiet run before 20:00 is when it was out; the last active slot is when it went to bed.</p>
+        <p>Across the 14 constructed days that rule reads 93.0 percent of the 15-minute slots right, against the truth the trace was built from. It puts the time the household left within 30 minutes on 12 of 14 days, and the median error on leave time is 0 minutes. A leader should hear that as a statement about the data, not about cleverness: the routine is so plainly in the trace that the crudest possible rule reads it.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>In the Flat 4B team's review (constructed), the analyst shows day 1: woke 07:30, left 09:00, back 17:45, asleep 23:30. The account holder's flatmate is in the room as a test user. Her first question is not about accuracy. It is "who else can see that?"</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Where the rule is wrong, and why that does not make it safe<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Flat 4B was built with two confounders. Some awake hours at home are quiet: someone reading, a laptop on battery. And on some days a timed appliance runs for three quarters of an hour with nobody in. The two leave times the rule got badly wrong, 225 minutes and 45 minutes off, both fall on days the timed appliance ran, but for two different reasons. On the 225-minute day the appliance broke the quiet stretch, so the rule saw a return that never happened. On the 45-minute day the flat simply went quiet for half an hour before anyone left, so the rule called the leave too early. Same rule, two failure modes, and only one of them is the timer.</p>
+        <p>It is tempting to treat those errors as protection. They are not. A wrong inference is still an inference about the household, and anything built on it (a reminder sent, a profile updated, a flag raised) acts on people who never saw it. Twelve days out of 14 were right to within half an hour; the errors add a second harm to the first rather than cancelling it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The household is the unit, and it has no user id<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>On an engine the unit is obvious: one engine, one serial, one failure. In a home the meter's identity is a premises. Its trace is the sum of everyone in it, and the people change: a partner moves in, a child grows up, a carer visits on weekdays, a lodger leaves. A product that calls the account holder "the user" quietly assumes that the person who signed is the person the data describes. Most of the time the trace describes several people, and most of them signed nothing.</p>
+        <p>The warehouse habit is to join on a customer id and treat the row as that customer's behaviour. In a home that join is a category error. The safer default for a leader is to write "the household" in every spec where the team wrote "the user", and to see which features still make sense. Practitioner session 9 builds the threshold by hand on the same constructed trace: <a href="p9-smart-home-telemetry.html">Smart home telemetry: occupancy and where to stop</a>.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the privacy line</span>
+      <h2>What the trace can be made to say, and about whom</h2>
+      <span class="tag concept">11 min live</span>
+    </div>
+    <p class="lede">One trace can be read at several depths. At the bottom is what the contract was signed for: energy used, for the bill. Each rung above it is an inference, and each says more about the people and less about the electricity. The figure draws the ladder beside the household it describes, and draws the line where the bill ends.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram. On the left, four boxes for the people in one constructed household: the account holder, who signed the contract, and a partner, a child and a visitor or carer, each marked never signed up. Arrows from all four converge on one meter dial. An arrow goes from the meter to a ladder of five rungs on the right, read from the bottom: energy used, for the bill; then, above a dashed copper line labelled the privacy line, where the bill ends and the living room begins: someone is up and at home, which one threshold reads right on 93.0 percent of Flat 4B's 15-minute slots; the routine, with leave time within 30 minutes on 12 of 14 days; when the flat is empty; and, dashed because it is reported in research and not measured here, beliefs, disability, illness and the TV channel.">
+        <defs>
+          <filter id="ia4bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia4bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia4bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia4bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia4bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia4bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia4bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia4bH" x="30" y="26">ONE METER, FOUR PEOPLE</text>
+        <text class="ia4bH" x="350" y="26">WHAT ONE TRACE CAN BE MADE TO SAY</text>
+
+        <g filter="url(#ia4bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the household -->
+          <rect x="30" y="50" width="190" height="44" rx="6" transform="rotate(-0.8 125 72)" fill="#F3F7EA"/>
+          <rect x="30" y="104" width="190" height="44" rx="6" transform="rotate(0.6 125 126)" fill="#FFFFFF"/>
+          <rect x="30" y="158" width="190" height="44" rx="6" transform="rotate(-0.5 125 180)" fill="#FFFFFF"/>
+          <rect x="30" y="212" width="190" height="44" rx="6" transform="rotate(0.7 125 234)" fill="#FFFFFF"/>
+          <path d="M222 72 L252 170" marker-end="url(#ia4bAr)"/>
+          <path d="M222 126 L252 176" marker-end="url(#ia4bAr)"/>
+          <path d="M222 180 L252 181" marker-end="url(#ia4bAr)"/>
+          <path d="M222 234 L252 188" marker-end="url(#ia4bAr)"/>
+          <!-- the meter dial (doodle anchor) -->
+          <circle cx="274" cy="180" r="20" fill="#FFFFFF"/>
+          <path d="M274 180 L285 168"/>
+          <path d="M296 180 L344 180" marker-end="url(#ia4bAr)"/>
+          <!-- the ladder, bottom to top -->
+          <rect x="350" y="50" width="500" height="40" rx="6" transform="rotate(0.4 600 70)" stroke-dasharray="6 5" fill="#FFFFFF"/>
+          <rect x="350" y="96" width="500" height="40" rx="6" transform="rotate(-0.4 600 116)" fill="url(#ia4bHc)"/>
+          <rect x="350" y="142" width="500" height="40" rx="6" transform="rotate(0.3 600 162)" fill="#F3F7EA"/>
+          <rect x="350" y="188" width="500" height="40" rx="6" transform="rotate(-0.3 600 208)" fill="#F3F7EA"/>
+          <path d="M350 252 L850 252" stroke="#9B4D45" stroke-width="2.6" stroke-dasharray="9 6"/>
+          <rect x="350" y="262" width="500" height="40" rx="6" transform="rotate(0.5 600 282)" fill="#FFFFFF"/>
+        </g>
+
+        <text class="ia4bL" x="44" y="68">Account holder</text>
+        <text class="ia4bA" x="44" y="84">signed the contract</text>
+        <text class="ia4bL" x="44" y="122">Partner</text>
+        <text class="ia4bS" x="44" y="138">never signed up</text>
+        <text class="ia4bL" x="44" y="176">Child</text>
+        <text class="ia4bS" x="44" y="192">never signed up</text>
+        <text class="ia4bL" x="44" y="230">Visitor or carer</text>
+        <text class="ia4bS" x="44" y="246">never signed up</text>
+        <text class="ia4bS" x="274" y="228" text-anchor="middle">one meter</text>
+
+        <text class="ia4bL" x="366" y="67">Beliefs, disability, illness, the TV channel</text>
+        <text class="ia4bS" x="366" y="82">reported in research on meter data; not measured here</text>
+        <text class="ia4bL" x="366" y="113">When the flat is empty</text>
+        <text class="ia4bS" x="366" y="128">the routine read backwards: the hours nobody is there to see</text>
+        <text class="ia4bL" x="366" y="159">The routine: up, out, back, bed</text>
+        <text class="ia4bS" x="366" y="174">Flat 4B: leave time within 30 minutes on 12 of 14 days</text>
+        <text class="ia4bL" x="366" y="205">Someone is up and at home</text>
+        <text class="ia4bS" x="366" y="220">Flat 4B: one threshold reads 93.0% of 15-minute slots right</text>
+        <text class="ia4bB" x="366" y="244">the privacy line: where the bill ends and the living room begins</text>
+        <text class="ia4bL" x="366" y="279">Energy used, for the bill</text>
+        <text class="ia4bS" x="366" y="294">what the contract was signed for</text>
+
+        <text class="ia4bN" x="30" y="324">Rungs two and three are measured on the constructed Flat 4B trace. The top rung is reported in published research</text>
+        <text class="ia4bN" x="30" y="342">(Giaconi, Gunduz and Poor 2018), not measured here. Of the four people the trace describes, one signed anything.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - everything above the copper line is about the people, not the electricity, and three of the four people it is about never signed up.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What researchers report a meter trace reveals<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Flat 4B measures two rungs: presence and routine. The literature on meter privacy reports more. A 2018 review by Giaconi, Gunduz and Poor, read at source, states that a third party holding smart-meter data may learn "a user's presence at home, her religious beliefs, disabilities, illnesses", and even which TV channel is on. Molina-Markham and colleagues' 2010 paper "Private Memoirs of a Smart Meter" is widely cited as showing activity inference from meter data; it is reported here, because its text could not be read.</p>
+        <p>None of the upper rungs is measured on this page, and Flat 4B was not built to carry them. The point for a leader is the direction of travel: every rung above the bill is an inference about people, the rungs get more sensitive as they go up, and each was made from the same trace the bill needs. The data does not change as you climb. Only what someone chooses to compute from it does.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>The Flat 4B team's first feature idea (constructed) was "we noticed you are usually out from 09:00; switch the heating off then". It is helpful, it is on the third rung, and the same sentence, sent to the wrong inbox or kept in a leaked table, is the fourth: when the flat is empty.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Consent from people who never signed up<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The account holder ticked a box. The partner, the child and the carer did not, and in most homes they never see the screen where the box was. A trace is a mixture: the meter cannot separate one person's kettle from another's, so an inference about "the household" is an inference about each of them. One person's tick cannot be stretched to cover what the team learns about the others, and the team usually cannot even list who the others are.</p>
+        <p>Whether that tick is a lawful basis for any particular inference is a legal question, and the answer depends on where the household is and what the product does. It is taught properly elsewhere: what counts as personal data and when the rules apply in <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">learn GDPR, scope</a>, and consent and its exemptions in <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">learn PDPA and DNC, consent and exemptions</a>. Nothing on this page is legal advice. The question a product team owns, before any lawyer is asked, is narrower: should we compute this at all?</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Take the hardest case. An older person lives alone; a relative wants to know if the kettle has not gone on by mid-morning. The same third-rung inference that worried the flatmate in Part 1 is, here, the whole value of the product. One camp says an inference the household benefits from and has asked for is the point of home telemetry, and refusing it protects nobody. A second camp says the person in the home is rarely the one who asked, and that a check-in nobody can switch off is surveillance with a kind face. A third says the argument is in the wrong place: keep the data so coarse at the source (a daily total, not 15-minute readings) that the routine cannot be computed, and build only the features that survive.</p>
+        <p>Each camp is right about something. The first is right that "never infer occupancy" rules out real care. The second is right that the account holder and the person described are often different people. The third is right that a promise in code is weaker than an inference the data cannot support. The answer depends on who lives there, who asked, and who can say no. A leader cannot borrow it from another product; it has to be written down for this one.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Which inferences a product team should refuse to make</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">No code. A decision exercise, done on paper for Flat 4B's product team and then for a device your organisation ships or is about to. Every inference the team proposes passes three gates in order, and any "no" at the first two or "yes" at the third sends it to the refuse list. The figure is the card to keep.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 372" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn flow of three gates. A proposed inference from the meter, with a small meter dial above it, enters gate 1: does the service the household asked for break without it? Yes leads to gate 2: could every person in the home see it and say no? Yes leads to gate 3: would it tell a stranger when the flat is empty, if it leaked? No leads to a box: make it, and tell the household. A no at gate 1, a no at gate 2, or a yes at gate 3 drops into one copper box along the bottom: refuse it, or keep the data too coarse for the inference to be made.">
+        <defs>
+          <filter id="ia4cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia4cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia4cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia4cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia4cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia4cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia4cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia4cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia4cH" x="30" y="26">THREE GATES EVERY INFERENCE PASSES BEFORE ANYONE BUILDS IT</text>
+
+        <g filter="url(#ia4cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- the meter dial (doodle anchor) -->
+          <circle cx="95" cy="76" r="13" fill="#FFFFFF"/>
+          <path d="M95 76 L103 68"/>
+          <path d="M95 89 L95 98" stroke="#3F6212"/>
+          <!-- start -->
+          <rect x="30" y="100" width="130" height="90" rx="8" transform="rotate(-1 95 145)" fill="url(#ia4cHc)"/>
+          <!-- gates -->
+          <rect x="190" y="100" width="160" height="90" rx="8" transform="rotate(0.8 270 145)" fill="#FFFFFF"/>
+          <rect x="380" y="100" width="160" height="90" rx="8" transform="rotate(-0.6 460 145)" fill="#FFFFFF"/>
+          <rect x="570" y="100" width="160" height="90" rx="8" transform="rotate(0.5 650 145)" fill="#FFFFFF"/>
+          <rect x="760" y="100" width="100" height="90" rx="8" transform="rotate(-0.9 810 145)" fill="#F3F7EA"/>
+          <!-- forward arrows -->
+          <path d="M160 145 L186 145" marker-end="url(#ia4cAr)"/>
+          <path d="M350 145 L376 145" marker-end="url(#ia4cAr)"/>
+          <path d="M540 145 L566 145" marker-end="url(#ia4cAr)"/>
+          <path d="M730 145 L756 145" marker-end="url(#ia4cAr)"/>
+          <!-- drop arrows -->
+          <path d="M270 190 L270 246" marker-end="url(#ia4cAr)"/>
+          <path d="M460 190 L460 246" marker-end="url(#ia4cAr)"/>
+          <path d="M650 190 L650 246" marker-end="url(#ia4cAr)"/>
+          <!-- refuse -->
+          <rect x="190" y="250" width="540" height="56" rx="8" transform="rotate(-0.4 460 278)" fill="#FBEFEC" stroke="#9B4D45" stroke-width="2.4"/>
+        </g>
+
+        <text class="ia4cL" x="44" y="128">A proposed</text>
+        <text class="ia4cL" x="44" y="146">inference</text>
+        <text class="ia4cS" x="44" y="170">from the meter</text>
+
+        <text class="ia4cH" x="202" y="124">1 · Needed?</text>
+        <text class="ia4cS" x="202" y="146">Does the service the</text>
+        <text class="ia4cS" x="202" y="162">household asked for</text>
+        <text class="ia4cS" x="202" y="178">break without it?</text>
+
+        <text class="ia4cH" x="392" y="124">2 · All of them?</text>
+        <text class="ia4cS" x="392" y="146">Could every person</text>
+        <text class="ia4cS" x="392" y="162">in the home see it</text>
+        <text class="ia4cS" x="392" y="178">and say no?</text>
+
+        <text class="ia4cH" x="582" y="124">3 · If it leaked?</text>
+        <text class="ia4cS" x="582" y="146">Would it tell a</text>
+        <text class="ia4cS" x="582" y="162">stranger when the</text>
+        <text class="ia4cS" x="582" y="178">flat is empty?</text>
+
+        <text class="ia4cL" x="772" y="128">Make it</text>
+        <text class="ia4cS" x="772" y="150">and tell the</text>
+        <text class="ia4cS" x="772" y="166">household</text>
+
+        <text class="ia4cA" x="363" y="137" text-anchor="middle">yes</text>
+        <text class="ia4cA" x="553" y="137" text-anchor="middle">yes</text>
+        <text class="ia4cA" x="743" y="137" text-anchor="middle">no</text>
+        <text class="ia4cB" x="278" y="222">no</text>
+        <text class="ia4cB" x="468" y="222">no</text>
+        <text class="ia4cB" x="658" y="222">yes</text>
+
+        <text class="ia4cB" x="206" y="273">Refuse it</text>
+        <text class="ia4cS" x="206" y="292">or keep the data too coarse for the inference to be made</text>
+
+        <text class="ia4cN" x="30" y="338">These gates are the team's own test, not a legal one. Whether an inference is lawful belongs to the GDPR and</text>
+        <text class="ia4cN" x="30" y="356">PDPA sessions linked below and to a lawyer; whether it should be built is the team's call, made first.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three of the four exits lead to the copper box; an inference has to earn its way to "make it", not be argued out of it afterwards.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>List what the trace could be made to say</h4>
+        <p>For Flat 4B, write six candidate inferences the product team might propose, one per line: energy used this month; usage compared with last month; an appliance that seems to run constantly; someone is home right now; the household's weekday routine; the hours the flat is usually empty. Leave room to add your own. Do not rank them yet.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Gate 1: is it needed for what the household asked for?</h4>
+        <p>Write the service in one sentence, the way the household would describe it ("tell us what we use and help us use less"). For each inference, ask whether that service breaks without it. "It would be a nice feature" is a no. Anything that fails goes to the refuse list with the words "not needed".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Gate 2: could every person in the home see it and say no?</h4>
+        <p>Not the account holder: every person. Name them for Flat 4B (a flatmate, a partner, a visiting carer) and ask whether each could find out the inference exists and switch it off without asking anyone else. If the honest answer is "only the person who signed", it goes to the refuse list with the words "household not asked".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Gate 3: if it leaked, would it tell a stranger when the flat is empty?</h4>
+        <p>Imagine the table the inference is stored in turns up somewhere it should not. If it lets a reader work out when nobody is home, or anything on the top rung of the ladder, refuse it, however useful it is. Write the reason next to it in one line.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>For each refusal, ask whether the data could make it impossible</h4>
+        <p>A refusal written in a policy can be undone by the next feature. A refusal built into the data cannot: if the product keeps only daily totals, no rule can read a leave time from it. For every inference on the refuse list, write down the coarsest reading that still serves the inferences you kept, and ask whether the team could keep only that.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the refuse list and get it signed</h4>
+        <p>One page: the inferences the team will make, the ones it refuses and why, and the data resolution it will keep. Name who signed it. Then hand the inferences you kept, not the ones you refused, to whoever answers the legal question; that is the order that keeps the team's own judgement from being replaced by a yes from counsel.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> When a team shows you what a home device's data can do, do not ask whether the inference is accurate. Ask who it is about, whether all of them could say no, and what it would tell a stranger. Accuracy is the smallest of the three questions; Flat 4B's crudest rule was already right most of the time.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">A product lead says the Flat 4B trace is "only electricity readings, nothing about people". What is the right reading for a leader?</p>
+      <div class="qopt">A · Agreed: a meter records watts, not people, so the trace carries no information about the household</div>
+      <div class="qopt">B · The trace carries the household's routine: one threshold reads 93.0 percent of 15-minute slots right and the leave time within 30 minutes on 12 of 14 days, so the team must decide which inferences to make; whether the trace is personal data in law is a question for the GDPR and PDPA sessions and a lawyer</div>
+      <div class="qopt">C · The trace is about people only if the team trains a machine-learning model on it</div>
+      <q class="qwhy">No model was needed: a two-part threshold rule read the routine off the constructed trace. The data already carries the inference; the choice is whether to compute it. The legal status is not decided here.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Flat 4B's account holder ticked a consent box. A flatmate and a visiting carer did not. Which statement fits the household as the unit?</p>
+      <div class="qopt">A · The account holder's tick covers everyone in the flat, because the meter belongs to the account</div>
+      <div class="qopt">B · Nobody in the flat matters, because a meter reading has no user id</div>
+      <div class="qopt">C · The trace is a mixture of everyone in the flat, so an inference about the household is an inference about each of them; one person's tick cannot be stretched to cover the others, and the team should design so that every person can see and refuse it, or not make it</div>
+      <q class="qwhy">The meter cannot tell one person's kettle from another's. Having no user id does not make a trace about nobody; it makes it about everyone at once. Whether a tick is a lawful basis is for the law sessions, not this page.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The two leave times the rule got badly wrong (225 and 45 minutes off) were both on days a timed appliance ran. What should a leader take from that?</p>
+      <div class="qopt">A · The errors do not make the inference safe: the rule was right within 30 minutes on the other 12 days, and a wrong inference still acts on the household, so the errors add a harm rather than remove one</div>
+      <div class="qopt">B · Occupancy inference is too unreliable to raise privacy concerns</div>
+      <div class="qopt">C · The fix is a better model, after which the privacy question goes away</div>
+      <q class="qwhy">A confounder that breaks the quiet stretch fools the rule on some days and not others. Accuracy and privacy are different questions: a more accurate model makes the inference more revealing, not less.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 5</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Twenty minutes, on one device in a home that your organisation ships, supports or buys data from.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Draw its ladder</h4>
+        <p>At the bottom, what the household signed up for. Above it, every inference your product makes or could make from the same data, in rising order of what it says about the people. Draw the line where the service ends. Mark each rung "made today", "planned" or "possible".</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Count the people the data describes</h4>
+        <p>For a typical home using it, how many people does the data describe, and how many of them signed anything? If nobody on the team knows, that is the finding. Leader session 5 takes the same "no user id" idea back to the plant floor as one of five places the warehouse playbook breaks.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Run one rung through the three gates</h4>
+        <p>Pick the highest rung marked "made today". Needed, all of them, if it leaked. Write the answer to each in one line, and bring it to the next session.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The household as the unit</span><span class="note">A meter's identity is a premises; its trace is the sum of everyone in it. "The user" is the wrong word.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Occupancy inferred without asking</span><span class="note">Constructed Flat 4B: one threshold reads 93.0 percent of 15-minute slots right; leave time within 30 minutes on 12 of 14 days, median error 0 minutes.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What the trace prints</span><span class="note">Wake, leave, return and sleep times, and so the hours the home is empty.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Confounders</span><span class="note">Quiet awake hours and a timed appliance; the two bad misses (225 and 45 minutes) fall on timed-appliance days. Errors do not make an inference safe.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What research reports meter data reveals</span><span class="note">Giaconi, Gunduz and Poor (2018), read at source; Molina-Markham et al. (2010), reported.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Consent from people who never signed up</span><span class="note">One account holder's tick against a household of several people.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Which inferences to refuse</span><span class="note">Three gates: needed, all of them, if it leaked. Refuse in the data, not only in the code.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The threshold rule built by hand</span><span class="note">Named tonight. <a href="p9-smart-home-telemetry.html">Practitioner session 9</a> builds it on the same trace.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Law: personal data, lawful basis, consent</span><span class="note">Not legal advice. Live in <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">learn GDPR, scope</a> and <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">learn PDPA and DNC, consent and exemptions</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real households, devices or products</span><span class="note">Out of scope by design. Flat 4B is constructed, not a real household; no device or product is named. The engine rows elsewhere are real public rows from NASA's simulation, not real engines.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one sentence.</strong> A home meter writes one number for everyone in the home, and that number already carries their routine.</div>
+      <div class="cheat-item"><strong>The unit.</strong> The household, not a person. Write "the household" wherever a spec says "the user" and see what survives.</div>
+      <div class="cheat-item"><strong>Flat 4B, constructed.</strong> One reading every 15 minutes, 14 days, one threshold: 93.0 percent of slots right, leave time within 30 minutes on 12 of 14 days.</div>
+      <div class="cheat-item"><strong>No model needed.</strong> The day's 10th percentile plus 120 W. If the crudest rule reads the routine, the routine is in the data.</div>
+      <div class="cheat-item"><strong>Errors are not privacy.</strong> The two misses fell on timed-appliance days. A wrong inference still acts on the household.</div>
+      <div class="cheat-item"><strong>The ladder.</strong> Bill, presence, routine, empty home, then beliefs and health (reported in research). The line sits above the bill.</div>
+      <div class="cheat-item"><strong>Three gates.</strong> Needed? All of them could say no? Safe if it leaked? Fail one and it goes on the refuse list.</div>
+      <div class="cheat-item"><strong>The seam.</strong> Whether it is lawful: the GDPR and PDPA sessions and a lawyer. Whether to build it: the team, first.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 4 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="a3-a-false-alarm-stops-the-line.html">← Leader session 3 · A false alarm stops the line</a>
+        <a href="a5-why-the-warehouse-playbook-breaks-here.html">Leader session 5 · Why the warehouse playbook breaks here →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined") return;
+  var sel = document.getElementById("ia4-pick");
+  var out = document.getElementById("ia4-out");
+  var verdict = document.getElementById("ia4-verdict");
+  var self = document.getElementById("ia4-self");
+
+  /* constructed household at its canon seed */
+  var h = IOT.household(909), S = h.slotsPerDay;
+
+  function hm(s) {
+    var m = s * 15, hh = Math.floor(m / 60), mm = m % 60;
+    return (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm;
+  }
+
+  for (var d = 0; d < h.days; d++) {
+    var o = document.createElement("option");
+    o.value = d;
+    o.textContent = "Day " + (d + 1) + " · " + (h.plan[d].weekend ? "weekend" : "weekday");
+    sel.appendChild(o);
+  }
+
+  /* the same reading of the inferred slots the engine uses for leave time */
+  function readDay(d) {
+    var inf = h.inferred.slice(d * S, d * S + S), tr = h.truth.slice(d * S, d * S + S);
+    var first = -1, last = -1, s;
+    for (s = 0; s < S; s++) if (inf[s]) { if (first < 0) first = s; last = s; }
+    var f = -1, best = 0, bestStart = -1, run = 0, runStart = -1;
+    for (s = 0; s < 80; s++) {
+      var a = inf[s];
+      if (a && f < 0) f = s;
+      if (f < 0) continue;
+      if (!a) { if (run === 0) runStart = s; run++; if (run > best) { best = run; bestStart = runStart; } }
+      else run = 0;
+    }
+    var hit = 0;
+    for (s = 0; s < S; s++) if (inf[s] === tr[s]) hit++;
+    return { wake: first, leave: bestStart, back: bestStart + best, sleep: last + 1, hit: hit };
+  }
+
+  var misses = [], missesOnTimer = 0;
+  h.leaveErrMin.forEach(function (e, i) { if (e > 30) { misses.push(e); if (h.plan[i].timer >= 0) missesOnTimer++; } });
+
+  function render() {
+    var d = Number(sel.value), p = h.plan[d], r = readDay(d);
+    var agrees = Math.abs(r.leave - p.leave) * 15 === h.leaveErrMin[d];
+    function row(name, truth, meter) {
+      var off = Math.abs(meter - truth) * 15;
+      return "<tr><td>" + name + "</td><td>" + hm(truth) + "</td><td><b>" + hm(meter) + "</b></td><td>" +
+        (off === 0 ? "exact" : off + " min") + "</td></tr>";
+    }
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Moment</th><th>Truth, built in</th><th>What the meter says</th><th>Off by</th></tr></thead><tbody>';
+    html += row("Woke", p.wake, r.wake);
+    html += row("Left home", p.leave, r.leave);
+    html += row("Came back", p.back, r.back);
+    html += row("Went to sleep", p.sleep, r.sleep);
+    html += "<tr><td>Slots read right</td><td colspan=\"3\"><b>" + r.hit + "</b> of " + S + " (" + (100 * r.hit / S).toFixed(1) + "%)</td></tr>";
+    html += "<tr><td>Timed appliance</td><td colspan=\"3\">" + (p.timer >= 0 ? 'ran from <b class="ia4-timer">' + hm(p.timer) + "</b>, with or without anyone home" : "did not run") + "</td></tr>";
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+
+    verdict.textContent = "Day " + (d + 1) + ": one reading every 15 minutes and one threshold say the flat was empty from " + hm(r.leave) + " to " + hm(r.back) +
+      " (built-in truth: " + hm(p.leave) + " to " + hm(p.back) + "). Across all " + h.days + " days the same rule reads " + (100 * h.accuracy).toFixed(1) +
+      "% of slots right and puts the leave time within 30 minutes on " + h.leaveWithin30 + " of " + h.days + " days; " +
+      (misses.length === missesOnTimer ? "every bad miss (" + misses.join(" and ") + " minutes) is a day the timed appliance ran." : misses.length + " bad misses, " + missesOnTimer + " on timed-appliance days.") +
+      (agrees ? "" : " Warning: this page's reading of the leave time disagrees with the engine's.") +
+      " Constructed household, not a real one.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Flat 4B is constructed: no real household, meter or device is behind these numbers."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia4-day .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia4-day table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ia4-day .ia4-timer { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

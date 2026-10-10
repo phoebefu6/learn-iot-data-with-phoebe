@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 5 of 10. Remaining useful life as a target: the uncapped label, the piecewise cap at 125 or 130, and the fleet-average floor every model has to beat. Real public rows from NASA's simulation, scored on 300 held-out cut points in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Remaining useful life as a target - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 5 of 10. Same channels, same least squares, a different target: RMSE 30.50 uncapped, 24.00 capped at 125. And the floor, 45.61, whose score of 305,167 is mostly two long-lived engines.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p5-remaining-useful-life-as-a-target.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Remaining useful life as a target - learn iot data with phoebe">
+<meta name="twitter:description" content="The cap at 125 or 130 is a convention, not a law of engines. Run both and watch the winner change with the seed.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 5 · Remaining useful life as a target - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 5 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 5 of 10</div>
+    <h1>Remaining useful life <span class="accent">as a target</span></h1>
+    <p class="sub">Session 1 found the label hiding in the cycle count: life minus cycle. Tonight asks whether to use it as it is. Written raw, it asks a model to tell an engine with 361 cycles left from one with 127 while both still look healthy. Capped, it asks only for a countdown near the end. Where to cap is a convention, 125 in some papers and 130 in others, and the bench runs both. Underneath sits the floor: the fleet average minus age, the score of knowing nothing. Real public rows from NASA's simulation, scored in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Working depth</span>
+      <span class="chip audience">Analysts and data scientists modelling time to failure</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · Uncapped or capped</span>
+      <span class="a3" style="flex:3">15-27 · The floor and the other cap</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's planners ask for one number</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is NASA's 100 simulated engines. Every week its planners decide which engines to pull. They ask the analyst for one number per engine: how many cycles are left. Before any model, she has to decide what that number means early in an engine's life, when nothing has started to wear, and what the dumbest honest answer scores. Both decisions are tonight.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The uncapped and the capped remaining-useful-life target, drawn against cycles for the shortest and the longest engine in FD001. Why 125 sits just under the shortest training life of 128, and why 130 is in the literature too: a convention, not a law. The floor, the fleet average minus age, at RMSE 45.61 and a summed score of 305,167 that is mostly two long-lived engines. And the first rungs of the ladder rebuilt in your console: 30.50 with the raw target, 24.00 with the capped one, on the same channels and the same least squares, 300 units under test.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What the number is for<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A planner does not need to know that an engine has 300 cycles left rather than 250. Both mean "not this week, not next month". The number starts to matter when the end is close enough to plan around, and there it matters a great deal: too late and the engine fails in service, too early and a healthy one comes off the wing. The target a model is trained on should carry the information the decision needs, no more.</p>
+        <p>The engines are simulated with C-MAPSS, and the degradation in them is simulated. Every number tonight is computed from real public rows from NASA's simulation, never from real engines, and scored on 30 held-out engines cut at 10 points each, which stand in for the NASA test set and are not comparable with it.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words tonight<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Uncapped label.</strong> Life minus cycle, every row, from the first cycle to the last.</li>
+          <li><strong>Piecewise-linear (capped) label.</strong> The same countdown, held flat at the cap early in life.</li>
+          <li><strong>Cap.</strong> The flat value. 125 and 130 are both in use on FD001.</li>
+          <li><strong>Floor.</strong> The fleet-average model: average training life minus cycles seen, floored at zero. No sensors.</li>
+          <li><strong>Rung.</strong> One model on the bench's ladder. Rung 0 is the floor, rung 1 the raw linear fit, rung 2 the capped one.</li>
+          <li><strong>Cut point.</strong> A cycle at which a held-out engine is stopped and the model asked for its remaining life. 300 of them, seed 2008.</li>
+          <li><strong>Bias.</strong> Mean of predicted minus true. Positive means late, the side the asymmetric score punishes harder.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the target</span>
+      <h2>Uncapped or capped: what you ask the model to learn</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">Two engines bracket FD001: engine 39, the shortest, fails at cycle 128; engine 69, the longest, at 362. The figure draws both labels against cycles, then the capped version of engine 69's. The triangle between the black line and the copper one is everything the cap throws away.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 424" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn chart of remaining useful life against cycle for two engines. Engine 69, life 362, uncapped: a straight line from 361 at cycle 1 down to 0 at cycle 362. Engine 39, life 128, uncapped: a short line from 127 down to 0 at cycle 128. Engine 69 capped at 125: a copper line flat at 125 until cycle 237, then the same countdown. A dashed line at 130 runs just above it. The hatched triangle between engine 69's raw line and its capped line is the part of the label the cap removes. A note says uncapped, a model must tell 361 from 127 while both engines are healthy, and that cap 130 never touches engine 39.">
+        <defs>
+          <filter id="ip5aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="51" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip5aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip5aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip5aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip5aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip5aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip5aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip5aH" x="30" y="26">ENGINES 39 AND 69: TWO WAYS TO WRITE THE LABEL</text>
+        <text class="ip5aA" x="80" y="58">cycles left</text>
+
+        <g filter="url(#ip5aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes: x = 80 + 2 per cycle (cycle 362 at 804); y = 330 - 0.62 per cycle left (361 at 106) -->
+          <path d="M80 68 L80 330 L820 330"/>
+          <!-- what the cap removes: between engine 69's raw line and its cap -->
+          <path d="M82 106 L554 252.5 L82 252.5 Z" fill="url(#ip5aHc)" stroke="none"/>
+          <!-- engine 69 uncapped -->
+          <path d="M82 106 L804 330"/>
+          <!-- engine 39 uncapped -->
+          <path d="M82 251 L336 330" stroke="#56604A"/>
+          <!-- cap 130, dashed, flat to cycle 232 -->
+          <path d="M82 249.4 L544 249.4" stroke="#93A86F" stroke-dasharray="6 5"/>
+          <!-- engine 69 capped at 125: flat to cycle 237, then the countdown -->
+          <path d="M82 252.5 L554 252.5 L804 330" stroke="#9B4D45" stroke-width="3"/>
+          <!-- pointer into the removed triangle -->
+          <path d="M330 128 L330 206" marker-end="url(#ip5aAr)"/>
+          <!-- key -->
+          <rect x="590" y="48" width="260" height="104" rx="8" transform="rotate(0.6 720 100)" fill="#FFFFFF"/>
+          <path d="M606 72 L640 72"/>
+          <path d="M606 98 L640 98" stroke="#9B4D45" stroke-width="3"/>
+          <path d="M606 124 L640 124" stroke="#93A86F" stroke-dasharray="6 5"/>
+          <!-- gauge doodle at failure -->
+          <circle cx="852" cy="312" r="12" fill="#FFFFFF"/>
+          <path d="M852 312 L844 304"/>
+        </g>
+
+        <text class="ip5aS" x="652" y="76">uncapped: life minus cycle</text>
+        <text class="ip5aB" x="652" y="102">capped at 125</text>
+        <text class="ip5aS" x="652" y="128">capped at 130</text>
+
+        <text class="ip5aL" x="120" y="100">engine 69, life 362</text>
+        <text class="ip5aA" x="300" y="120">what the cap removes</text>
+        <text class="ip5aB" x="380" y="276">flat at 125 to cycle 237</text>
+        <text class="ip5aL" x="346" y="322">engine 39, life 128</text>
+
+        <text class="ip5aS" x="72" y="110" text-anchor="end">361</text>
+        <text class="ip5aS" x="72" y="256" text-anchor="end">125</text>
+        <text class="ip5aS" x="72" y="334" text-anchor="end">0</text>
+        <text class="ip5aS" x="82" y="348" text-anchor="middle">1</text>
+        <text class="ip5aS" x="336" y="348" text-anchor="middle">128</text>
+        <text class="ip5aS" x="554" y="348" text-anchor="middle">237</text>
+        <text class="ip5aS" x="804" y="348" text-anchor="middle">362</text>
+        <text class="ip5aA" x="450" y="366" text-anchor="middle">cycle</text>
+
+        <text class="ip5aN" x="30" y="392">Uncapped, a model must tell 361 from 127 at cycle 1, while both engines are still healthy.</text>
+        <text class="ip5aN" x="30" y="410">Capped, it counts down only near the end. Cap 130 never touches engine 39 (127 at cycle 1).</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the hatched triangle is the part of engine 69's label no sensor can support, and the cap is the decision to stop asking for it.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What the uncapped label asks for<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>At cycle 1, engine 69's label is 361 and engine 39's is 127. The readme says each engine "starts with different degrees of initial wear and manufacturing variation which is unknown to the user", and that it operates normally at the start before a fault develops. So a model fed cycle 1 of each sees two healthy engines and is asked to put them 234 cycles apart. Engine 39 does start a little hotter, which is a hint; it is not a count of cycles.</p>
+        <p>A least-squares fit takes that impossible job seriously. Its square error is dominated by the early rows, where the labels are large and the channels say little, and it spends its weights trying to explain them. The paper adds that participants were never given the health index; they had to infer it from the sensed variables. The uncapped label asks them to infer it before it exists.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The cap, and why 125 sits under 128<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The piecewise-linear target holds the label flat at the cap and lets it fall only once the countdown drops below it. One recent paper sets its early-RUL threshold at 125 "based on the minimum run length of 128 cycles observed in the training data", so the model is "only asked to track the RUL once the engine approaches end of life" (Tsurkan et al., 2025). The minimum is checkable: engine 39, 128 cycles. With the cap at 125, every training engine starts on the flat part, engine 39 for its first 3 cycles and engine 69 until cycle 237.</p>
+        <p>Move the cap to 130 and engine 39's label never touches it: 127 at cycle 1 is already under. That is not a flaw. It only shows that "every engine starts flat" is a property of one cap on one subset, not of the method.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) showed the planners two charts of the same engine: the raw countdown, and the capped one. The head planner pointed at the flat part and said that was the only honest thing the old report had never told them: "not yet, and we cannot say more". The capped target matched the question they actually ask each week. It did not answer how long a healthy engine will last, and nobody pretended it did.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Both values are in current use. Zhou et al. (2020): "We use piece-wise linear RUL as the target function, where the maximal RUL is 130". Tsurkan et al. (2025) use 125, tied to the 128-cycle minimum. A 2024 survey adopts the piecewise-linear label citing Heimes (2008) and sets the maximum to 125, citing Li, Ding and Sun (2018). Heimes is the paper usually credited with the idea; the cap value Heimes himself used was not read here, so it is reported second-hand only and no value is attributed to it.</p>
+        <p>The cap is also a bet about the range the model will be tested on. The PHM08 test set's true remaining lives ran from 10 to 150 cycles; the validation set's ran from 6 to 190, a widening the paper says was not announced to participants. A model capped at 125 can never say more than 125, so on any engine with more life it is early by construction. The bench's cut points run 10 to 150, so it pays that cost on some units and prints it.</p>
+        <p>The fair statement: a convention, chosen on this subset; it is a modelling choice, not a law of engines. Practitioner session 10 lets you toggle it on the full ladder.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The papers, in full<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li>Saxena, A., Goebel, K., Simon, D., and Eklund, N. (2008). "Damage Propagation Modeling for Aircraft Engine Run-to-Failure Simulation." Proceedings of the 1st International Conference on Prognostics and Health Management (PHM08), Denver, CO. Read at source (the PDF ships inside the NASA data set zip).</li>
+          <li>Heimes, F. O. (2008). "Recurrent Neural Networks for Remaining Useful Life Estimation." 2008 International Conference on Prognostics and Health Management. DOI 10.1109/PHM.2008.4711422. Reported (not read).</li>
+          <li>Zhou, Y., Gao, Y., Huang, Y., Hefenbrock, M., Riedel, T., and Beigl, M. (2020). "Automatic Remaining Useful Life Estimation Framework with Embedded Convolutional LSTM as the Backbone." arXiv 2008.03961. Read at source.</li>
+          <li>Tsurkan, O., Konstantinova, A., Senokosov, A., Sagingalieva, A., and Melnikov, A. (2025). "Hybrid quantum recurrent neural network for remaining useful life prediction of turbofan engines." arXiv 2504.20823. Read at source.</li>
+          <li>Wang, Y., Wu, M., Li, X., Xie, L., and Chen, Z. (2024). "A Survey on Graph Neural Networks for Remaining Useful Life Prediction: Methodologies, Evaluation and Future Trends." arXiv 2409.19629. Read at source.</li>
+        </ul>
+        <p>Only the cap values and the reasons quoted above are taken from these papers. Their models and their scores are not compared with the bench: different protocols, different test sets.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the floor and the convention check</span>
+      <h2>The floor, and what the target buys</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The floor predicts the average training life, 200.37 cycles over the 70 training engines, minus the cycles seen so far, floored at zero. It knows an engine's age and nothing else. The figure shows the three kinds of engine it meets: short-lived ones it is always late on, average ones it is close on, and long-lived ones it writes off at exactly the moment they have the most life left.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 332" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn bars of engine life against a dashed line at the fleet average life of 200.37 cycles. Engine 39, life 128, ends short of the line; the dashed ghost beyond it is the life the floor still expects, so the floor is always late on it. Engine 1, life 192, ends just short of the line, so the floor is close. Engine 69, life 362, runs far past the line; the part past it is hatched copper, and a cut point inside it shows the floor predicting 0 to 14 cycles left where 140 to 150 remain. A note says six of 300 units from engines 69 and 96 carry 79.5 percent of the floor's summed score of 305,167.">
+        <defs>
+          <filter id="ip5bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip5bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip5bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip5bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip5bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip5bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip5bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip5bH" x="30" y="26">THE FLOOR: AVERAGE LIFE MINUS AGE</text>
+        <text class="ip5bA" x="511" y="46" text-anchor="middle">fleet average life 200.37 (70 training engines)</text>
+
+        <g filter="url(#ip5bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- x = 110 + 2 per cycle: 128 at 366, 192 at 494, 200.37 at 511, 362 at 834 -->
+          <path d="M511 54 L511 226" stroke-dasharray="5 6"/>
+          <!-- engine 39 -->
+          <rect x="110" y="64" width="256" height="26" rx="4" transform="rotate(-0.4 238 77)" fill="#FFFFFF"/>
+          <rect x="369" y="64" width="142" height="26" rx="4" transform="rotate(0.3 440 77)" fill="#F3F7EA" stroke="#CDD5C0" stroke-dasharray="5 4"/>
+          <path d="M376 77 L503 77" marker-end="url(#ip5bAr)"/>
+          <!-- engine 1 -->
+          <rect x="110" y="128" width="384" height="26" rx="4" transform="rotate(0.3 302 141)" fill="#FFFFFF"/>
+          <rect x="497" y="128" width="14" height="26" rx="3" fill="#F3F7EA" stroke="#CDD5C0" stroke-dasharray="4 3"/>
+          <!-- engine 69: the part past the average is the costly part -->
+          <rect x="110" y="192" width="724" height="26" rx="4" transform="rotate(0.2 472 205)" fill="#FFFFFF"/>
+          <rect x="513" y="194" width="319" height="22" fill="url(#ip5bHc)" stroke="none"/>
+          <path d="M550 186 L550 224"/>
+          <!-- gauge doodle -->
+          <circle cx="858" cy="205" r="11" fill="#FFFFFF"/>
+          <path d="M858 205 L851 197"/>
+        </g>
+
+        <text class="ip5bL" x="30" y="82">engine 39</text>
+        <text class="ip5bL" x="30" y="146">engine 1</text>
+        <text class="ip5bL" x="30" y="210">engine 69</text>
+        <text class="ip5bL" x="238" y="82" text-anchor="middle">life 128</text>
+        <text class="ip5bL" x="302" y="146" text-anchor="middle">life 192</text>
+        <text class="ip5bL" x="310" y="210" text-anchor="middle">life 362</text>
+        <text class="ip5bS" x="560" y="183">a cut point</text>
+
+        <text class="ip5bS" x="110" y="110">the floor expects 200.37: always late here</text>
+        <text class="ip5bS" x="110" y="174">near the average: the floor is near right</text>
+        <text class="ip5bB" x="110" y="238">past 200.37 the floor says 0 to 14 left; 140 to 150 remain</text>
+
+        <text class="ip5bN" x="30" y="274">Six of the 300 units (engines 69 and 96) carry 79.5 percent of the floor's summed score of 305,167;</text>
+        <text class="ip5bN" x="30" y="292">the worst single unit (d = -142) costs 55,440. A sum of exponentials is ruled by its worst few units.</text>
+        <text class="ip5bS" x="30" y="318">300 cut points on 30 held-out engines, true life 10 to 150 cycles; not the NASA test set.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the floor is late on short lives and wildly early on long ones, and the hatched copper zone is where almost all of its score comes from.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip5-cap">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The floor and the first rungs on real public rows from NASA's simulation, computed in this page, with the cap and the seed in your hands. Modelled, and labelled so: the seeded split of 70 training and 30 held-out engines and the 10 cut points per held-out engine. At cap 125 and seed 2008, the canon settings, the table prints the canon figures.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip5-capv">Cap on the label (a convention: 125 and 130 are both in use)</label>
+        <select class="sql-code" id="ip5-capv">
+          <option value="100">100</option>
+          <option value="110">110</option>
+          <option value="120">120</option>
+          <option value="125" selected>125</option>
+          <option value="130">130</option>
+          <option value="140">140</option>
+          <option value="150">150</option>
+        </select>
+        <label class="sql-label" for="ip5-seed">Seed for the split and the cut points</label>
+        <select class="sql-code" id="ip5-seed">
+          <option value="2008" selected>2008, the canon</option>
+          <option value="1">1</option>
+          <option value="7">7</option>
+          <option value="42">42</option>
+        </select>
+        <div id="ip5-cap-out"></div>
+        <p class="sql-note" id="ip5-cap-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip5-cap-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the first three rungs<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>At the canon settings, on 300 units under test: the floor prints RMSE 45.61 and a summed score of 305,167, with a bias of -12.1 (early on average) and 43 percent of units late. Rung 1, a least-squares fit on the 14 raw channels with the uncapped label, prints 30.50 and 28,557, but its bias is +15.8 and 70 percent of its calls are late, the side the score punishes harder. Rung 2, the capped label, prints 24.00 and 3,542, bias +0.8, 56 percent late.</p>
+        <p>Here is the part worth slowing down for. In the engine, rung 2 uses the same 14 channels and the same least squares as rung 1. The fitted line, scaled 0 to 1, is the learned health index session 4 builds; then it is clipped to that range and multiplied back by the cap. So the move from 30.50 to 24.00, and from 28,557 to 3,542, is the target and its clip. No new input, no new model.</p>
+        <p>Every score on this page is the PHM08 asymmetric score summed over the 300 bench units, which are held-out training engines, not the NASA test set. Practitioner session 7 opens the formula; tonight it is enough that late costs more than early.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why the floor is the floor<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The floor is the score of knowing an engine's age and nothing else, so any model that reads the sensors has to beat it on the same cut points or the sensors added nothing. Its summed score of 305,167 is not an average of bad calls. Engines 69 (life 362) and 96 (life 336) are past the 200-cycle average at their cut points, so the floor predicts 0 to 14 cycles left when 140 to 150 remain. Those six units carry 79.5 percent of the sum, and the single worst unit (d = -142) costs 55,440 alone, 18.2 percent. A sum of exponentials is ruled by its worst few units.</p>
+        <p>Beating the floor is not automatic. At seed 7 the uncapped linear fit is worse than the floor on RMSE (40.40 against 38.06), and at seeds 1 and 7 its score is worse than the floor's. On every seed tried (2008, 1, 7, 42), the capped rung beats both. That is the strongest claim the bench supports about the target.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's planners (constructed) had been using exactly the floor for years, as a rule of thumb: "an engine is good for about 200 cycles". The analyst ran it on the bench and showed them where its cost sat: not spread across the fleet, but on the two long-lived engines the rule had told them to pull while they still had most of their margin. The rule of thumb became the line every new model is drawn against, and nobody was embarrassed by it.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The convention check: 125 against 130<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The bench prints the cap-130 row on its smoothed rung (rung 3: the health index smoothed by a lag-free local line over its last 10 values). At seed 2008, cap 125 gives RMSE 23.64 and a score of 3,366; cap 130 gives 23.70 and 3,622, with the bias moving later, from +1.4 to +3.0. The RMSE barely moves; the score moves by 256. Same models, same units: only the convention changed.</p>
+        <p>Do not read a winner into that. At seeds 1 and 7, 125 does better again (24.73 against 25.13, and 24.82 against 25.39). At seed 42, 130 wins on both numbers: 21.89 and 2,453 against 22.32 and 2,562. The order of the two caps depends on which engines the seeded draw holds out. Try it in the widget above: change the seed, and watch the verdict line.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Rebuild the floor, the first two rungs and the other cap</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). Six steps, each with the number you should see at seed 2008. The figure is what rung 2 does to the label, box by box, so you can see where the cap enters and where it bites.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes for rung 2. One: label every row of the 70 training engines with life minus cycle. Two: cap the label at 125 and divide by 125, a target from 0 to 1. Three: least squares on the 14 standardised channels, which is the learned health index. Four, in copper: clip the prediction to 0 to 1 and multiply by 125, so no prediction is ever above 125. Five: score on 300 cut points whose true life runs 10 to 150, printing RMSE and the score. A note says rung 1 skips boxes 2 and 4, and that 49 of the 300 units have more than 125 cycles left, so rung 2 is early on them by construction.">
+        <defs>
+          <filter id="ip5cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip5cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip5cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip5cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip5cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip5cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip5cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip5cH" x="30" y="26">RUNG 2: WHERE THE CAP ENTERS AND WHERE IT BITES</text>
+
+        <g filter="url(#ip5cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="56" width="140" height="120" rx="8" transform="rotate(-0.8 100 116)" fill="#FFFFFF"/>
+          <rect x="200" y="56" width="140" height="120" rx="8" transform="rotate(0.6 270 116)" fill="#F3F7EA"/>
+          <rect x="370" y="56" width="140" height="120" rx="8" transform="rotate(-0.5 440 116)" fill="url(#ip5cHc)"/>
+          <rect x="540" y="56" width="140" height="120" rx="8" transform="rotate(0.7 610 116)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="710" y="56" width="140" height="120" rx="8" transform="rotate(-0.6 780 116)" fill="#FFFFFF"/>
+          <path d="M172 116 L196 116" marker-end="url(#ip5cAr)"/>
+          <path d="M342 116 L366 116" marker-end="url(#ip5cAr)"/>
+          <path d="M512 116 L536 116" marker-end="url(#ip5cAr)"/>
+          <path d="M682 116 L706 116" marker-end="url(#ip5cAr)"/>
+          <!-- sensor dot doodle on the fit box -->
+          <circle cx="490" cy="160" r="5" fill="#1D2513"/>
+        </g>
+
+        <text class="ip5cL" x="100" y="84" text-anchor="middle">label</text>
+        <text class="ip5cS" x="100" y="104" text-anchor="middle">70 train engines</text>
+        <text class="ip5cS" x="100" y="120" text-anchor="middle">every row</text>
+        <text class="ip5cS" x="100" y="136" text-anchor="middle">life minus cycle</text>
+
+        <text class="ip5cL" x="270" y="84" text-anchor="middle">cap</text>
+        <text class="ip5cS" x="270" y="104" text-anchor="middle">min(label, 125)</text>
+        <text class="ip5cS" x="270" y="120" text-anchor="middle">divided by 125</text>
+        <text class="ip5cS" x="270" y="136" text-anchor="middle">target 0 to 1</text>
+
+        <text class="ip5cL" x="440" y="84" text-anchor="middle">fit</text>
+        <text class="ip5cS" x="440" y="104" text-anchor="middle">least squares on</text>
+        <text class="ip5cS" x="440" y="120" text-anchor="middle">14 standardised</text>
+        <text class="ip5cS" x="440" y="136" text-anchor="middle">channels: an index</text>
+
+        <text class="ip5cB" x="610" y="84" text-anchor="middle">clip</text>
+        <text class="ip5cS" x="610" y="104" text-anchor="middle">to 0 to 1,</text>
+        <text class="ip5cS" x="610" y="120" text-anchor="middle">times 125: never</text>
+        <text class="ip5cS" x="610" y="136" text-anchor="middle">above 125</text>
+
+        <text class="ip5cL" x="780" y="84" text-anchor="middle">score</text>
+        <text class="ip5cS" x="780" y="104" text-anchor="middle">300 cut points</text>
+        <text class="ip5cS" x="780" y="120" text-anchor="middle">true life 10 to 150</text>
+        <text class="ip5cS" x="780" y="136" text-anchor="middle">RMSE and score</text>
+
+        <text class="ip5cN" x="30" y="222">Rung 1 skips boxes 2 and 4: it fits life minus cycle directly and is clipped only at 0.</text>
+        <text class="ip5cN" x="30" y="240">49 of the 300 units have more than 125 cycles left, so rung 2 calls them early by construction.</text>
+        <text class="ip5cS" x="30" y="268">Cap 130 changes boxes 2 and 4 only; the split, the channels and the 300 cut points stay fixed.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is where the cap costs something: a ceiling on every prediction, paid on the units with more life than the cap.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Score the floor</h4>
+        <p>Rung 0 at the canon settings. You should see an RMSE of 45.61, a summed score of 305,167, a training mean life of 200.37 and 300 units under test.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r0 = IOT.ladder(IOT_SAMPLE, { only: ["mean"] });
+[r0.mean.rmse.toFixed(2), Math.round(r0.mean.score), r0.mean.meanLife.toFixed(2), r0.mean.n]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find where the floor's score lives</h4>
+        <p>Score each unit on its own, sort, and add up the worst six. The worst unit costs 55,440; the top six carry 79.5 percent of the sum.</p>
+        <div class="prompt-box good"><span class="label">console</span>var s = r0.cuts.map(function (c, i) { return IOT.phmScore(r0.mean.preds[i] - c.rul, 13, 10); }).sort(function (a, b) { return b - a; });
+var tot = s.reduce(function (a, b) { return a + b; }, 0);
+[Math.round(s[0]), (s.slice(0, 6).reduce(function (a, b) { return a + b; }, 0) / tot * 100).toFixed(1)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Rung 1: the uncapped target</h4>
+        <p>Least squares on the 14 channels, label = life minus cycle. RMSE 30.50, score 28,557, bias +15.8, 70 percent late.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r1 = IOT.ladder(IOT_SAMPLE, { only: ["linear"] }).linear;
+[r1.rmse.toFixed(2), Math.round(r1.score), r1.bias.toFixed(1), Math.round(r1.lateShare * 100)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Rung 2: the capped target</h4>
+        <p>Same channels, same least squares, label capped at 125. RMSE 24.00, score 3,542, bias +0.8. The last number is the largest prediction on the bench: 125, the cap, exactly.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r2 = IOT.ladder(IOT_SAMPLE, { only: ["hi"] }).hi;
+[r2.rmse.toFixed(2), Math.round(r2.score), r2.bias.toFixed(1), Math.max.apply(null, r2.preds)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Count the units the cap cannot reach</h4>
+        <p>How many of the 300 units have more life left than the cap? 49 above 125 and 35 above 130. On those, a capped model is early whatever the sensors say.</p>
+        <div class="prompt-box good"><span class="label">console</span>[r0.cuts.filter(function (c) { return c.rul &gt; 125; }).length,
+ r0.cuts.filter(function (c) { return c.rul &gt; 130; }).length]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Run the other cap, then a second seed</h4>
+        <p>The smoothed rung at 125 and at 130. Seed 2008: 23.64 / 3,366 against 23.70 / 3,622. Seed 42: 22.32 / 2,562 against 21.89 / 2,453. The winner changes with the seed; write both down.</p>
+        <div class="prompt-box good"><span class="label">console</span>var a = IOT.ladder(IOT_SAMPLE, { only: ["smooth", "cap130Smooth"] });
+var b = IOT.ladder(IOT_SAMPLE, { seed: 42, only: ["smooth", "cap130Smooth"] });
+[a, b].map(function (x) { return [x.smooth.rmse.toFixed(2), Math.round(x.smooth.score), x.cap130Smooth.rmse.toFixed(2), Math.round(x.cap130Smooth.score)]; })</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> When you change the target, change nothing else and score it beside the floor on the same cut points. Then name the convention in the write-up, with the value you did not pick printed next to it, on more than one seed.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Why do many FD001 models hold the remaining-life label flat at 125 early in life?</p>
+      <div class="qopt">A · Because no engine in the file has more than 125 cycles left</div>
+      <div class="qopt">B · Because early in life the channels cannot separate a long remaining life from a short one, and 125 sits just under the shortest training life of 128, so every engine starts on the flat part</div>
+      <div class="qopt">C · Because the NASA readme specifies 125 as the target</div>
+      <q class="qwhy">Engine 69 has 361 cycles left at cycle 1, so A is false, and the readme gives no target at all. The cap removes the part of the label no sensor can support; 125 is tied to the 128-cycle minimum by one paper, and other papers use 130.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">At seed 2008 the smoothed rung prints 23.64 / 3,366 with cap 125 and 23.70 / 3,622 with cap 130. What follows?</p>
+      <div class="qopt">A · 125 is the correct cap for FD001</div>
+      <div class="qopt">B · The papers that use 130 made a mistake</div>
+      <div class="qopt">C · On this bench at this seed 125 does a little better; at seed 42 130 wins on both numbers, so the cap is a modelling choice to test and report, not a law</div>
+      <q class="qwhy">One seed is one draw of held-out engines. At seeds 1 and 7, 125 wins again; at seed 42, 130 does (21.89 / 2,453 against 22.32 / 2,562). A convention gets printed beside its alternative, never crowned.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The floor's summed score is 305,167; the uncapped linear fit's is 28,557. Which reading is right?</p>
+      <div class="qopt">A · Six units from two long-lived engines carry 79.5 percent of the floor's sum; a sum of exponentials is ruled by its worst few units, so look at the units before trusting the total</div>
+      <div class="qopt">B · The floor is about ten times worse on every engine</div>
+      <div class="qopt">C · A linear fit on the sensors always beats the floor</div>
+      <q class="qwhy">The floor's total is mostly engines 69 and 96, written off at 0 to 14 cycles while 140 to 150 remained. And C fails on the bench itself: at seed 7 the uncapped fit is worse than the floor on RMSE.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 6</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the widget and the console on this page.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Sweep the cap across seeds</h4>
+        <p>In the widget, run every cap from 100 to 150 at seeds 2008, 1, 7 and 42, and write down the cap with the lowest RMSE and the cap with the lowest score for each seed. Note whether they are the same cap, and whether any cap wins on every seed. Whatever you find, it is a finding about these 300 units, not about engines.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Name the floor's victims</h4>
+        <p>Extend step 2 of the build-along to keep each unit's engine number with its score. Confirm that the six heaviest units belong to engines 69 and 96, and write one sentence on what the floor told the planner about each of them.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the cap for a label you own</h4>
+        <p>Pick a time-to-event label from your own work (days to churn, weeks to stock-out, hours to a breach of a threshold). Say where your inputs stop carrying information about the time left, what cap that implies, and what value you would print beside it. Session 6 then asks what happens when the inputs themselves go missing near the end.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The uncapped label</span><span class="note">Life minus cycle on every row; asks a model to separate 361 from 127 at cycle 1.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The piecewise-linear target</span><span class="note">Flat at the cap, then the same countdown; engine 69 flat to cycle 237 at cap 125.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">125 and the 128-cycle minimum</span><span class="note">Tsurkan et al. (2025), read at source; a 2024 survey adopts 125 too (Wang et al.).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">130</span><span class="note">Zhou et al. (2020), read at source. Both caps are conventions chosen on this subset.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Heimes (2008)</span><span class="note">Credited with the piecewise-linear target; reported, and the cap value Heimes used was not read.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The floor</span><span class="note">Average life 200.37 minus age: RMSE 45.61, score 305,167, 79.5 percent of it on six units from two engines.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Rungs 1 and 2</span><span class="note">Same channels, same least squares: 30.50 / 28,557 uncapped, 24.00 / 3,542 capped at 125 (300 held-out cut points, seed 2008).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The convention check</span><span class="note">Cap 130: 23.70 / 3,622 against 23.64 / 3,366 at seed 2008; 130 wins at seed 42.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The asymmetric score</span><span class="note">Late punished harder; the formula and its printed orientation are practitioner session 7.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Forecast backtests and RMSE</span><span class="note">Used here, taught in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn timeseries forecasting, builder session 8</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; no figure describes a real fleet.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The label.</strong> Life minus cycle. Computed, possible only because training engines ran to failure.</div>
+      <div class="cheat-item"><strong>The cap.</strong> Hold the label flat, then count down. 125 or 130: a convention, not a law.</div>
+      <div class="cheat-item"><strong>Why 125.</strong> FD001's shortest life is 128, so every engine starts on the flat part.</div>
+      <div class="cheat-item"><strong>What it costs.</strong> No prediction above the cap: units with more life are called early by construction.</div>
+      <div class="cheat-item"><strong>The floor.</strong> 200.37 minus age: RMSE 45.61, score 305,167, mostly two long-lived engines.</div>
+      <div class="cheat-item"><strong>The target move.</strong> Same channels, same fit: 30.50 uncapped, 24.00 capped at 125.</div>
+      <div class="cheat-item"><strong>The check.</strong> Print the other cap beside yours, on more than one seed. 130 wins at seed 42.</div>
+      <div class="cheat-item"><strong>The caveat.</strong> 300 cut points on 30 held-out engines, not the NASA test set.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 5 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p4-many-channels-one-health-index.html">← Practitioner session 4 · From many channels to one health index</a>
+        <a href="p6-missing-not-at-random-planted.html">Practitioner session 6 · Missing not at random, planted →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var capSel = document.getElementById("ip5-capv");
+  var seedSel = document.getElementById("ip5-seed");
+  var out = document.getElementById("ip5-cap-out");
+  var verdict = document.getElementById("ip5-cap-verdict");
+  var self = document.getElementById("ip5-cap-self");
+
+  function fmt(x, d) { return x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function row(label, x, cls) {
+    return "<tr" + (cls ? ' class="' + cls + '"' : "") + "><td>" + label + "</td><td><b>" + fmt(x.rmse, 2) + "</b></td><td><b>" + fmt(x.score, 0) +
+      "</b></td><td>" + sgn(x.bias) + "</td><td>" + Math.round(x.lateShare * 100) + "%</td></tr>";
+  }
+
+  function render() {
+    var cap = Number(capSel.value), seed = Number(seedSel.value);
+    out.innerHTML = '<p class="sql-note">Running the rungs on 100 engines...</p>';
+    setTimeout(function () {
+      var r = IOT.ladder(IOT_SAMPLE, { seed: seed, cap: cap, only: ["mean", "linear", "hi", "smooth", "cap130Smooth"] });
+      var s125 = cap === 125 ? r.smooth : IOT.ladder(IOT_SAMPLE, { seed: seed, only: ["smooth"] }).smooth;
+      var s130 = r.cap130Smooth;
+      var above = r.cuts.filter(function (c) { return c.rul > cap; }).length;
+      var html = '<table class="sql-table"><thead><tr><th>Rung</th><th>RMSE</th><th>Score, sum</th><th>Bias</th><th>Late</th></tr></thead><tbody>';
+      html += row("0 Fleet-average floor (no cap)", r.mean, "");
+      html += row("1 Linear fit, uncapped label", r.linear, "");
+      html += row("2 Health index, label capped at " + cap, r.hi, "ip5-mine");
+      html += row("3 + lag-free smoothing, capped at " + cap, r.smooth, "");
+      html += '<tr class="ip5-sep"><td colspan="5">Convention check at seed ' + seed + ", rung 3</td></tr>";
+      html += row("cap 125", s125, "");
+      html += row("cap 130", s130, "");
+      html += "</tbody></table>";
+      html += '<p class="sql-note">' + r.mean.n + " units under test (30 held-out engines x 10 cuts, not the NASA test set), 70 training engines, seed " + seed +
+        (cap === 125 && seed === 2008 ? ", the canon settings." : ". Not the canon settings: your numbers will differ from the figures in the prose.") + "</p>";
+      out.innerHTML = html;
+      var rm = s130.rmse < s125.rmse ? "130" : "125", sc = s130.score < s125.score ? "130" : "125";
+      verdict.textContent = "Capped at " + cap + ", no prediction can go above " + cap + ", and " + above + " of the " + r.mean.n +
+        " units have more life left than that, so the model is early on them by construction. Convention check at seed " + seed +
+        ": cap 125 prints " + fmt(s125.rmse, 2) + " / " + fmt(s125.score, 0) + ", cap 130 prints " + fmt(s130.rmse, 2) + " / " + fmt(s130.score, 0) + ". " +
+        (rm === sc ? "Cap " + rm + " wins on both numbers at this seed." : "Cap " + rm + " wins on RMSE, cap " + sc + " on the score.") +
+        " Change the seed before you believe it.";
+    }, 20);
+  }
+
+  capSel.addEventListener("change", render);
+  seedSel.addEventListener("change", render);
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  var faults = IOT.FAULTS.filter(function (f) { return !IOT.selfTest(f).pass; }).length;
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, and " + faults + " of " + IOT.FAULTS.length + " planted faults make a check fail, as they should. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  render();
+})();
+</script>
+<style>
+  #ip5-cap .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip5-cap table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip5-cap tr.ip5-mine td { background: var(--indigo-50); }
+  #ip5-cap tr.ip5-sep td { background: #FFFFFF; font-style: italic; color: var(--muted); }
+</style>
+</body>
+</html>

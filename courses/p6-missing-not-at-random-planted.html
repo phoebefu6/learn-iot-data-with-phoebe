@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 6 of 10. Plant a declared dropout in NASA's FD001 rows (hot T50 readings vanish with probability 0.7), drop the rows with gaps, refit and re-score: RMSE moves 5 percent, the asymmetric score 38 percent. Real public rows from NASA's simulation, computed in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Missing not at random, planted - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 6 of 10. 3,073 of 20,631 rows vanish because they were hot. Deleting them pushes the estimates late: RMSE 23.64 to 24.89, score 3,366 to 4,656.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p6-missing-not-at-random-planted.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Missing not at random, planted - learn iot data with phoebe">
+<meta name="twitter:description" content="Same number of rows, removed for a different reason, does different damage. Plant the reason, then measure it.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 6 · Missing not at random, planted - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 6 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 6 of 10</div>
+    <h1>Missing not at random, <span class="accent">planted</span></h1>
+    <p class="sub">NASA's FD001 file has no gaps at all, which makes it the perfect place to study them: you can add gaps on purpose, with a rule you write down first, and then measure exactly what the usual clean-up does. Tonight the rule is the sensor's worst habit. When the exhaust temperature runs hot, the reading vanishes. The pipeline then does what most cleaning scripts do on line one, drops every row with a gap, and the bench re-scores the best model on the same 300 cut points. The error most teams report barely moves. The score that prices lateness jumps. Real public rows from NASA's simulation, computed in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Advanced</span>
+      <span class="chip audience">Data scientists modelling sensor data</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · The plant</span>
+      <span class="a3" style="flex:3">15-27 · Deletion and two numbers</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's feed starts losing its hottest readings</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is the 100 simulated engines of NASA's FD001 training set. Leader session 2 showed its planning lead what dropped gaps do to a decision. Tonight its analyst rebuilds that result by hand: she writes the dropout rule, plants it with the engine, deletes the gappy rows the way her pipeline would, refits the bench's top rung and puts the two scores side by side. Then she asks the question deletion threw away: how long since the last reading?</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A planted dropout you can state in one line: a row whose T50 reading is at or above 1416.2 degrees Rankine vanishes with probability 0.7, so 3,073 of 20,631 rows go. Why that is missing not at random in Rubin's sense, and why it lands at the end of life. The two-number move measured on 300 cut points: RMSE from 23.64 to 24.89, about 5 percent; the asymmetric score from 3,366 to 4,656, about 38 percent; the bias from 1.4 to 4.7 cycles late. A live check that the same number of rows removed at random does not do the same damage. And an honest list of what to do instead, with what this bench does and does not show about it.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why a file with no gaps needs a plant<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>On a real feed the reason behind each gap is unknown. You can argue that the probe overheats, or that the link saturates, or that a maintenance mode switches it off, and you can never be sure which one made a given hole. That uncertainty is why "missing not at random" usually stays an argument instead of a measurement.</p>
+        <p>FD001 removes the uncertainty from the other side. Every cycle of every engine is in the file, so the truth is complete. Plant the gaps with a rule written down before anything is measured, and the bench can compare the same model on the same 300 cut points with and without them. Nothing else changes, so the difference between the two scores is what the rule plus the clean-up did. The dropout is modelled, labelled modelled; the readings it removes are real public rows from NASA's simulation, in which the degradation itself is simulated (C-MAPSS).</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>The plant.</strong> A dropout rule applied on purpose to a complete file, seeded so the same rows vanish every run, declared on the widget.</li>
+          <li><strong>Threshold.</strong> 1416.2 degrees Rankine: the 80th percentile of all 20,631 T50 readings, so the hottest fifth sits at or above it.</li>
+          <li><strong>Missing completely at random.</strong> Whether a reading arrives has nothing to do with the engine or the reading.</li>
+          <li><strong>Missing at random.</strong> Whether it arrives depends only on things you did record.</li>
+          <li><strong>Missing not at random.</strong> Whether it arrives depends on the value that went missing. The three names are the shorthand of later texts, reported here.</li>
+          <li><strong>Deletion.</strong> Dropping every row with a gap before modelling; also called complete-case analysis. The habit measured tonight.</li>
+          <li><strong>Staleness.</strong> Cycles between the cut point and the newest row that survived. Zero when nothing vanished.</li>
+          <li><strong>Top rung.</strong> The bench's best model: health index on 14 channels, label capped at 125, lag-free smoothing over the last 10 values.</li>
+          <li><strong>Units under test.</strong> 300 cut points on 30 held-out engines (seed 2008), not the NASA test set; 70 engines fit the model.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the plant</span>
+      <h2>A rule that reads temperature and removes old age</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The rule never looks at cycle numbers. It looks at one channel, T50 (the low-pressure turbine outlet temperature), and removes the row when that reading is hot. The figure splits all 20,631 rows into tenths of each engine's life and draws, for each tenth, how many rows are hot and how many of those the rule removed.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn bar chart of all 100 engines split into tenths of life. White bars show the share of rows with T50 at or above 1416.2 degrees Rankine: 0.8, 0.8, 1.4, 1.8, 3.4, 6.7, 12.0, 27.1, 63.8 and 96.4 percent from the first tenth to the last. Inside each, a copper hatched bar shows the rows the planted rule removed, about seven in ten of the hot ones. A copper panel states the rule: if T50 is at or above 1416.2, the hottest 20 percent of readings, the row vanishes with probability 0.7, seeded; 3,073 of 20,631 rows vanish, 14.9 percent; then the pipeline drops them. A note says the rule reads only temperature, but the holes land at the end of life, outside the conditions Rubin gave for ignoring a gap.">
+        <defs>
+          <filter id="ip6aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip6aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip6aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip6aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip6aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip6aV { font: 800 17px Inter, sans-serif; fill: #2A410C; }
+          .ip6aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip6aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip6aH" x="30" y="26">THE RULE READS TEMPERATURE; THE HOLES LAND BY AGE</text>
+        <text class="ip6aA" x="70" y="54">share of rows, by tenth of each engine's life (all 100 engines)</text>
+
+        <g filter="url(#ip6aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes: baseline y 290, 2.2 px per percent; slot 49 px from x 70 -->
+          <path d="M70 64 L70 290 L572 290"/>
+          <!-- legend swatches -->
+          <rect x="90" y="92" width="14" height="14" rx="2" transform="rotate(-1 97 99)" fill="#FFFFFF"/>
+          <path d="M90 116 L104 116 L104 130 L90 130 Z" fill="url(#ip6aHc)" stroke="#9B4D45"/>
+          <!-- hot share bars (white), tenths 1 to 10 -->
+          <rect x="78" y="288" width="34" height="2" transform="rotate(-0.4 95 289)" fill="#FFFFFF"/>
+          <rect x="127" y="288" width="34" height="2" transform="rotate(0.4 144 289)" fill="#FFFFFF"/>
+          <rect x="176" y="287" width="34" height="3" transform="rotate(-0.4 193 288)" fill="#FFFFFF"/>
+          <rect x="225" y="286" width="34" height="4" transform="rotate(0.4 242 288)" fill="#FFFFFF"/>
+          <rect x="274" y="282.5" width="34" height="7.5" transform="rotate(-0.5 291 286)" fill="#FFFFFF"/>
+          <rect x="323" y="275.3" width="34" height="14.7" transform="rotate(0.5 340 283)" fill="#FFFFFF"/>
+          <rect x="372" y="263.6" width="34" height="26.4" transform="rotate(-0.6 389 277)" fill="#FFFFFF"/>
+          <rect x="421" y="230.4" width="34" height="59.6" transform="rotate(0.6 438 260)" fill="#FFFFFF"/>
+          <rect x="470" y="149.6" width="34" height="140.4" transform="rotate(-0.7 487 220)" fill="#FFFFFF"/>
+          <rect x="519" y="77.9" width="34" height="212.1" transform="rotate(0.7 536 184)" fill="#FFFFFF"/>
+          <!-- removed by the rule (copper hachure), drawn to the engine's count -->
+          <path d="M376 290 L376 271.3 L402 271.3 L402 290" fill="url(#ip6aHc)" stroke="#9B4D45" stroke-width="1.6"/>
+          <path d="M425 290 L425 247.8 L451 247.8 L451 290" fill="url(#ip6aHc)" stroke="#9B4D45" stroke-width="1.6"/>
+          <path d="M474 290 L474 191 L500 191 L500 290" fill="url(#ip6aHc)" stroke="#9B4D45" stroke-width="1.6"/>
+          <path d="M523 290 L523 141.9 L549 141.9 L549 290" fill="url(#ip6aHc)" stroke="#9B4D45" stroke-width="1.6"/>
+          <!-- the rule -->
+          <rect x="600" y="60" width="256" height="236" rx="8" transform="rotate(0.8 728 178)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <!-- probe doodle with heat -->
+          <circle cx="830" cy="88" r="6" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M838 80 Q844 74 838 68 M846 84 Q852 78 846 72" stroke="#9B4D45" stroke-width="1.6"/>
+        </g>
+
+        <text class="ip6aS" x="112" y="104">hot: T50 at or above 1416.2</text>
+        <text class="ip6aB" x="112" y="128">removed by the rule</text>
+
+        <text class="ip6aS" x="95" y="282" text-anchor="middle">0.8%</text>
+        <text class="ip6aS" x="144" y="282" text-anchor="middle">0.8%</text>
+        <text class="ip6aS" x="193" y="281" text-anchor="middle">1.4%</text>
+        <text class="ip6aS" x="242" y="280" text-anchor="middle">1.8%</text>
+        <text class="ip6aS" x="291" y="276" text-anchor="middle">3.4%</text>
+        <text class="ip6aS" x="340" y="269" text-anchor="middle">6.7%</text>
+        <text class="ip6aS" x="389" y="257" text-anchor="middle">12.0%</text>
+        <text class="ip6aS" x="438" y="224" text-anchor="middle">27.1%</text>
+        <text class="ip6aL" x="487" y="143" text-anchor="middle">63.8%</text>
+        <text class="ip6aL" x="536" y="72" text-anchor="middle">96.4%</text>
+
+        <text class="ip6aS" x="95" y="308" text-anchor="middle">1st</text>
+        <text class="ip6aS" x="144" y="308" text-anchor="middle">2nd</text>
+        <text class="ip6aS" x="193" y="308" text-anchor="middle">3rd</text>
+        <text class="ip6aS" x="242" y="308" text-anchor="middle">4th</text>
+        <text class="ip6aS" x="291" y="308" text-anchor="middle">5th</text>
+        <text class="ip6aS" x="340" y="308" text-anchor="middle">6th</text>
+        <text class="ip6aS" x="389" y="308" text-anchor="middle">7th</text>
+        <text class="ip6aS" x="438" y="308" text-anchor="middle">8th</text>
+        <text class="ip6aS" x="487" y="308" text-anchor="middle">9th</text>
+        <text class="ip6aS" x="536" y="308" text-anchor="middle">10th</text>
+        <text class="ip6aA" x="315" y="326" text-anchor="middle">tenth of life: 1st = first cycles, 10th = the cycles before failure</text>
+
+        <text class="ip6aH" x="616" y="88">THE RULE, DECLARED FIRST</text>
+        <text class="ip6aS" x="616" y="106">modelled; a seeded draw</text>
+        <text class="ip6aL" x="616" y="134">if T50 is at or above 1416.2</text>
+        <text class="ip6aS" x="616" y="152">the hottest 20% of all readings</text>
+        <text class="ip6aL" x="616" y="178">the row vanishes with</text>
+        <text class="ip6aL" x="616" y="196">probability 0.7</text>
+        <text class="ip6aV" x="616" y="234">3,073 rows</text>
+        <text class="ip6aS" x="616" y="254">of 20,631 vanish (14.9%)</text>
+        <text class="ip6aB" x="616" y="280">then the pipeline drops them</text>
+
+        <text class="ip6aN" x="30" y="356">The rule never reads the engine's age, only the reading. Heat lives at the end of life, so the holes do too.</text>
+        <text class="ip6aN" x="30" y="374">Missing because of the value that went missing: outside the conditions Rubin (1976) gave for ignoring a gap.</text>
+        <text class="ip6aS" x="30" y="398">Shares from all 20,631 rows, real public rows from NASA's simulation (C-MAPSS); copper drawn to the engine's count.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the first half of life barely loses a row; the last tenth loses most of its rows, because that is where the heat is.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The rule, declared before anything is measured<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three numbers define the plant, and the engine exposes all three as settings: the channel (<code>mnarCh</code>, s4, which is T50), the quantile that marks a reading as hot (<code>mnarQuantile</code>, 0.8), and the probability that a hot reading vanishes (<code>mnarP</code>, 0.7). The threshold is computed, not chosen: sort all 20,631 T50 readings and take the one 80 percent of the way up, 1416.2 degrees Rankine. Every hot row then gets a seeded random draw (seed 2008 plus 7), and 7 in 10 of them, on average, vanish. The count at the canon settings is 3,073 rows, 14.9 percent of the file.</p>
+        <p>Read the rule panel again: the row vanishes, not just the reading. A pipeline that drops rows with gaps throws away the other thirteen channels of every one of those cycles, all of which arrived intact. The plant reports a missing T50; the clean-up turns it into a missing cycle.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) writes the rule on the team's wiki before running anything, with the threshold, the probability and the seed. The reliability engineer objects that the shop's probes do not quit at exactly 1416.2. He is right, and it does not matter tonight: the point of a declared rule is that anyone can rerun it and get the same 3,073 rows, so an argument about the result is never an argument about which rows went.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Not at random, in Rubin's sense<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Rubin (1976) asked when an analysis may ignore the process that caused some data to be missing. The abstract, read at source, gives two sets of conditions: for inference from sampling distributions, the data must be "missing at random" and "observed at random"; for likelihood or Bayesian inference, missing at random and the missingness parameter "distinct" from the one being estimated. It calls these "the weakest general conditions" under which ignoring that process is always appropriate.</p>
+        <p>The plant breaks the first condition by construction. Whether a T50 reading arrives depends on the value of that same reading, which is exactly the value you no longer hold once it is gone. That is the case later texts call missing not at random; the formal definitions and the three-way naming are in the full paper and in those texts, reported here, not read. Across all 100 engines it matters for remaining life: 1.6 percent of rows in the first half of life are hot, against 88.8 percent of rows in each engine's last 30 cycles. A rule about temperature is, in effect, a rule about age.</p>
+        <p>One honest nuance. The other thirteen channels also move as the engine nears failure, so what survives carries some information about what vanished. That is why the damage is measurable rather than total. It does not make the gap ignorable: the rule reads T50 itself, not anything you hold.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the plant imitates, and what it does not<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It imitates one specific failure of a device: electronics that cut out above a temperature, intermittently. The probability below 1 matters; a probe that always quit above the threshold would make every engine's end of life vanish completely, which is a different and easier problem to spot.</p>
+        <p>It does not imitate the other things a struggling feed does: repeat the last value, write a default, lose a burst of cycles to a saturated link, or quit for reasons tied to the operating condition rather than the reading. Each of those leaves a different shape of hole, and none is measured here. Leader session 2 lists them in its gap ledger; the bench measures only the one planted rule, followed by deletion.</p>
+        <p>Citation: Rubin, D. B. (1976). "Inference and Missing Data." Biometrika 63(3), 581-592. DOI 10.1093/biomet/63.3.581. Abstract read at source.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers deletion and the two-number move</span>
+      <h2>Drop the gaps, and the estimates slide late</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">Deletion reaches the model in two places: it thins the end of life out of the training engines, and at every cut point it hands the model an older row as if it were today. The figure draws both, then where the errors land on the asymmetric score's curve and what the two headline numbers say about it.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in three parts. Left, two places deletion reaches the model: one, the fit, where the 70 training engines lose their hottest rows so the model sees fewer cycles from engines about to fail; two, the input at the cut, a row of eight cycles where the last three vanished, so the newest surviving row is older and cooler and is read as today. Right, the PHM08 score for one unit against the error d in cycles: early misses divided by 13 reach about 46 at minus 50, late misses divided by 10 reach about 147 at plus 50; after the drop the mean error moves from plus 1.4 to plus 4.7 cycles, the late side. Bottom, three result boxes for 300 units: RMSE 23.64 to 24.89, up 1.25 or about 5 percent; summed score 3,366 to 4,656, up 1,290 or about 38 percent, in copper; late share 56 to 60 percent.">
+        <defs>
+          <filter id="ip6bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="73" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip6bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip6bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip6bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip6bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip6bV { font: 800 17px Inter, sans-serif; fill: #2A410C; }
+          .ip6bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip6bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip6bH" x="30" y="26">WHERE DELETION BITES, AND WHICH SIDE OF THE TRUTH IT LANDS</text>
+        <text class="ip6bA" x="30" y="56">two places the drop reaches the model</text>
+        <text class="ip6bA" x="450" y="56">PHM08 score for one unit, by error d in cycles</text>
+
+        <g filter="url(#ip6bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- box 1: the fit -->
+          <rect x="30" y="68" width="380" height="110" rx="8" transform="rotate(-0.6 220 123)" fill="#FFFFFF"/>
+          <!-- gauge doodle: reads healthier -->
+          <circle cx="382" cy="104" r="14" fill="#FFFFFF"/>
+          <path d="M382 104 L374 94"/>
+          <path d="M370 124 L394 124"/>
+          <!-- box 2: the input at the cut -->
+          <rect x="30" y="196" width="380" height="150" rx="8" transform="rotate(0.5 220 271)" fill="#FFFFFF"/>
+          <rect x="46" y="236" width="36" height="30" rx="4" transform="rotate(-0.8 64 251)" fill="url(#ip6bHc)"/>
+          <rect x="90" y="236" width="36" height="30" rx="4" transform="rotate(0.6 108 251)" fill="url(#ip6bHc)"/>
+          <rect x="134" y="236" width="36" height="30" rx="4" transform="rotate(-0.5 152 251)" fill="url(#ip6bHc)"/>
+          <rect x="178" y="236" width="36" height="30" rx="4" transform="rotate(0.7 196 251)" fill="url(#ip6bHc)"/>
+          <rect x="222" y="236" width="36" height="30" rx="4" transform="rotate(-0.6 240 251)" fill="url(#ip6bHc)" stroke="#3F6212" stroke-width="2.6"/>
+          <rect x="266" y="236" width="36" height="30" rx="4" transform="rotate(0.5 284 251)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <rect x="310" y="236" width="36" height="30" rx="4" transform="rotate(-0.7 328 251)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <rect x="354" y="236" width="36" height="30" rx="4" transform="rotate(0.8 372 251)" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="5 4"/>
+          <path d="M372 274 Q306 298 244 276" stroke="#9B4D45" marker-end="url(#ip6bAr)"/>
+
+          <!-- the cost curve: x = 650 + 3.6 d, y = 330 - 1.4 s -->
+          <path d="M466 330 L846 330"/>
+          <path d="M650 336 L650 126" stroke="#CDD5C0" stroke-dasharray="5 5"/>
+          <path d="M470 265.9 L488 286.8 L506 301 L524 310.7 L542 317.3 L560 321.8 L578 324.9 L596 327 L614 328.4 L632 329.3 L650 330" stroke="#3F6212" stroke-width="2.6"/>
+          <path d="M650 330 L668 329.1 L686 327.6 L704 325.1 L722 321.1 L740 314.3 L758 303.3 L776 285 L794 255 L812 205.4 L830 123.6" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- the shift of the mean error -->
+          <circle cx="655" cy="330" r="3.5" fill="#93A86F" stroke="#3F6212"/>
+          <circle cx="667" cy="330" r="3.5" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M604 222 Q640 252 662 318" marker-end="url(#ip6bAr)"/>
+
+          <!-- results -->
+          <rect x="30" y="392" width="260" height="76" rx="8" transform="rotate(-0.6 160 430)" fill="#FFFFFF"/>
+          <rect x="310" y="392" width="260" height="76" rx="8" transform="rotate(0.5 440 430)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="590" y="392" width="266" height="76" rx="8" transform="rotate(-0.5 723 430)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ip6bL" x="46" y="92">1 · the fit</text>
+        <text class="ip6bS" x="46" y="114">70 training engines lose their hottest rows, so</text>
+        <text class="ip6bS" x="46" y="130">the model learns from a fleet whose final</text>
+        <text class="ip6bS" x="46" y="146">cycles are thinned: fewer examples of an</text>
+        <text class="ip6bS" x="46" y="162">engine about to fail.</text>
+
+        <text class="ip6bL" x="46" y="216">2 · the input at the cut</text>
+        <text class="ip6bA" x="240" y="230" text-anchor="middle">newest kept</text>
+        <text class="ip6bB" x="372" y="230" text-anchor="middle">today</text>
+        <text class="ip6bS" x="46" y="314">hollow = vanished. The newest row that survived is</text>
+        <text class="ip6bS" x="46" y="330">older and cooler than today, and is read as today.</text>
+
+        <text class="ip6bS" x="474" y="254">about 46 at -50</text>
+        <text class="ip6bB" x="820" y="116" text-anchor="end">about 147 at +50</text>
+        <text class="ip6bS" x="656" y="140">d = 0, the truth</text>
+        <text class="ip6bB" x="474" y="180">after the drop,</text>
+        <text class="ip6bB" x="474" y="196">mean error +1.4 → +4.7</text>
+        <text class="ip6bB" x="474" y="212">cycles: the late side</text>
+        <text class="ip6bS" x="470" y="348" text-anchor="middle">-50</text>
+        <text class="ip6bS" x="650" y="348" text-anchor="middle">0</text>
+        <text class="ip6bS" x="830" y="348" text-anchor="middle">+50</text>
+        <text class="ip6bA" x="560" y="368" text-anchor="middle">early: divided by 13</text>
+        <text class="ip6bB" x="740" y="368" text-anchor="middle">late: divided by 10</text>
+
+        <text class="ip6bL" x="46" y="414">RMSE</text>
+        <text class="ip6bV" x="46" y="438">23.64 → 24.89</text>
+        <text class="ip6bS" x="46" y="456">+1.25, about 5%</text>
+        <text class="ip6bL" x="326" y="414">PHM08 score, summed</text>
+        <text class="ip6bV" x="326" y="438">3,366 → 4,656</text>
+        <text class="ip6bB" x="326" y="456">+1,290, about 38%</text>
+        <text class="ip6bL" x="606" y="414">late share</text>
+        <text class="ip6bV" x="606" y="438">56% → 60%</text>
+        <text class="ip6bS" x="606" y="456">bias +1.4 → +4.7 cycles</text>
+
+        <text class="ip6bN" x="30" y="490">300 cut points on 30 held-out engines (not the NASA test set): the top rung with and without the planted drop.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the drop hands the model an older row, the errors slide a few cycles to the late side, and the late side of the curve is the steep one.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip6-drop">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The bench's top rung on real public rows from NASA's simulation, three times: every reading arrives; the hot readings vanish and rows with gaps are dropped; and the same number of rows vanish at random instead, then dropped. Modelled, and labelled so: the seeded split, the 300 cut points and both dropouts. Computed in your browser.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip6-p">Probability that a hot T50 reading (at or above the 80th percentile) vanishes: <b id="ip6-p-val">0.7</b></label>
+        <input class="sql-code" id="ip6-p" type="range" min="0.1" max="0.9" step="0.1" value="0.7">
+        <div class="ip6-btns">
+          <button class="btn" id="ip6-reset" type="button">Back to the canon setting, 0.7</button>
+        </div>
+        <div id="ip6-out"></div>
+        <p class="sql-note" id="ip6-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip6-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the widget<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>At 0.7 the first two rows are the canon figures: every reading arrives, RMSE 23.64 and summed score 3,366; hot readings vanish and the gappy rows are dropped, RMSE 24.89 and score 4,656, with the bias moving from 1.4 to 4.7 cycles late. Now look at the third row. It removes about the same number of rows, chosen at random from the whole file, and then drops them the same way. Its numbers stay close to the clean row and its bias barely moves.</p>
+        <p>That third row is the whole session in one line. The size of the hole is about the same in rows two and three; only the reason differs. Deletion is roughly harmless when the reason has nothing to do with the engine and expensive when the reason is the reading itself. The at-random row is exploration, never a canon figure, and it holds for this model at this seed; drag the slider and watch the bias column, which keeps growing for the hot rule and stays nearly flat for the random one. Other probabilities are not canon settings: your numbers will differ from the figures in the prose.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The two-number move<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>RMSE goes up by 1.25, about 5 percent. A team that reports only square error would file the dropout under rounding. The PHM08 score goes up by 1,290, about 38 percent. The difference is not that one number is right. Square error treats a miss of 5 cycles early and 5 late the same and grows with the square of the miss; the score grows exponentially and divides a late miss by 10 but an early one by 13, so in the paper's words "late predictions were more heavily penalized than early predictions". A modest shift of the whole error distribution towards late is almost invisible to the first and expensive in the second.</p>
+        <p>Does it hold beyond seed 2008? On every seed tried (2008, 1, 7 and 42), the dropout rung is worse than the top rung on both numbers and later in bias. The size moves a lot: seed 42 goes from 22.32 / 2,562 to 23.16 / 2,993, seed 7 from 24.82 / 4,891 to 26.25 / 7,351 (RMSE / summed score). Quote the direction; quote a size only with its seed.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's model review (constructed) has one slide of metrics, and it is RMSE. When the analyst adds the bias and the summed score beside it, the planning lead's first question is not about the model at all: "Which step in the pipeline made us late?" The answer is the one-line clean-up at the top of the feature script. It had been there for two years and nobody had ever measured it, because the number on the slide could not see it.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What to do instead, and what this bench does not show<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Three habits follow from the mechanism. <strong>Never drop silently:</strong> if a step removes rows, it logs how many and from where in each unit's life, so the shape of the hole is visible before any model is fitted. <strong>Flag the gap:</strong> keep the row, mark the missing channel, and keep the other thirteen readings that did arrive. <strong>Keep the gap as a feature:</strong> cycles since the last reading of each channel is itself a reading, and under this plant it is a hot-engine detector. The build-along measures that last point directly: near failure the newest surviving row is about two cycles stale; far from failure it is almost never stale.</p>
+        <p>Now the honest part. The bench measures deletion only. It does not fit a model with a gap flag or a staleness feature, and it does not test any fill method, so this page makes no claim that any of them recovers the 1,290. Any fill computed only from what survived rests on the same assumption deletion does, that what you hold explains the gap, and under a rule that reads the missing value that assumption fails. Imputation methods and missingness as a model input are taught in <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">learn feature engineering, practitioner session 7, missing data as signal</a>; the second homework below lets you try one here, with no canon number to aim at.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>One score or several?</strong> The paper that published this data ranked the 2008 challenge on one summed asymmetric score, and in the same paper its authors argued for more than one number: weighting short true lives more heavily and adding a correlation measure, because a summed score can hide uneven performance across units. Tonight is a case for several numbers: RMSE alone hid the slide, and the score alone would not have told you it was a slide (the bias did).</p>
+        <p>The other side is just as practical: a bench with four numbers lets a team quote whichever one flatters the change. The bench prints RMSE, the summed score, the bias and the late share side by side and crowns none of them. Practitioner session 7 takes the score apart, including a printed equation and a figure in the original paper that disagree about which side it punishes harder.</p>
+        <p>One more modelling choice sits under every number here: the label is capped at 125 cycles, a convention chosen on this subset (130 is also in use, and the bench prints it). The top rung's smoothing is a lag-free local line over the last 10 values; its gain is small, 0.36 of RMSE, and a trailing mean of the same window lags and makes both numbers worse (24.88 / 4,171). Neither smoothing is a fix for dropout.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Plant it, drop it, re-score it, then read the gap</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). Six steps, each with the number you should see at the canon settings. The figure is the order of operations; the only lossy step is the copper one, and you will know exactly which rows it took.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes. One, decode: 20,631 rows, 14 channels, 100 engines. Two, find the line: the 80th percentile of T50, 1416.2 degrees Rankine. Three, in copper, plant: a hot row vanishes with probability 0.7, by seeded draw. Four, drop and refit: 3,073 rows gone, same model, same 300 cut points. Five, score twice: RMSE up 1.25, score up 1,290, bias goes late. A note says step six measures the gap: near failure, true life 30 or less on 47 cuts, the newest surviving row is 2.19 cycles old on average; above 100 on 93 cuts, 0.01.">
+        <defs>
+          <filter id="ip6cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="89" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip6cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip6cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip6cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip6cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip6cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip6cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip6cH" x="30" y="26">WHAT YOUR CONSOLE DOES, IN ORDER</text>
+
+        <g filter="url(#ip6cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="56" width="148" height="120" rx="8" transform="rotate(-0.8 104 116)" fill="#FFFFFF"/>
+          <rect x="198" y="56" width="148" height="120" rx="8" transform="rotate(0.6 272 116)" fill="url(#ip6cHc)"/>
+          <rect x="366" y="56" width="148" height="120" rx="8" transform="rotate(-0.5 440 116)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="534" y="56" width="148" height="120" rx="8" transform="rotate(0.7 608 116)" fill="#F3F7EA"/>
+          <rect x="702" y="56" width="148" height="120" rx="8" transform="rotate(-0.6 776 116)" fill="#FFFFFF"/>
+          <path d="M180 116 L194 116" marker-end="url(#ip6cAr)"/>
+          <path d="M348 116 L362 116" marker-end="url(#ip6cAr)"/>
+          <path d="M516 116 L530 116" marker-end="url(#ip6cAr)"/>
+          <path d="M684 116 L698 116" marker-end="url(#ip6cAr)"/>
+          <!-- probe doodle over the plant -->
+          <circle cx="440" cy="40" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <path d="M448 34 Q454 28 448 22 M456 38 Q462 32 456 26" stroke="#9B4D45" stroke-width="1.6"/>
+        </g>
+
+        <text class="ip6cL" x="104" y="84" text-anchor="middle">decode</text>
+        <text class="ip6cS" x="104" y="104" text-anchor="middle">20,631 rows</text>
+        <text class="ip6cS" x="104" y="120" text-anchor="middle">14 channels</text>
+        <text class="ip6cS" x="104" y="136" text-anchor="middle">100 engines</text>
+
+        <text class="ip6cL" x="272" y="84" text-anchor="middle">find the line</text>
+        <text class="ip6cS" x="272" y="104" text-anchor="middle">80th percentile</text>
+        <text class="ip6cS" x="272" y="120" text-anchor="middle">of T50: 1416.2</text>
+        <text class="ip6cS" x="272" y="136" text-anchor="middle">degrees Rankine</text>
+
+        <text class="ip6cB" x="440" y="84" text-anchor="middle">plant</text>
+        <text class="ip6cS" x="440" y="104" text-anchor="middle">hot row vanishes</text>
+        <text class="ip6cS" x="440" y="120" text-anchor="middle">with p = 0.7,</text>
+        <text class="ip6cS" x="440" y="136" text-anchor="middle">seeded draw</text>
+
+        <text class="ip6cL" x="608" y="84" text-anchor="middle">drop and refit</text>
+        <text class="ip6cS" x="608" y="104" text-anchor="middle">3,073 rows gone</text>
+        <text class="ip6cS" x="608" y="120" text-anchor="middle">same model, same</text>
+        <text class="ip6cS" x="608" y="136" text-anchor="middle">300 cut points</text>
+
+        <text class="ip6cL" x="776" y="84" text-anchor="middle">score twice</text>
+        <text class="ip6cS" x="776" y="104" text-anchor="middle">RMSE +1.25</text>
+        <text class="ip6cS" x="776" y="120" text-anchor="middle">score +1,290</text>
+        <text class="ip6cS" x="776" y="136" text-anchor="middle">bias goes late</text>
+
+        <text class="ip6cN" x="30" y="212">Step 6 asks the question deletion threw away: how long since the last reading? Near failure (true life 30 or</text>
+        <text class="ip6cN" x="30" y="230">less, 47 cuts) the newest surviving row is 2.19 cycles old on average; above 100 (93 cuts) it is 0.01.</text>
+        <text class="ip6cS" x="30" y="262">Same seed, same split, same model: the only difference between the two scores is the plant and the drop.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the only step that loses anything, and the rule that decides what it loses is written down.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Find the line</h4>
+        <p>Decode the fleet, collect every T50 reading (channel s4), sort them and take the one 80 percent of the way up. You should see 20,631 readings and a threshold of 1416.2 degrees Rankine.</p>
+        <div class="prompt-box good"><span class="label">console</span>var units = IOT.decode(IOT_SAMPLE);
+var k = IOT_SAMPLE.channels.indexOf("s4");
+var t50 = [];
+units.forEach(function (u) { u.rows.forEach(function (r) { t50.push(r[k]); }); });
+t50.sort(function (a, b) { return a - b; });
+[t50.length, t50[Math.floor(0.8 * (t50.length - 1))].toFixed(1)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Plant the dropout</h4>
+        <p>The engine's own planting function, at its defaults: channel s4, quantile 0.8, probability 0.7, seed 2008. It returns the surviving rows of every engine and a receipt. You should see 3,073 of 20,631 rows gone, 14.9 percent.</p>
+        <div class="prompt-box good"><span class="label">console</span>var p = IOT.prepare(units, IOT.DEFAULTS, "mnar", IOT_SAMPLE.channels);
+[p.info.dropped, p.info.total, (100 * p.info.dropped / p.info.total).toFixed(1)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>See where the holes landed</h4>
+        <p>Count the vanished rows in each engine's last 30 cycles and in its first half. You should see 1,868 of 3,000 late rows gone against 115 of 10,290 early ones. The rule never read the cycle number; the age pattern came from the heat.</p>
+        <div class="prompt-box good"><span class="label">console</span>var late = 0, nLate = 0, early = 0, nEarly = 0;
+units.forEach(function (u, i) {
+  var kept = {};
+  p.units[i].cyc.forEach(function (c) { kept[c] = 1; });
+  u.cyc.forEach(function (c) {
+    if (c &gt; u.n - 30) { nLate++; if (!kept[c]) late++; }
+    else if (c &lt;= u.n / 2) { nEarly++; if (!kept[c]) early++; }
+  });
+});
+[late, nLate, early, nEarly]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Score the top rung, with and without the drop</h4>
+        <p>The ladder can compute just the two rungs you need. The second one plants the same dropout, drops the rows, refits on the 70 training engines and scores the same 300 cut points. You should see 23.64, 3,366, +1.4, 56% and then 24.89, 4,656, +4.7, 60%.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r = IOT.ladder(IOT_SAMPLE, { only: ["smooth", "mnarSmooth"] });
+[r.smooth, r.mnarSmooth].map(function (x) {
+  return [x.rmse.toFixed(2), Math.round(x.score), x.bias.toFixed(1), Math.round(100 * x.lateShare) + "%"];
+})</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Make the two-number move</h4>
+        <p>Put the changes side by side, in units and in percent. You should see RMSE up 1.25 (5%) and the summed score up 1,290 (38%). Write both in your notes, with the bias, and with "n = 300 cut points on 30 held-out engines, not the NASA test set".</p>
+        <div class="prompt-box good"><span class="label">console</span>var a = r.smooth, b = r.mnarSmooth;
+[(b.rmse - a.rmse).toFixed(2), Math.round(100 * (b.rmse / a.rmse - 1)) + "%",
+ Math.round(b.score - a.score), Math.round(100 * (b.score / a.score - 1)) + "%"]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read the gap as a reading</h4>
+        <p>At every cut point, how many cycles separate today from the newest row that survived? Split the 300 cuts by true remaining life. You should see 47 cuts with 30 or fewer cycles left averaging 2.19 cycles stale, and 93 cuts with more than 100 left averaging 0.01. The gap knows the engine is hot even though the hot reading is gone.</p>
+        <div class="prompt-box good"><span class="label">console</span>var near = [], far = [];
+r.cuts.forEach(function (c) {
+  var last = 0;
+  p.units[c.u - 1].cyc.forEach(function (x) { if (x &lt;= c.cut) last = x; });
+  if (c.rul &lt;= 30) near.push(c.cut - last);
+  if (c.rul &gt; 100) far.push(c.cut - last);
+});
+function avg(v) { return v.reduce(function (s, x) { return s + x; }, 0) / v.length; }
+[near.length, avg(near).toFixed(2), far.length, avg(far).toFixed(2)]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before any clean-up step ships, plant its worst plausible reason on a complete copy of the data, run the step, and report two numbers and the bias. If the step removes rows, log where in each unit's life they came from. A gap is a reading about the device; delete it and you delete the reading.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Which property of the planted rule makes the dropout missing not at random, in Rubin's sense?</p>
+      <div class="qopt">A · It removes 14.9 percent of the rows, which is more than most teams tolerate</div>
+      <div class="qopt">B · Whether a T50 reading vanishes depends on the value of that reading itself, which the analyst no longer holds once it is gone</div>
+      <div class="qopt">C · It uses a seeded draw, so the rows that vanish are not truly random</div>
+      <q class="qwhy">Size is not the test, and a seeded draw is still a random draw. Rubin's weakest general conditions for ignoring the missing-data process start from missing at random; a rule that reads the missing value itself is outside them, and because heat lives at the end of life, the holes land there.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">After the plant and the drop, RMSE moves 23.64 to 24.89 and the summed score 3,366 to 4,656, on 300 cut points. Your review deck shows only RMSE. What do you add beside it?</p>
+      <div class="qopt">A · Nothing; a 5 percent change is within normal variation</div>
+      <div class="qopt">B · A larger test set, since 300 units cannot separate the two runs</div>
+      <div class="qopt">C · The bias (+1.4 to +4.7 cycles) and the asymmetric score: the drop pushed estimates late, which square error barely registers and the score prices</div>
+      <q class="qwhy">Both runs use the same 300 cut points and the same model, so the difference is the drop. On every seed tried the dropout rung is worse on both numbers and later in bias. A late slide of a few cycles adds little to squared error and a lot to a score that divides a late miss by 10 and an early one by 13.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">In the widget, removing about the same number of rows at random barely moves the bias, while removing the hot ones pushes it late. What does that show?</p>
+      <div class="qopt">A · The damage comes from which rows go, not how many: the hole is the same size and the mechanism is not</div>
+      <div class="qopt">B · Deleting rows at random is always safe</div>
+      <div class="qopt">C · The model is overfitted to the training engines</div>
+      <q class="qwhy">The comparison holds the count fixed and changes only the reason, so the difference is the reason. "Always safe" overreaches: the at-random row is exploration on one model at one seed, not a law, and it is not a canon figure.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 7</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Forty minutes, in the console on this page. Neither of the first two has a canon number; write down what you get and the seed you got it on.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Split the damage in two</h4>
+        <p>Deletion reached the model in two places, the fit and the input. Build one units array with the clean training engines and the planted held-out engines, and another the other way round (<code>r.testIds</code> lists the 30 held-out engines; the other 70 are <code>trainIds</code>), then score each with <code>IOT.runRung(mixed, trainIds, r.cuts, r.opts, "smooth")</code>. Which half moves the summed score more? Bring the answer to session 7, which asks why a score can move more than its error.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Try the gap as a feature</h4>
+        <p>After the plant, add a fifteenth input to every surviving row: cycles since the previous surviving row of that engine. Append it to each row of <code>p.units</code> and score the augmented units with <code>IOT.runRung</code> exactly as in the first homework; the engine standardises and fits whatever columns it is given. If it helps, check seeds 1, 7 and 42 before believing it; one seed is an anecdote.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find the line that drops rows in a pipeline you own</h4>
+        <p>Search one feature script for the step that removes rows with gaps. Write next to it: what the device does when it struggles, where in a unit's life those gaps would land, and which of your reported numbers would show a late slide.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The planted rule</span><span class="note">T50 at or above 1416.2 (the 80th percentile) vanishes with probability 0.7, seeded: 3,073 of 20,631 rows, 14.9 percent. Modelled and declared.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Why it is not at random</span><span class="note">Rubin (1976), abstract read at source: the weakest general conditions start from missing at random. The three names are later texts' shorthand, reported.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Where the holes land</span><span class="note">1.6 percent of first-half rows are hot against 88.8 percent of rows in the last 30 cycles; all 100 engines.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Deletion, the default habit</span><span class="note">Two places it reaches the model: thinned end of life in the fit, an older row read as today at the cut.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The two-number move</span><span class="note">RMSE 23.64 to 24.89 (+1.25, 5 percent); score 3,366 to 4,656 (+1,290, 38 percent); bias +1.4 to +4.7. 300 cut points on 30 held-out engines, not the NASA test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Same count, different reason</span><span class="note">The widget's at-random comparison; exploration on one model and seed, not a canon figure.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The gap as a reading</span><span class="note">Staleness at the cut, computed in the console: 2.19 cycles on 47 cuts near failure, 0.01 on 93 cuts far from it.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Flag the gap, keep it as a feature</span><span class="note">Named as practice; not measured on this bench, and no claim that it recovers the score.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The asymmetric score</span><span class="note">Used tonight, late punished harder. Taken apart in practitioner session 7.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Imputation methods, missingness as a feature</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">learn feature engineering, practitioner session 7</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; the dropout is planted and no figure describes a real fleet.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The plant.</strong> T50 at or above 1416.2 vanishes with probability 0.7, seeded. 3,073 of 20,631 rows.</div>
+      <div class="cheat-item"><strong>Why not at random.</strong> The rule reads the value that goes missing. Rubin's conditions start from missing at random.</div>
+      <div class="cheat-item"><strong>Temperature is age.</strong> 1.6 percent of first-half rows are hot; 88.8 percent of last-30-cycle rows are.</div>
+      <div class="cheat-item"><strong>Two bites.</strong> Deletion thins end of life from the fit and hands the model an older row as today.</div>
+      <div class="cheat-item"><strong>Two numbers.</strong> RMSE +1.25 (5 percent), score +1,290 (38 percent), bias +1.4 to +4.7. Report all three.</div>
+      <div class="cheat-item"><strong>Same count, other reason.</strong> Remove as many rows at random and the bias barely moves. The reason does the damage.</div>
+      <div class="cheat-item"><strong>The gap is a reading.</strong> Staleness at the cut: 2.19 cycles near failure, 0.01 far from it.</div>
+      <div class="cheat-item"><strong>The honest limit.</strong> The bench measures deletion only. Flags and fills are practice here, not measured.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 6 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p5-remaining-useful-life-as-a-target.html">← Practitioner session 5 · Remaining useful life as a target</a>
+        <a href="p7-the-asymmetric-score.html">Practitioner session 7 · The asymmetric score →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var slider = document.getElementById("ip6-p");
+  var pVal = document.getElementById("ip6-p-val");
+  var out = document.getElementById("ip6-out");
+  var verdict = document.getElementById("ip6-verdict");
+  var self = document.getElementById("ip6-self");
+  var clean = null;
+
+  function fmt(x, d) { return x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function pct(a, b) { var v = Math.round(100 * (b / a - 1)); return (v >= 0 ? "+" : "") + v + "%"; }
+  function row(label, x, gone, cls) {
+    return "<tr" + (cls ? ' class="' + cls + '"' : "") + "><td>" + label + "</td><td>" + gone + "</td><td><b>" + fmt(x.rmse, 2) + "</b></td><td><b>" + fmt(x.score, 0) +
+      "</b></td><td>" + sgn(x.bias) + "</td><td>" + Math.round(x.lateShare * 100) + "%</td></tr>";
+  }
+
+  function render() {
+    var p = Math.round(Number(slider.value) * 10) / 10;
+    pVal.textContent = p.toFixed(1);
+    out.innerHTML = '<p class="sql-note">Planting, dropping and refitting on 100 engines...</p>';
+    setTimeout(function () {
+      /* canon settings except the probability the reader chose */
+      var hot = IOT.ladder(IOT_SAMPLE, { only: clean ? ["mnarSmooth"] : ["smooth", "mnarSmooth"], mnarP: p });
+      if (!clean) clean = hot.smooth;
+      var share = hot.mnar.dropped / hot.mnar.total;
+      /* the same share of rows, chosen without looking at the reading: every row counts as "hot" */
+      var rnd = IOT.ladder(IOT_SAMPLE, { only: ["mnarSmooth"], mnarP: share, mnarQuantile: 0 });
+      var h = hot.mnarSmooth, m = rnd.mnarSmooth, total = hot.mnar.total;
+      var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Top rung, 300 cut points</th><th>Rows gone</th><th>RMSE</th><th>Score, sum</th><th>Bias</th><th>Late</th></tr></thead><tbody>';
+      html += row("Every reading arrives", clean, "0", "ip6-clean");
+      html += row("Hot T50 vanishes (p " + p.toFixed(1) + "), gaps dropped", h, fmt(hot.mnar.dropped, 0), "ip6-hot");
+      html += row("Same share vanishes at random, gaps dropped", m, fmt(rnd.mnar.dropped, 0), "ip6-rnd");
+      html += "</tbody></table></div>";
+      html += '<p class="sql-note">' + h.n + " units under test (30 held-out engines x 10 cuts, not the NASA test set), 70 training engines, seed 2008, threshold T50 " +
+        hot.mnar.threshold.toFixed(1) + " of " + fmt(total, 0) + " rows. " +
+        (Math.abs(p - 0.7) < 1e-9 ? "At 0.7 the first two rows are the canon figures; the at-random row is exploration, not a canon figure." :
+          "Not the canon setting: your numbers will differ from the figures in the prose. The at-random row is exploration at any setting.") + "</p>";
+      out.innerHTML = html;
+      verdict.textContent = "Hot rule at p " + p.toFixed(1) + ": " + fmt(hot.mnar.dropped, 0) + " rows gone; RMSE " + fmt(clean.rmse, 2) + " to " + fmt(h.rmse, 2) +
+        " (" + pct(clean.rmse, h.rmse) + "), score " + fmt(clean.score, 0) + " to " + fmt(h.score, 0) + " (" + pct(clean.score, h.score) + "), bias " +
+        sgn(clean.bias) + " to " + sgn(h.bias) + " cycles. Same share at random (" + fmt(rnd.mnar.dropped, 0) + " rows): RMSE " + fmt(m.rmse, 2) + " (" + pct(clean.rmse, m.rmse) +
+        "), score " + fmt(m.score, 0) + " (" + pct(clean.score, m.score) + "), bias " + sgn(m.bias) + ". Positive bias = late. Same size of hole, different reason.";
+    }, 20);
+  }
+
+  document.getElementById("ip6-reset").addEventListener("click", function () { slider.value = "0.7"; render(); });
+  slider.addEventListener("change", render);
+  slider.addEventListener("input", function () { pVal.textContent = Number(slider.value).toFixed(1); });
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  var faults = IOT.FAULTS.filter(function (f) { return !IOT.selfTest(f).pass; }).length;
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, including \"dropout removes only hot readings\", and " + faults + " of " + IOT.FAULTS.length + " planted faults make a check fail, as they should. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  render();
+})();
+</script>
+<style>
+  #ip6-drop input.sql-code { width: 100%; max-width: 24rem; border: 1px solid var(--hairline); border-radius: 8px; }
+  #ip6-drop table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip6-drop .ip6-btns { display: flex; flex-wrap: wrap; gap: .5rem; margin: .7rem 0 .3rem; }
+  #ip6-drop tr.ip6-clean td { background: var(--indigo-50); }
+  #ip6-drop tr.ip6-hot td { background: var(--amber-50); color: var(--amber-ink-text); }
+  #ip6-drop tr.ip6-rnd td { background: #FFFFFF; }
+</style>
+</body>
+</html>

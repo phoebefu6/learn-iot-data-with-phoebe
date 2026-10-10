@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 3 of 10. Triage the 21 sensor channels of NASA's FD001 file: seven that never move, fourteen ranked by correlation with life and by noise share, and the two smooth channels a single correlation undersells. Real public rows from NASA's simulation, computed in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Channel triage: flat, noisy and drifting - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 3 of 10. Ps30 tops the ranking at r -0.696; Nc and NRc sit at the bottom with the smoothest traces of all fourteen. Two lenses, one table, and a look before anything is dropped.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p3-channel-triage.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Channel triage: flat, noisy and drifting - learn iot data with phoebe">
+<meta name="twitter:description" content="A correlation is one lens. The two smoothest channels in the file have the weakest one.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 3 · Channel triage: flat, noisy and drifting - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 3 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 3 of 10</div>
+    <h1>Channel triage: <span class="accent">flat, noisy and drifting</span></h1>
+    <p class="sub">Twenty-one sensor columns, and a model that will happily take all of them. Tonight sorts them before anything is fitted. Seven never move at all. Fourteen do, and two numbers per channel say how: how closely it tracks the cycles left before failure, and how much of its movement is cycle-to-cycle jitter. Then the trap: the two smoothest channels in the file have the weakest correlation, and a ranking by correlation alone would drop them first. Real public rows from NASA's simulation, computed in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Working depth</span>
+      <span class="chip audience">Analysts choosing inputs from sensor data</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:4">0-12 · Welcome, flat channels</span>
+      <span class="a2" style="flex:3">12-21 · r and noise</span>
+      <span class="a3" style="flex:3">21-30 · Drift</span>
+      <span class="a4" style="flex:5">30-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's analyst has too many columns</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop whose fleet is NASA's 100 simulated engines. Its analyst now knows the grain of the file and where the label comes from (session 1), and how the cycle clock differs from a wall clock (session 2). Her planners want a model by Friday. Before she fits anything she does what a careful analyst does with any wide table: she sorts the columns into the ones that say nothing, the ones that mostly shake, and the ones that move with the thing she is predicting. That sort is triage, and it takes 45 minutes to do properly.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The seven flat channels of FD001 sorted by why they are flat, so nobody mistakes "flat here" for "broken". The full triage table for the fourteen that move, reproduced in your own console: correlation with cycles to failure (Ps30 strongest at -0.696, NRc weakest at -0.307) and noise share (T30 noisiest at 0.65, NRc smoothest at 0.17). A clear sense of what a single correlation can and cannot see. And a look at drift across an engine's life, which is where the two channels at the bottom of the ranking stop looking useless.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Where tonight sits<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The data is NASA's FD001 training set, data set 6 of the Prognostics Center of Excellence repository (Saxena and Goebel, 2008): 100 engines, one operating condition, one fault mode, each run from a healthy start to failure, 20,631 rows. The degradation is simulated with C-MAPSS, so every number here describes real public rows from NASA's simulation, not real engines.</p>
+        <p>Triage is not modelling. Nothing tonight predicts a remaining life. It decides what a model in session 4 is allowed to see, and it writes down why, so that a channel left out is a decision with a reason rather than a habit.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Flat channel.</strong> A column that takes one value (or, for P15, two values a hundredth apart) across every row of FD001.</li>
+          <li><strong>Cycles to failure.</strong> The label from session 1: life minus cycle. Every correlation tonight is against it.</li>
+          <li><strong>r.</strong> Pearson correlation of a channel with cycles to failure, pooled over all 100 engines. Negative means the channel rises as failure nears; positive means it falls.</li>
+          <li><strong>Noise share.</strong> Within-engine cycle-to-cycle spread over the channel's total spread. Lower means a smoother trend.</li>
+          <li><strong>Drift.</strong> A channel's slow movement across an engine's life, here because the engine is wearing.</li>
+          <li><strong>Triage.</strong> Sorting columns by what they can carry before any model sees them, and recording the reason for each.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers flat channels</span>
+      <h2>Seven channels that never move, and why</h2>
+      <span class="tag concept">10 min live</span>
+    </div>
+    <p class="lede">Computed on all 20,631 training rows, seven of the 21 sensor channels never move: T2, P2, P15, epr, farB, Nf_dmd and PCNfR_dmd. Operational setting 3 is constant at 100.0 as well. None of this means a probe failed. The figure places each flat channel where it reads, and sorts the seven by the reason they are flat in this one subset.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 384" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn engine gas path as a row of stations: inlet, fan and bypass, low-pressure compressor, high-pressure compressor, burner and turbines, with a separate command box. Copper sensor dots mark the flat channels: T2 and P2 at the inlet, P15 in the bypass, farB at the burner, and the two demanded speeds Nf_dmd and PCNfR_dmd in the command box. Below, three reasons: T2, P2 and P15 read the operating condition, and FD001 has only one, sea level; the demanded speeds read a command, not the engine's response, and the command is fixed; epr at 1.3 and farB at 0.03 take one printed value. A fourth panel shows a flat line from cycle 1 to failure, for which the correlation is zero over zero. A note says flat in one condition is not broken, and these readings may matter in the six-condition subsets, which are not covered.">
+        <defs>
+          <filter id="ip3aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip3aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip3aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip3aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip3aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip3aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip3aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip3aH" x="30" y="26">WHERE THE SEVEN FLAT CHANNELS SIT, AND WHY NONE OF THEM MOVES IN FD001</text>
+
+        <g filter="url(#ip3aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- gas path stations -->
+          <rect x="30" y="48" width="110" height="88" rx="6" transform="rotate(-0.6 85 92)" fill="#FFFFFF"/>
+          <rect x="152" y="48" width="128" height="88" rx="6" transform="rotate(0.5 216 92)" fill="#FFFFFF"/>
+          <rect x="292" y="48" width="96" height="88" rx="6" transform="rotate(-0.4 340 92)" fill="url(#ip3aHc)"/>
+          <rect x="400" y="48" width="110" height="88" rx="6" transform="rotate(0.6 455 92)" fill="url(#ip3aHc)"/>
+          <rect x="522" y="48" width="96" height="88" rx="6" transform="rotate(-0.5 570 92)" fill="#FFFFFF"/>
+          <rect x="630" y="48" width="116" height="88" rx="6" transform="rotate(0.4 688 92)" fill="url(#ip3aHc)"/>
+          <!-- command box, off the gas path -->
+          <rect x="760" y="48" width="96" height="88" rx="6" transform="rotate(-0.7 808 92)" fill="#FFFFFF" stroke-dasharray="5 4"/>
+          <!-- flat sensor dots -->
+          <circle cx="42" cy="86" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="42" cy="102" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="164" cy="86" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="534" cy="86" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="772" cy="86" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="772" cy="102" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- airflow -->
+          <path d="M40 152 L740 152" marker-end="url(#ip3aAr)"/>
+          <!-- reason boxes -->
+          <rect x="30" y="192" width="200" height="112" rx="8" transform="rotate(0.5 130 248)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="250" y="192" width="200" height="112" rx="8" transform="rotate(-0.6 350 248)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="470" y="192" width="180" height="112" rx="8" transform="rotate(0.4 560 248)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="670" y="192" width="186" height="112" rx="8" transform="rotate(-0.5 763 248)" fill="#FFFFFF"/>
+          <!-- what a model gets: a flat line -->
+          <path d="M690 226 L690 258 L840 258"/>
+          <path d="M694 242 L836 242" stroke="#9B4D45" stroke-width="2.6"/>
+        </g>
+
+        <text class="ip3aH" x="42" y="68">INLET</text>
+        <text class="ip3aB" x="52" y="90">T2 flat</text>
+        <text class="ip3aB" x="52" y="106">P2 flat</text>
+
+        <text class="ip3aH" x="164" y="68">FAN, BYPASS</text>
+        <text class="ip3aB" x="174" y="90">P15 flat</text>
+        <text class="ip3aS" x="164" y="122">Nf, NRf move</text>
+
+        <text class="ip3aH" x="304" y="68">LPC</text>
+        <text class="ip3aS" x="304" y="90">T24 moves</text>
+
+        <text class="ip3aH" x="412" y="68">HPC</text>
+        <text class="ip3aS" x="412" y="90">T30, P30,</text>
+        <text class="ip3aS" x="412" y="106">Ps30, Nc, NRc</text>
+        <text class="ip3aS" x="412" y="122">all move</text>
+
+        <text class="ip3aH" x="534" y="68">BURNER</text>
+        <text class="ip3aB" x="544" y="90">farB flat</text>
+        <text class="ip3aS" x="534" y="122">phi moves</text>
+
+        <text class="ip3aH" x="642" y="68">TURBINES</text>
+        <text class="ip3aS" x="642" y="90">T50, W31,</text>
+        <text class="ip3aS" x="642" y="106">W32 move</text>
+
+        <text class="ip3aH" x="772" y="68">COMMAND</text>
+        <text class="ip3aB" x="782" y="90">Nf_dmd</text>
+        <text class="ip3aB" x="782" y="106">PCNfR_dmd</text>
+        <text class="ip3aS" x="772" y="124">both flat</text>
+
+        <text class="ip3aA" x="300" y="172">airflow, inlet to exhaust</text>
+        <text class="ip3aS" x="808" y="158" text-anchor="middle">a setpoint,</text>
+        <text class="ip3aS" x="808" y="174" text-anchor="middle">not a probe</text>
+
+        <text class="ip3aH" x="42" y="214">READS THE CONDITION</text>
+        <text class="ip3aB" x="42" y="234">T2, P2, P15</text>
+        <text class="ip3aS" x="42" y="256">FD001 has one condition,</text>
+        <text class="ip3aS" x="42" y="272">sea level: the inlet</text>
+        <text class="ip3aS" x="42" y="288">never changes</text>
+
+        <text class="ip3aH" x="262" y="214">READS A DEMAND</text>
+        <text class="ip3aB" x="262" y="234">Nf_dmd, PCNfR_dmd</text>
+        <text class="ip3aS" x="262" y="256">a commanded speed, not</text>
+        <text class="ip3aS" x="262" y="272">the engine's response;</text>
+        <text class="ip3aS" x="262" y="288">the command is fixed</text>
+
+        <text class="ip3aH" x="482" y="214">ONE PRINTED VALUE</text>
+        <text class="ip3aB" x="482" y="234">epr 1.3, farB 0.03</text>
+        <text class="ip3aS" x="482" y="256">if they move, it is</text>
+        <text class="ip3aS" x="482" y="272">below the precision</text>
+        <text class="ip3aS" x="482" y="288">the file prints</text>
+
+        <text class="ip3aH" x="682" y="214">WHAT A MODEL GETS</text>
+        <text class="ip3aS" x="682" y="278">same at cycle 1 and</text>
+        <text class="ip3aS" x="682" y="294">at failure: r is 0/0</text>
+
+        <text class="ip3aN" x="30" y="330">Flat in one operating condition is not broken, and it is not proof the probe is useless everywhere:</text>
+        <text class="ip3aN" x="30" y="348">in the six-condition subsets (FD002, FD004) these readings may matter. Those subsets are not covered.</text>
+        <text class="ip3aS" x="30" y="372">Computed on all 20,631 FD001 training rows; P15 takes two values, 21.60 and 21.61; setting 3 sits at 100.0.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - every copper dot is a flat channel, and each one is flat for a reason about the operating condition, not about the probe.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Three reasons a channel is flat<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>It reads the operating condition.</strong> T2 and P2 sit at the fan inlet and P15 in the bypass duct. FD001 runs at one condition, sea level, so the air arriving at the engine never changes, and neither do they. P15 takes two values, 21.60 and 21.61: a hundredth of a psia is resolution, not information.</p>
+        <p><strong>It reads a demand, not a response.</strong> Nf_dmd and PCNfR_dmd are the demanded fan speeds. They record what the engine was asked to do, and in one fixed condition it is always asked the same thing. The measured speeds, Nf and NRf, do move.</p>
+        <p><strong>It takes one printed value.</strong> epr reads 1.3 and farB 0.03 on every row. Whatever these do inside the simulation, it happens below the precision the file prints, so for a model they carry nothing.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>A Harrow Lane planner (constructed, like the shop) asked for an alert on inlet temperature, "because heat is how engines die". On FD001 the alert would never fire: T2 is the same number on every row. Worse, a dashboard tile that never changes colour reads as reassurance. The analyst wrote one line in the triage log instead: "T2 flat, reads the operating condition, which is fixed in this subset; no alert can be built on it here."</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Flat describes the condition, not the probe<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Dropping the seven from an FD001 model is right. Writing "T2 is useless" in a shared feature list is not. The flat list is a fact about one operating condition. In the six-condition subsets (FD002 and FD004) the inlet readings may well matter, and a habit learned here would delete them there. Those subsets are not covered on any page; the point is only that the reason travels with the decision.</p>
+        <p>The shipped sample follows that rule: the seven are not shipped, and they are listed inside it with their symbols and values, so the fact is never separated from the data.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why a flat channel breaks the arithmetic<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A correlation divides the shared movement of two columns by the product of their spreads. A flat column has zero spread, so its correlation with anything is zero divided by zero: not "weak", undefined. Standardising it (subtract the mean, divide by the spread) divides by zero too. Many pipelines quietly turn that into a column of missing values or a column of zeros, and neither announces itself.</p>
+        <p>That is the practical reason to triage flat channels first and by name, before any step that divides by a spread runs.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers correlation and noise</span>
+      <h2>Two lenses: r with life, and noise share</h2>
+      <span class="tag concept">9 min live</span>
+    </div>
+    <p class="lede">For each of the fourteen channels that move, two numbers, both computed on all 100 engines. r asks how well one straight line, shared by the whole fleet, describes the channel against cycles to failure. Noise share asks how much of the channel's spread is cycle-to-cycle jitter. The figure draws what each one actually measures, because each is blind to something the other sees.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two hand drawn panels. Left: what r sees. A hatched cloud of T50 readings against cycles to failure, flat for most of life and bending sharply upward near failure, with one copper straight line through it; r is -0.679 for T50, because a bent cloud keeps even a good channel well short of 1. Right: what noise share sees. One engine's jittery trace, flat then rising; a small bracket marks the cycle-to-cycle jitter and a tall bracket marks the total spread; noise share is jitter over total spread, 0.45 for T50, 0.65 for T30, the noisiest, and 0.17 for NRc, the smoothest.">
+        <defs>
+          <filter id="ip3bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip3bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip3bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip3bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip3bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip3bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip3bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip3bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip3bH" x="30" y="26">TWO LENSES ON ONE CHANNEL: WHAT r SEES AND WHAT NOISE SHARE SEES</text>
+        <text class="ip3bH" x="30" y="52">r: ONE STRAIGHT LINE THROUGH THE FLEET'S CLOUD</text>
+        <text class="ip3bH" x="470" y="52">NOISE SHARE: JITTER OVER TOTAL SPREAD</text>
+
+        <g filter="url(#ip3bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- left axes -->
+          <path d="M60 70 L60 260 L420 260"/>
+          <!-- the pooled cloud: flat, then bending up near failure -->
+          <path d="M80 245 L300 238 Q345 222 360 200 Q385 165 400 140 L400 95 Q382 125 360 160 Q330 200 300 205 L80 212 Z" fill="url(#ip3bHc)" stroke="#CDD5C0"/>
+          <!-- the one straight line r measures against -->
+          <path d="M80 238 L400 150" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- right: one engine's trace -->
+          <path d="M500 224 L510 234 L520 223 L530 234 L540 222 L550 231 L560 225 L570 235 L580 224 L590 232 L600 220 L610 233 L620 221 L630 233 L640 222 L650 232 L660 221 L670 233 L680 218 L690 227 L700 210 L710 214 L720 198 L730 203 L740 185 L750 183 L760 163 L770 164 L780 140 L790 141 L800 113" stroke-width="1.6"/>
+          <circle cx="500" cy="224" r="5" fill="#FFFFFF"/>
+          <!-- jitter bracket -->
+          <path d="M482 220 L488 220 L488 236 L482 236"/>
+          <!-- total spread bracket -->
+          <path d="M814 113 L820 113 L820 236 L814 236"/>
+        </g>
+
+        <text class="ip3bS" x="52" y="80" text-anchor="end">T50</text>
+        <text class="ip3bS" x="80" y="276" text-anchor="middle">200</text>
+        <text class="ip3bS" x="240" y="276" text-anchor="middle">100</text>
+        <text class="ip3bS" x="400" y="276" text-anchor="middle">0</text>
+        <text class="ip3bA" x="240" y="294" text-anchor="middle">cycles to failure (time runs left to right)</text>
+        <text class="ip3bV" x="110" y="104">r = -0.679 (T50)</text>
+        <text class="ip3bB" x="110" y="124">the copper line is all r sees</text>
+        <text class="ip3bS" x="110" y="142">the cloud bends, so even a good</text>
+        <text class="ip3bS" x="110" y="158">channel stays well short of 1</text>
+
+        <text class="ip3bS" x="482" y="256">jitter: cycle to cycle</text>
+        <text class="ip3bS" x="828" y="170">total</text>
+        <text class="ip3bS" x="828" y="186">spread</text>
+        <text class="ip3bL" x="470" y="290">noise share = jitter / total spread</text>
+        <text class="ip3bS" x="470" y="310">T50 0.45; T30 0.65, noisiest; NRc 0.17, smoothest</text>
+
+        <text class="ip3bS" x="30" y="318">r = Pearson correlation with cycles to failure;</text>
+        <text class="ip3bS" x="30" y="334">negative = rises as failure nears.</text>
+
+        <text class="ip3bN" x="30" y="362">Two numbers per channel, both computed on all 100 engines and all 20,631 rows.</text>
+        <text class="ip3bN" x="30" y="380">Neither says alone whether a channel is worth keeping; read them together, then look at the trace.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - r is the copper line through a bent cloud; noise share is the small bracket over the tall one. Each is blind to what the other measures.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip3-triage">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The triage table for all fourteen moving channels, computed from the shipped sample of all 100 simulated engines in your browser, plus a drift readout for the channel you pick. Nothing is seeded or drawn at random here: every reader gets the same numbers.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip3-triage-ch">Channel to inspect</label>
+        <select class="sql-code" id="ip3-triage-ch"></select>
+        <label class="sql-label" for="ip3-triage-sort">Order the table by</label>
+        <select class="sql-code" id="ip3-triage-sort">
+          <option value="r" selected>Size of r, strongest first</option>
+          <option value="noise">Noise share, smoothest first</option>
+          <option value="ch">Channel order</option>
+        </select>
+        <div id="ip3-triage-out"></div>
+        <p class="sql-note" id="ip3-triage-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip3-triage-self">...</div>
+    </div>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading r<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Sorted by size, the strongest three are Ps30 (HPC outlet static pressure, -0.696), T50 (LPT outlet temperature, -0.679) and phi (fuel flow over Ps30, +0.672). The sign is a direction, not a quality: Ps30 and T50 rise as failure nears, phi, P30, W31 and W32 fall. At the bottom sit Nc (-0.390) and NRc (-0.307), the core shaft read physically and corrected.</p>
+        <p>No channel gets near 1, and the figure shows one reason. Most of T50's rise comes late in life, so the cloud is bent and a straight line can only cut through it. Two more reasons come from the readme: each engine starts with its own unknown initial wear and manufacturing variation, so engines sit at different heights; and the data carries sensor noise. A pooled r is reduced by all three at once and cannot say which.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Reading noise share<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Noise share is the cycle-to-cycle spread inside each engine (the spread of first differences, divided by the square root of 2) over the channel's total spread. T30 is the noisiest at 0.65, then htBleed 0.61 and T24 0.60: well over half of what these channels do from one cycle to the next is jitter. The smoothest are NRc at 0.17 and Nc at 0.19, then Ps30 at 0.38.</p>
+        <p>A high noise share does not make a channel useless. T24 still correlates at -0.606. It means a model reading one cycle at a time will be shaken by it, which is the case for smoothing in session 4 and for drawing the trace before trusting any single reading.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed) ranked the fourteen by r, kept the top ten, and had a draft feature list in five minutes. Then she sorted the same table by noise share and saw the two channels she had just cut, Nc and NRc, sitting at the top as the smoothest in the file. Weak r with a smooth trace is not a quiet channel. It is a channel doing something a straight line does not describe. She put both back on a "look before deciding" list.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Should triage rank by one number, or read several? A single ranking is fast, repeatable and easy to defend in a review. Several numbers catch what one hides, but leave a judgement call that two analysts can make differently.</p>
+        <p>The same argument runs through the PHM08 paper itself, at the scoring end rather than the input end. Saxena, Goebel, Simon and Eklund (2008) define one summed score for the challenge, and also argue for weighting short true remaining lives more and for adding a correlation metric, because a summed score can hide uneven performance across units. Every later session prints several numbers side by side and none is crowned; triage tonight does the same with r and noise share. Which channels a model should finally keep is not settled here, and session 4 shows one way to stop having to choose.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers drift across life</span>
+      <h2>Drift: what the engine does between birth and failure</h2>
+      <span class="tag concept">9 min live</span>
+    </div>
+    <p class="lede">r squeezes a whole life into one number. Drift is the shape it squeezed. Cut each engine's life into ten equal tenths and average T50 across the fleet: 1402.57 degrees Rankine in the first tenth, 1425.04 in the last, and most of the rise in the last three tenths. Then do the same for the two channels at the bottom of the ranking, and they stop looking like nothing.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two hand drawn panels. Left: T50 fleet mean by tenth of each engine's life across all 100 engines, a copper line from 1402.57 in the first tenth, nearly flat for half of life, then climbing through the last three tenths, which are hatched, to 1425.04 in the last. Right: a sketch of five engines' Nc traces starting at different levels, running close together, then parting at the end, some higher and some lower, with a dashed fleet mean in which the opposite directions partly cancel. Notes give r of -0.390 for Nc and -0.307 for NRc, the weakest of 14, and noise shares of 0.19 and 0.17, the smoothest. A bottom note says this drift is the engine wearing, read through a probe, and drift in a pipeline's data is a separate problem.">
+        <defs>
+          <filter id="ip3cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip3cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip3cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip3cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip3cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip3cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip3cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip3cH" x="30" y="26">DRIFT ACROSS LIFE: ONE CHANNEL THE WHOLE FLEET AGREES ON, TWO WHERE ENGINES PART WAYS</text>
+        <text class="ip3cH" x="30" y="52">T50 BY TENTH OF LIFE, ALL 100 ENGINES</text>
+        <text class="ip3cH" x="490" y="52">Nc AND NRc: ENGINES PART WAYS</text>
+
+        <g filter="url(#ip3cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- left: last three tenths band -->
+          <rect x="322" y="80" width="106" height="178" fill="url(#ip3cHc)" stroke="none"/>
+          <!-- left axes -->
+          <path d="M70 70 L70 260 L432 260"/>
+          <!-- T50 fleet mean by tenth: x = 70 + (i - 0.5) * 36, y = 260 - (T - 1400) * 6.54 -->
+          <path d="M88 243 L124 242 L160 238 L196 232 L232 224 L268 215 L304 200 L340 178 L376 146 L412 96" stroke="#9B4D45" stroke-width="2.6"/>
+          <circle cx="88" cy="243" r="3" fill="#9B4D45" stroke="#9B4D45"/>
+          <circle cx="412" cy="96" r="3" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- probe dial doodle -->
+          <circle cx="456" cy="200" r="11" fill="#FFFFFF"/>
+          <path d="M456 200 L463 192"/>
+          <!-- right axes -->
+          <path d="M500 70 L500 260 L830 260"/>
+          <!-- five engines: different starting levels, close together, then parting -->
+          <path d="M505 166 Q620 170 700 172 Q770 160 820 98" stroke-width="1.4"/>
+          <path d="M505 178 Q620 182 700 180 Q770 172 820 124" stroke-width="1.4"/>
+          <path d="M505 188 Q620 190 700 188 Q770 190 820 184" stroke-width="1.4"/>
+          <path d="M505 196 Q620 196 700 196 Q770 208 820 232" stroke-width="1.4"/>
+          <path d="M505 206 Q620 204 700 204 Q770 220 820 248" stroke-width="1.4"/>
+          <!-- the fleet mean, where directions partly cancel -->
+          <path d="M505 187 Q660 189 700 188 Q770 184 820 166" stroke="#3F6212" stroke-width="2" stroke-dasharray="6 5"/>
+        </g>
+
+        <text class="ip3cS" x="62" y="264" text-anchor="end">1400</text>
+        <text class="ip3cS" x="62" y="100" text-anchor="end">1425</text>
+        <text class="ip3cS" x="88" y="276" text-anchor="middle">1st</text>
+        <text class="ip3cS" x="412" y="276" text-anchor="middle">10th</text>
+        <text class="ip3cA" x="250" y="294" text-anchor="middle">tenth of each engine's life</text>
+        <text class="ip3cB" x="82" y="230">1402.57</text>
+        <text class="ip3cB" x="404" y="88" text-anchor="end">1425.04</text>
+        <text class="ip3cB" x="326" y="74">most of the rise</text>
+
+        <text class="ip3cS" x="510" y="150">engines start at different levels</text>
+        <text class="ip3cS" x="640" y="104">some end higher</text>
+        <text class="ip3cS" x="640" y="252">some end lower</text>
+        <text class="ip3cS" x="505" y="276" text-anchor="middle">start</text>
+        <text class="ip3cS" x="820" y="276" text-anchor="middle">failure</text>
+        <text class="ip3cA" x="662" y="294" text-anchor="middle">cycles, start to failure (sketch)</text>
+
+        <text class="ip3cS" x="30" y="318">Each engine's life cut into ten equal tenths;</text>
+        <text class="ip3cS" x="30" y="334">the fleet mean barely moves for half of life.</text>
+
+        <text class="ip3cS" x="490" y="318">dashed: the fleet mean, where opposite</text>
+        <text class="ip3cS" x="490" y="334">directions partly cancel</text>
+        <text class="ip3cS" x="490" y="354">r: -0.390 (Nc), -0.307 (NRc), the weakest</text>
+        <text class="ip3cS" x="490" y="370">noise share: 0.19, 0.17, the smoothest</text>
+
+        <text class="ip3cN" x="30" y="398">Drift here is the engine wearing, read through a probe. Drift in a pipeline's data is a different problem,</text>
+        <text class="ip3cN" x="30" y="416">with its own monitors; it is linked below, not taught here.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - T50 drifts the same way in every engine and r rewards it; Nc and NRc drift too, but not in one shared direction, and a pooled r adds the directions together.</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>T50 by tenth of life<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Across all 100 engines and 20,631 rows, the fleet mean of T50 by tenth of life reads 1402.57, 1402.75, 1403.41, 1404.35, 1405.48, 1406.96, 1409.16, 1412.57, 1417.50 and 1425.04 degrees Rankine. The first half of life moves less than three degrees; the last three tenths carry most of the climb. Averaged over each engine's first 20 cycles the fleet reads 1402.75, over its last 20 cycles 1424.95: a rise of 22.20.</p>
+        <p>That shape is drift: slow, one-way, tied to wear. It is also why the cloud in the Part 2 figure bends, and why a straight-line r for the best temperature channel in the file stops at -0.679. Set the widget to s4 · T50 and it prints these same tenths.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's reliability engineer (constructed) proposed a fixed T50 alarm level for the whole fleet. The analyst pulled two engines. Engine 1 averages 1400.85 over its first 20 cycles and 1424.85 over its last 20; engine 39, the shortest-lived in the file, starts at 1407.14 and ends at 1426.68. Engine 39 is born hotter. A fixed level measures where an engine started as much as how far it has drifted, and the analyst's note said so: "drift is a change from the engine's own start, not a height".</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Nc and NRc: look before you rank<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Nc and NRc carry the weakest r of the fourteen (-0.390 and -0.307) and the lowest noise share (0.19 and 0.17). Those two facts together say the channels move a great deal relative to their jitter, but not along one straight line that the whole fleet shares. What shape the movement takes is a question for the traces, not for the table.</p>
+        <p>Set the widget to s9 · Nc, then s14 · NRc. It prints the fleet mean by tenth of life and counts the engines whose last 20 cycles average below their first 20. Compare that count with T50's. When engines move in opposite directions near the end, a pooled r adds the two directions together and shrinks, however clearly each engine is moving. Why the core speed goes one way in some simulated engines and the other way in others is not something the file or its readme states; treat it as an open question, and treat "weak r" as a reason to look, never as a reason to drop.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Physical drift is not pipeline drift<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Tonight's drift is the thing a remaining-life model exists to read: the engine changing, measured faithfully. A pipeline drift monitor watches for the opposite: a table's distribution changing because something upstream changed, which is usually a fault to be fixed. Both use the same word and sometimes the same statistics, and a monitor tuned to alarm on "drift" would alarm on every engine approaching failure, which is to say on the signal.</p>
+        <p>Pipeline data quality, freshness, volume and distribution-drift monitors are taught in <a href="https://phoebefu6.github.io/learn-data-observability-with-phoebe/courses/b5-distribution-drift.html">learn data observability, builder session 5</a>. They are linked, not retaught. Here the drift is in the physical sensor.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 4: BUILD-ALONG ============ -->
+  <section class="section" id="part-4">
+    <div class="section-kicker">
+      <span class="klabel">Part 4 · build-along</span>
+      <h2>Triage the fourteen in your own console</h2>
+      <span class="tag build">15 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). Six steps, each with what you should see. By step 3 you have reproduced the full triage table; by step 6 you have looked at the drift behind the two numbers at its bottom. The figure is the table you are about to print, drawn.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 492" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn triage table for the 14 moving channels, ranked by size of correlation with cycles to failure, each with a hatched bar for the size of r and a pale bar for noise share. From the top: Ps30 -0.696 and 0.38, T50 -0.679 and 0.45, phi +0.672 and 0.41, P30 +0.657 and 0.46, BPR -0.643 and 0.54, W32 +0.636 and 0.56, W31 +0.629 and 0.56, T24 -0.606 and 0.60, htBleed -0.606 and 0.61, T30 -0.584 and 0.65, Nf -0.564 and 0.43, NRf -0.563 and 0.42, and in copper Nc -0.390 and 0.19 and NRc -0.307 and 0.17. Below, a box lists the seven flat channels, which have no r and no noise share because their spread is zero.">
+        <defs>
+          <filter id="ip3dSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="79" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip3dHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip3dAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip3dH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3dL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip3dS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip3dB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip3dA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip3dN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip3dH" x="30" y="26">THE TRIAGE TABLE YOUR CONSOLE PRINTS, DRAWN: 14 CHANNELS BY SIZE OF r</text>
+        <text class="ip3dA" x="30" y="54">channel</text>
+        <text class="ip3dA" x="200" y="54">r with cycles to failure (bar = size)</text>
+        <text class="ip3dA" x="560" y="54">noise share (bar = jitter share)</text>
+
+        <g filter="url(#ip3dSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="200" y="70" width="264.5" height="11" rx="2" transform="rotate(-0.4 332 75)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="70" width="144.4" height="11" rx="2" transform="rotate(0.4 632 75)" fill="#F3F7EA"/>
+          <rect x="200" y="90" width="258.0" height="11" rx="2" transform="rotate(0.3 329 95)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="90" width="171.0" height="11" rx="2" transform="rotate(-0.3 646 95)" fill="#F3F7EA"/>
+          <rect x="200" y="110" width="255.4" height="11" rx="2" transform="rotate(-0.2 328 115)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="110" width="155.8" height="11" rx="2" transform="rotate(0.2 638 115)" fill="#F3F7EA"/>
+          <rect x="200" y="130" width="249.7" height="11" rx="2" transform="rotate(0.4 325 135)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="130" width="174.8" height="11" rx="2" transform="rotate(-0.4 647 135)" fill="#F3F7EA"/>
+          <rect x="200" y="150" width="244.3" height="11" rx="2" transform="rotate(-0.4 322 155)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="150" width="205.2" height="11" rx="2" transform="rotate(0.4 663 155)" fill="#F3F7EA"/>
+          <rect x="200" y="170" width="241.7" height="11" rx="2" transform="rotate(0.3 321 175)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="170" width="212.8" height="11" rx="2" transform="rotate(-0.3 666 175)" fill="#F3F7EA"/>
+          <rect x="200" y="190" width="239.0" height="11" rx="2" transform="rotate(-0.2 320 195)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="190" width="212.8" height="11" rx="2" transform="rotate(0.2 666 195)" fill="#F3F7EA"/>
+          <rect x="200" y="210" width="230.3" height="11" rx="2" transform="rotate(0.4 315 215)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="210" width="228.0" height="11" rx="2" transform="rotate(-0.4 674 215)" fill="#F3F7EA"/>
+          <rect x="200" y="230" width="230.3" height="11" rx="2" transform="rotate(-0.4 315 235)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="230" width="231.8" height="11" rx="2" transform="rotate(0.4 676 235)" fill="#F3F7EA"/>
+          <rect x="200" y="250" width="221.9" height="11" rx="2" transform="rotate(0.3 311 255)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="250" width="247.0" height="11" rx="2" transform="rotate(-0.3 684 255)" fill="#F3F7EA"/>
+          <rect x="200" y="270" width="214.3" height="11" rx="2" transform="rotate(-0.2 307 275)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="270" width="163.4" height="11" rx="2" transform="rotate(0.2 642 275)" fill="#F3F7EA"/>
+          <rect x="200" y="290" width="213.9" height="11" rx="2" transform="rotate(0.4 307 295)" fill="url(#ip3dHc)"/>
+          <rect x="560" y="290" width="159.6" height="11" rx="2" transform="rotate(-0.4 640 295)" fill="#F3F7EA"/>
+          <rect x="200" y="310" width="148.2" height="11" rx="2" transform="rotate(-0.4 274 315)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="560" y="310" width="72.2" height="11" rx="2" transform="rotate(0.4 596 315)" fill="#F3F7EA"/>
+          <rect x="200" y="330" width="116.7" height="11" rx="2" transform="rotate(0.3 258 335)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="560" y="330" width="64.6" height="11" rx="2" transform="rotate(-0.3 592 335)" fill="#F3F7EA"/>
+          <!-- the flat seven -->
+          <rect x="30" y="360" width="826" height="52" rx="8" transform="rotate(-0.3 443 386)" fill="#FFFFFF" stroke="#CDD5C0"/>
+          <!-- sensor dot doodle -->
+          <circle cx="846" cy="24" r="9" fill="#FFFFFF"/>
+          <path d="M846 24 L852 18"/>
+        </g>
+
+        <text class="ip3dL" x="30" y="80">s11 · Ps30</text>
+        <text class="ip3dS" x="472" y="80">-0.696</text>
+        <text class="ip3dS" x="712" y="80">0.38</text>
+        <text class="ip3dL" x="30" y="100">s4 · T50</text>
+        <text class="ip3dS" x="466" y="100">-0.679</text>
+        <text class="ip3dS" x="739" y="100">0.45</text>
+        <text class="ip3dL" x="30" y="120">s12 · phi</text>
+        <text class="ip3dS" x="463" y="120">+0.672</text>
+        <text class="ip3dS" x="724" y="120">0.41</text>
+        <text class="ip3dL" x="30" y="140">s7 · P30</text>
+        <text class="ip3dS" x="458" y="140">+0.657</text>
+        <text class="ip3dS" x="743" y="140">0.46</text>
+        <text class="ip3dL" x="30" y="160">s15 · BPR</text>
+        <text class="ip3dS" x="452" y="160">-0.643</text>
+        <text class="ip3dS" x="773" y="160">0.54</text>
+        <text class="ip3dL" x="30" y="180">s21 · W32</text>
+        <text class="ip3dS" x="450" y="180">+0.636</text>
+        <text class="ip3dS" x="781" y="180">0.56</text>
+        <text class="ip3dL" x="30" y="200">s20 · W31</text>
+        <text class="ip3dS" x="447" y="200">+0.629</text>
+        <text class="ip3dS" x="781" y="200">0.56</text>
+        <text class="ip3dL" x="30" y="220">s2 · T24</text>
+        <text class="ip3dS" x="438" y="220">-0.606</text>
+        <text class="ip3dS" x="796" y="220">0.60</text>
+        <text class="ip3dL" x="30" y="240">s17 · htBleed</text>
+        <text class="ip3dS" x="438" y="240">-0.606</text>
+        <text class="ip3dS" x="800" y="240">0.61</text>
+        <text class="ip3dL" x="30" y="260">s3 · T30</text>
+        <text class="ip3dS" x="430" y="260">-0.584</text>
+        <text class="ip3dS" x="815" y="260">0.65</text>
+        <text class="ip3dL" x="30" y="280">s8 · Nf</text>
+        <text class="ip3dS" x="422" y="280">-0.564</text>
+        <text class="ip3dS" x="731" y="280">0.43</text>
+        <text class="ip3dL" x="30" y="300">s13 · NRf</text>
+        <text class="ip3dS" x="422" y="300">-0.563</text>
+        <text class="ip3dS" x="728" y="300">0.42</text>
+        <text class="ip3dB" x="30" y="320">s9 · Nc</text>
+        <text class="ip3dS" x="356" y="320">-0.390</text>
+        <text class="ip3dS" x="640" y="320">0.19</text>
+        <text class="ip3dB" x="30" y="340">s14 · NRc</text>
+        <text class="ip3dS" x="325" y="340">-0.307</text>
+        <text class="ip3dS" x="633" y="340">0.17</text>
+
+        <text class="ip3dL" x="44" y="382">FLAT, NOT SHIPPED: no r and no noise share, because their spread is zero</text>
+        <text class="ip3dS" x="44" y="400">s1 T2 · s5 P2 · s6 P15 (21.60 / 21.61) · s10 epr · s16 farB · s18 Nf_dmd · s19 PCNfR_dmd</text>
+
+        <text class="ip3dN" x="30" y="438">Top of the r ranking: Ps30, T50, phi. Noisiest: T30, htBleed, T24. Weakest r and smoothest trace:</text>
+        <text class="ip3dN" x="30" y="456">Nc and NRc, the two a ranking by r alone would drop first, and the two worth a closer look.</text>
+        <text class="ip3dS" x="30" y="480">Computed on all 100 engines and 20,631 rows; the same numbers IOT.triage prints in step 3.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper rows are the ones a single ranking gets wrong: last by r, first by smoothness.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Run the triage</h4>
+        <p>IOT.triage decodes all 100 engines and returns two lists: the fourteen channels that move, each with r and noise share, and the seven flat ones carried inside the sample. You should see 14 and 7.</p>
+        <div class="prompt-box good"><span class="label">console</span>var tri = IOT.triage(IOT_SAMPLE);
+[tri.kept.length, tri.flat.length]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read the flat seven</h4>
+        <p>Each flat channel with its symbol, the number of distinct values in the original file, and its range. Every one takes a single value except P15, which takes two: 21.60 and 21.61. Copy the list into your triage log with the reason for each, from Part 1.</p>
+        <div class="prompt-box good"><span class="label">console</span>tri.flat.map(function (f) { return f.ch + " " + f.sym + ": " + f.distinct + " value(s), " + f.min + " to " + f.max; })</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Print the triage table</h4>
+        <p>One line per moving channel: channel, symbol, r to three places, noise share to two. Check each line against the figure above and the widget's table; they are the same computation. s4 · T50 should read -0.679 and 0.45.</p>
+        <div class="prompt-box good"><span class="label">console</span>tri.kept.map(function (c) { return c.ch + " " + c.sym + " " + c.r.toFixed(3) + " " + c.noiseShare.toFixed(2); })</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Rank by the size of r</h4>
+        <p>Sort a copy by the absolute value of r. You should see Ps30, T50 and phi first, and Nc then NRc last. If you stopped here, these are the two you would cut.</p>
+        <div class="prompt-box good"><span class="label">console</span>tri.kept.slice().sort(function (a, b) { return Math.abs(b.r) - Math.abs(a.r); }).map(function (c) { return c.sym; }).join(" ")</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Rank by noise share</h4>
+        <p>Now sort the same list from smoothest to noisiest. NRc and Nc come first, Ps30 third; T24, htBleed and T30 come last. The two lenses disagree most at exactly the two channels the first ranking would have dropped.</p>
+        <div class="prompt-box good"><span class="label">console</span>tri.kept.slice().sort(function (a, b) { return a.noiseShare - b.noiseShare; }).map(function (c) { return c.sym + " " + c.noiseShare.toFixed(2); }).join(", ")</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Look at the drift behind the numbers</h4>
+        <p>For a channel, average each engine's first 20 and last 20 cycles, take the fleet means, and count the engines that end lower than they start. For T50 you should see 1402.75 and 1424.95, the rise of 22.20. Then read the third number for T50, Nc and NRc side by side, and compare it with what the widget prints for the same channels.</p>
+        <div class="prompt-box good"><span class="label">console</span>var units = IOT.decode(IOT_SAMPLE);
+function drift(ch) {
+  var k = IOT_SAMPLE.channels.indexOf(ch), a = 0, b = 0, lower = 0;
+  units.forEach(function (u) {
+    var f = 0, l = 0;
+    for (var t = 0; t &lt; 20; t++) { f += u.rows[t][k]; l += u.rows[u.n - 20 + t][k]; }
+    a += f / 20; b += l / 20; if (l &lt; f) lower++;
+  });
+  return [(a / units.length).toFixed(2), (b / units.length).toFixed(2), lower];
+}
+[drift("s4"), drift("s9"), drift("s14")]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Triage every new sensor table in three passes and log a reason for each column: flat (and why: condition, demand or precision), noisy (by noise share), and moving with the target (by r). Then look at the trace of anything where the two numbers disagree before you drop it. A column cut on one number is a decision you cannot explain later.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Nf_dmd, the demanded fan speed, never moves across the FD001 training rows. What is the best explanation?</p>
+      <div class="qopt">A · The probe failed early in every engine</div>
+      <div class="qopt">B · It records a command, not the engine's response, and in FD001's one fixed operating condition the command never changes</div>
+      <div class="qopt">C · The shipped sample's quantisation rounded its movement away</div>
+      <q class="qwhy">A demanded speed is a setpoint. The measured fan speeds, Nf and NRf, do move. And the flat seven were flat in the original file: they are listed, not shipped, so quantisation never touched them.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Nc (s9) has r -0.390 and noise share 0.19. Ps30 (s11) has r -0.696 and noise share 0.38. What follows?</p>
+      <div class="qopt">A · Drop Nc: it has the second weakest r of the fourteen</div>
+      <div class="qopt">B · Nc is the noisier channel of the two</div>
+      <div class="qopt">C · Nc moves smoothly but not along one straight line the whole fleet shares, so r undersells it; look at its drift before deciding</div>
+      <q class="qwhy">A lower noise share means a smoother trend, so Nc is the smoother of the two. A weak pooled r with a smooth trace is the signature of movement a single straight line cannot describe, such as engines starting at different levels or moving in different directions near the end.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">Tonight's T50 drift (fleet mean 1402.57 in the first tenth of life, 1425.04 in the last) and a pipeline drift alert share a word. What is tonight's drift?</p>
+      <div class="qopt">A · The engine wearing, read faithfully through a probe: the signal a remaining-life model is meant to learn from</div>
+      <div class="qopt">B · A table's distribution shifting because something upstream in the pipeline changed</div>
+      <div class="qopt">C · Two channels' clocks slipping apart, so their readings no longer line up</div>
+      <q class="qwhy">B is pipeline drift, taught in the data observability sessions; C is clock skew, from session 2. Here the drift is in the physical sensor, and a monitor that alarmed on it would alarm on the very thing being predicted.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 4</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the console on this page and then on a table of your own.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Read three engines, not the fleet</h4>
+        <p>Using the drift function from step 6 as a pattern, print the first-20 and last-20 averages of Nc for engines 1, 39 and 69 only (units[0], units[38], units[68]). Write one sentence on what a single pooled r of -0.390 hides about these three.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Try a third lens</h4>
+        <p>For each of the fourteen channels, divide the fleet's average rise (last 20 minus first 20) by the channel's cycle-to-cycle jitter. Rank by that. Which channels move up compared with the r ranking, and which move down? Bring the list to session 4, where the channels are combined into one number.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Triage a table you own</h4>
+        <p>Pick any wide table at work. Log every column as flat (with the reason), noisy, or moving with the outcome you care about, and mark any column where two measures disagree. Count how many of your "drop" decisions rested on one number.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The seven flat channels</span><span class="note">T2, P2, P15, epr, farB, Nf_dmd, PCNfR_dmd and setting 3, sorted by reason: condition, demand, one printed value. Computed on all 20,631 rows.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">r with cycles to failure</span><span class="note">All fourteen moving channels, pooled over 100 engines; Ps30 -0.696 strongest, NRc -0.307 weakest.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Noise share</span><span class="note">Cycle-to-cycle spread over total spread; T30 0.65 noisiest, NRc 0.17 smoothest.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The triage table, reproduced</span><span class="note">IOT.triage in the console and the live widget, the same computation on the shipped sample.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">r as one lens</span><span class="note">A bent cloud, engines starting at different levels and sensor noise all shrink a pooled r, and it cannot say which.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Drift across life</span><span class="note">T50 fleet mean by tenth, 1402.57 to 1425.04; first 20 to last 20 cycles, 1402.75 to 1424.95.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Nc and NRc (s9, s14)</span><span class="note">Weakest r, smoothest trace. Looked at, not explained: why engines part ways on core speed is left open.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Combining channels into one number</span><span class="note">The health index, in practitioner session 4.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Is this one reading odd?</span><span class="note">Point and time-series detectors live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/b7-timeseries-anomalies.html">learn anomaly detection, builder session 7</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Pipeline data quality and drift monitors</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-data-observability-with-phoebe/courses/b5-distribution-drift.html">learn data observability, builder session 5</a>. Here the drift is in the physical sensor, not the pipeline.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; no figure describes a real fleet.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The flat seven.</strong> T2, P2, P15, epr, farB, Nf_dmd, PCNfR_dmd. Flat in FD001's one condition, not broken.</div>
+      <div class="cheat-item"><strong>Why flat.</strong> Reads the condition, reads a demand, or takes one printed value. Log the reason with the drop.</div>
+      <div class="cheat-item"><strong>r.</strong> Pearson with cycles to failure, pooled over 100 engines. Negative rises as failure nears.</div>
+      <div class="cheat-item"><strong>The top three.</strong> Ps30 -0.696, T50 -0.679, phi +0.672. None near 1.</div>
+      <div class="cheat-item"><strong>Noise share.</strong> Jitter over total spread. T30 0.65 noisiest; NRc 0.17 smoothest.</div>
+      <div class="cheat-item"><strong>r is one lens.</strong> A bent cloud, different starting levels and noise all shrink it, and it cannot say which.</div>
+      <div class="cheat-item"><strong>Drift.</strong> T50 fleet mean 1402.57 in the first tenth of life, 1425.04 in the last; most of it late.</div>
+      <div class="cheat-item"><strong>Look before you drop.</strong> Nc and NRc: weakest r, smoothest trace. Pipeline drift is a different problem.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 3 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p2-clocks-sampling-and-resampling.html">← Practitioner session 2 · Clocks, sampling and resampling</a>
+        <a href="p4-many-channels-one-health-index.html">Practitioner session 4 · From many channels to one health index →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var selCh = document.getElementById("ip3-triage-ch");
+  var selSort = document.getElementById("ip3-triage-sort");
+  var out = document.getElementById("ip3-triage-out");
+  var verdict = document.getElementById("ip3-triage-verdict");
+  var self = document.getElementById("ip3-triage-self");
+  var NAMES = {
+    T24: "LPC outlet temperature", T30: "HPC outlet temperature", T50: "LPT outlet temperature",
+    P30: "HPC outlet pressure", Nf: "physical fan speed", Nc: "physical core speed",
+    Ps30: "HPC outlet static pressure", phi: "fuel flow over Ps30", NRf: "corrected fan speed",
+    NRc: "corrected core speed", BPR: "bypass ratio", htBleed: "bleed enthalpy",
+    W31: "HPT coolant bleed", W32: "LPT coolant bleed"
+  };
+
+  var tri = IOT.triage(IOT_SAMPLE);
+  var units = IOT.decode(IOT_SAMPLE);
+  var byR = tri.kept.slice().sort(function (a, b) { return Math.abs(b.r) - Math.abs(a.r); });
+  var byNoise = tri.kept.slice().sort(function (a, b) { return a.noiseShare - b.noiseShare; });
+
+  tri.kept.forEach(function (c) {
+    var o = document.createElement("option");
+    o.value = c.ch;
+    o.textContent = c.ch + " · " + c.sym + " (" + NAMES[c.sym] + ")";
+    if (c.ch === "s4") o.selected = true;
+    selCh.appendChild(o);
+  });
+
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(3); }
+
+  function drift(ch) {
+    var k = IOT_SAMPLE.channels.indexOf(ch), a = 0, b = 0, lower = 0, sums = [], cnt = [], j, t;
+    for (j = 0; j < 10; j++) { sums.push(0); cnt.push(0); }
+    units.forEach(function (u) {
+      var f = 0, l = 0;
+      for (t = 0; t < 20; t++) { f += u.rows[t][k]; l += u.rows[u.n - 20 + t][k]; }
+      a += f / 20; b += l / 20; if (l < f) lower++;
+      for (t = 0; t < u.n; t++) { j = Math.min(9, Math.floor(10 * t / u.n)); sums[j] += u.rows[t][k]; cnt[j]++; }
+    });
+    return { first: a / units.length, last: b / units.length, lower: lower,
+             tenths: sums.map(function (s, i) { return s / cnt[i]; }) };
+  }
+
+  function dp(step) { return step >= 1 ? 2 : step >= 0.1 ? 2 : step >= 0.01 ? 3 : 4; }
+
+  function render() {
+    var ch = selCh.value;
+    var list = selSort.value === "r" ? byR : selSort.value === "noise" ? byNoise : tri.kept;
+    var html = '<table class="sql-table"><thead><tr><th>Channel</th><th>r with cycles to failure</th><th>Noise share</th></tr></thead><tbody>';
+    list.forEach(function (c) {
+      html += "<tr" + (c.ch === ch ? ' class="ip3-sel"' : "") + "><td>" + c.ch + " · " + c.sym + "</td><td><b>" + sgn(c.r) + "</b></td><td><b>" + c.noiseShare.toFixed(2) + "</b></td></tr>";
+    });
+    html += "</tbody></table>";
+    html += '<p class="sql-note">Flat, not shipped (no r, no noise share): ' + tri.flat.map(function (f) { return f.ch + " " + f.sym; }).join(", ") + ".</p>";
+    var c = tri.kept.filter(function (x) { return x.ch === ch; })[0];
+    var d = drift(ch), p = dp(c.step);
+    html += '<p class="sql-note"><b>' + c.sym + " fleet mean by tenth of life:</b> " + d.tenths.map(function (v) { return v.toFixed(p); }).join(", ") + ".</p>";
+    out.innerHTML = html;
+    var rankR = byR.indexOf(c) + 1, rankN = byNoise.indexOf(c) + 1;
+    verdict.textContent = c.ch + " · " + c.sym + ": r " + sgn(c.r) + ", rank " + rankR + " of 14 by size; noise share " + c.noiseShare.toFixed(2) +
+      ", rank " + rankN + " of 14 from smoothest. Fleet mean over each engine's first 20 cycles " + d.first.toFixed(p) + ", over its last 20 " + d.last.toFixed(p) +
+      "; " + d.lower + " of " + units.length + " engines end lower than they start. " +
+      (d.lower === 0 || d.lower === units.length
+        ? "Every engine moves the same way, so r is held down by the bend in the curve, different starting levels and noise, not by disagreement."
+        : "Engines move in different directions at the end, and a pooled r adds the directions together: look at the traces before ranking this channel.");
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  selCh.addEventListener("change", render);
+  selSort.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ip3-triage .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; width: 100%; }
+  #ip3-triage table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip3-triage tr.ip3-sel td { background: var(--amber-50); color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

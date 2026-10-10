@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 1 of 10. NASA's FD001 run-to-failure file read as a dataset: 26 columns, 100 simulated engines, 7 flat channels, and a label that is not in the file. Real public rows from NASA's simulation, decoded in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Reading a turbofan run as a dataset - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 1 of 10. 20,631 rows, 14 channels that move, and remaining useful life computed from the cycle count. The first model, the fleet average, misses by 45.61 cycles.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p1-reading-a-turbofan-run.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Reading a turbofan run as a dataset - learn iot data with phoebe">
+<meta name="twitter:description" content="The label is not in the file. It is in the cycle count, and only once the engine has failed.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 1 · Reading a turbofan run as a dataset - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 1 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 1 of 10</div>
+    <h1>Reading a turbofan run <span class="accent">as a dataset</span></h1>
+    <p class="sub">Every practitioner session works on one file: NASA's FD001 training set, 100 simulated turbofan engines, each recorded once per cycle from a healthy start to failure. Tonight reads it the way a careful analyst reads any new table: what each column is, which ones carry nothing, how the rows are grouped, and where the label is. The label is the surprise. It is not a column. It is the number of cycles left, and it only exists because each engine was run until it broke. Real public rows from NASA's simulation, decoded in your browser.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Foundations</span>
+      <span class="chip audience">Analysts and engineers new to sensor data</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · The file</span>
+      <span class="a3" style="flex:3">15-27 · The label in the cycle count</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane's analyst opens the file</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is NASA's 100 simulated engines. Its analyst has loaded tables for a decade: orders, sessions, invoices. She opens the training file expecting a fact table with a target column. She finds 26 columns of numbers, separated by spaces, no header, no nulls and no target. Every practitioner session after this one builds on what she works out in the next 45 minutes.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The FD001 training file read column by column, with the 21 sensor channels named and placed. The 7 channels that never move in it, and why. The grain of the table: one row per engine per cycle, 20,631 rows, lives from 128 to 362. The remaining-useful-life label computed from the cycle count, which is only possible because every training engine ran to failure. And the first model anyone should ship, the fleet average, scored on 300 held-out cut points: it misses by 45.61 cycles on average (root mean square).</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Where the file comes from<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>NASA's Prognostics Center of Excellence publishes a data set repository; this is data set 6, "Turbofan Engine Degradation Simulation", cited as Saxena and Goebel (2008). The zip holds four subsets. FD001 is the simplest: 100 training and 100 test trajectories, one operating condition (sea level), one fault mode (high-pressure compressor degradation). The others add six operating conditions, a second fault mode, or both.</p>
+        <p>The engines are simulated with C-MAPSS, so every page that quotes these rows calls them what they are: real public rows from NASA's simulation, not real engines. That is a strength for learning. The truth is recorded, the fleet is large, and every engine was allowed to do what real ones are maintained to avoid: fail.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Unit.</strong> One engine. Column 1. The nearest thing to an id, and it identifies a machine, not a person.</li>
+          <li><strong>Cycle.</strong> Column 2, counting from 1. One row per cycle; time is in cycles, never in clock time.</li>
+          <li><strong>Operational settings.</strong> Columns 3 to 5. In FD001 the third is constant at 100.0 and the first two only jitter.</li>
+          <li><strong>Sensor channels.</strong> Columns 6 to 26, sensor measurements 1 to 21.</li>
+          <li><strong>Run to failure.</strong> Training engines end at failure. Test engines stop some time before it.</li>
+          <li><strong>Remaining useful life (RUL).</strong> Cycles left before failure. Computed, not recorded.</li>
+          <li><strong>Held-out engines.</strong> 30 training engines set aside by a seeded split, cut at 10 points each, to score models. They stand in for the NASA test set on every page.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the file</span>
+      <h2>Twenty-six columns and no target</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The readme lists the columns in plain words: unit number, time in cycles, three operational settings, and 21 sensor measurements. It does not name the sensors; the paper's Table 2 lists 21 sensed outputs in an order that the field pairs with sensor 1 to 21. The figure draws the two halves of the data side by side, because the difference between them is where the label comes from.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn comparison of the training and test files. Left, the training file: stacked blocks of rows for unit 1 with 192 cycles, unit 2 and so on to unit 100, each block ending at a copper line marked failure, so the remaining life of every row can be counted back from the end. Columns are grouped as unit and cycle, three settings, 14 channels that move, and 7 that never move. Right, the test file: blocks that stop short of failure with a question mark, and a separate short file with one true remaining life per unit. A note says the label is not a column; it is computed from the cycle count because every training engine ran to failure.">
+        <defs>
+          <filter id="ip1aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip1aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip1aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip1aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip1aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip1aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip1aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip1aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip1aH" x="30" y="26">TRAIN: EVERY ENGINE RUNS TO FAILURE</text>
+        <text class="ip1aH" x="548" y="26">TEST: EVERY ENGINE STOPS EARLY</text>
+
+        <!-- column group captions -->
+        <text class="ip1aS" x="60" y="52" text-anchor="middle">unit, cycle</text>
+        <text class="ip1aS" x="140" y="52" text-anchor="middle">3 settings</text>
+        <text class="ip1aA" x="268" y="52" text-anchor="middle">14 channels move</text>
+        <text class="ip1aS" x="410" y="52" text-anchor="middle">7 never move</text>
+
+        <g filter="url(#ip1aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- train blocks: unit 1 -->
+          <rect x="30" y="62" width="60" height="92" rx="4" transform="rotate(-0.4 60 108)" fill="#FFFFFF"/>
+          <rect x="100" y="62" width="80" height="92" rx="4" transform="rotate(0.3 140 108)" fill="#FFFFFF"/>
+          <rect x="190" y="62" width="156" height="92" rx="4" transform="rotate(-0.3 268 108)" fill="url(#ip1aHc)"/>
+          <rect x="356" y="62" width="108" height="92" rx="4" transform="rotate(0.4 410 108)" fill="#F3F7EA" stroke="#CDD5C0"/>
+          <path d="M30 158 L464 158" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- unit 2 -->
+          <rect x="30" y="188" width="60" height="62" rx="4" transform="rotate(0.4 60 219)" fill="#FFFFFF"/>
+          <rect x="100" y="188" width="80" height="62" rx="4" transform="rotate(-0.3 140 219)" fill="#FFFFFF"/>
+          <rect x="190" y="188" width="156" height="62" rx="4" transform="rotate(0.3 268 219)" fill="url(#ip1aHc)"/>
+          <rect x="356" y="188" width="108" height="62" rx="4" transform="rotate(-0.4 410 219)" fill="#F3F7EA" stroke="#CDD5C0"/>
+          <path d="M30 254 L464 254" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- the dots for units 3..100 -->
+          <circle cx="247" cy="268" r="2.5" fill="#1D2513"/>
+          <circle cx="247" cy="280" r="2.5" fill="#1D2513"/>
+          <circle cx="247" cy="292" r="2.5" fill="#1D2513"/>
+          <!-- the count-back arrow -->
+          <path d="M476 154 L476 70" marker-end="url(#ip1aAr)" stroke="#9B4D45"/>
+
+          <!-- test blocks -->
+          <rect x="548" y="62" width="180" height="66" rx="4" transform="rotate(0.5 638 95)" fill="url(#ip1aHc)"/>
+          <path d="M548 136 L728 136" stroke="#CDD5C0" stroke-dasharray="6 6"/>
+          <rect x="548" y="172" width="180" height="44" rx="4" transform="rotate(-0.5 638 194)" fill="url(#ip1aHc)"/>
+          <path d="M548 224 L728 224" stroke="#CDD5C0" stroke-dasharray="6 6"/>
+          <!-- the separate RUL file -->
+          <rect x="762" y="62" width="92" height="160" rx="6" transform="rotate(1 808 142)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M732 96 L756 96" marker-end="url(#ip1aAr)"/>
+          <path d="M732 194 L756 194" marker-end="url(#ip1aAr)"/>
+        </g>
+
+        <text class="ip1aL" x="60" y="112" text-anchor="middle">unit 1</text>
+        <text class="ip1aS" x="60" y="128" text-anchor="middle">192 rows</text>
+        <text class="ip1aB" x="190" y="176">failure: the last row of unit 1</text>
+        <text class="ip1aL" x="60" y="223" text-anchor="middle">unit 2</text>
+        <text class="ip1aS" x="262" y="314" text-anchor="middle">... to unit 100: 20,631 rows</text>
+        <text class="ip1aB" x="488" y="100">RUL</text>
+        <text class="ip1aS" x="488" y="116">count</text>
+        <text class="ip1aS" x="488" y="132">back</text>
+
+        <text class="ip1aS" x="638" y="152" text-anchor="middle">stops here; failure not shown</text>
+        <text class="ip1aS" x="638" y="240" text-anchor="middle">stops here; failure not shown</text>
+        <text class="ip1aB" x="808" y="96" text-anchor="middle">true RUL</text>
+        <text class="ip1aS" x="808" y="114" text-anchor="middle">one number</text>
+        <text class="ip1aS" x="808" y="130" text-anchor="middle">per unit,</text>
+        <text class="ip1aS" x="808" y="146" text-anchor="middle">a separate</text>
+        <text class="ip1aS" x="808" y="162" text-anchor="middle">file</text>
+        <text class="ip1aS" x="548" y="282">PHM08 test RULs ran from 10 to 150 cycles.</text>
+        <text class="ip1aS" x="548" y="300">Not shipped; 30 held-out engines stand in.</text>
+
+        <text class="ip1aN" x="30" y="352">The label is not a column. In training it is the cycle count read backwards from a failure that is in the file; in the test</text>
+        <text class="ip1aN" x="30" y="370">set the failure is withheld and one true number per engine sits in a separate file. Same grain, different truth.</text>
+        <text class="ip1aS" x="30" y="396">Column groups from the readme; the move or never-move split computed on all 20,631 training rows.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper line at the bottom of each training block is the failure, and every label is a count back from it.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The 21 channels, named<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Table 2 of Saxena, Goebel, Simon and Eklund (2008) lists the 21 sensed outputs with their units: four temperatures (T2 at the fan inlet, T24 at the low-pressure compressor outlet, T30 at the high-pressure compressor outlet, T50 at the low-pressure turbine outlet) in degrees Rankine; four pressures (P2, P15 in the bypass duct, P30 and the static Ps30) in psia; four shaft speeds (physical Nf and Nc, corrected NRf and NRc) in rpm; and nine more: engine pressure ratio, fuel flow over Ps30 (phi), bypass ratio, burner fuel-air ratio, bleed enthalpy, the two demanded fan speeds, and the two turbine coolant bleeds W31 and W32.</p>
+        <p>The readme numbers the sensor columns 1 to 21 and does not name them. Pairing sensor 1 with T2 and sensor 21 with W32 follows Table 2's order, and it is the convention the prognostics literature uses; treat the pairing as reported, not as something the file itself states.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst wrote the 21 names into a header row before doing anything else, then sorted them by where the probe sits in the engine. Four columns she had been about to call "redundant" (the physical and corrected fan and core speeds) turned out to be two shafts, each read two ways. Naming before modelling saved her from reading the same signal twice as two pieces of evidence.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The seven that never move<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Computed on all 20,631 training rows: sensors 1 (T2), 5 (P2), 10 (epr), 16 (farB), 18 (Nf_dmd) and 19 (PCNfR_dmd) take exactly one value each; sensor 6 (P15) takes two, 21.60 and 21.61. Operational setting 3 is constant at 100.0. FD001 runs at one condition, sea level, so the fan-inlet conditions and the demanded speeds do not change.</p>
+        <p>They are dropped from the shipped sample and listed in it, so the fact travels with the data. They are not dropped because they are broken. In the six-condition subsets they move with the operating regime, which is exactly why a model trained on FD001 cannot be carried to FD002 without work.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Once the label is computed, the first modelling choice is whether to use it as it is. An engine at cycle 1 with 191 cycles left looks, in its sensors, almost exactly like the same engine at cycle 60 with 132 left: nothing has started to degrade. Many papers therefore cap the label, holding it constant early in life and letting it fall only near the end.</p>
+        <p>They do not agree on the cap. One recent paper sets it at 130 ("We use piece-wise linear RUL as the target function, where the maximal RUL is 130"); another sets it at 125 "based on the minimum run length of 128 cycles observed in the training data"; a survey adopts 125 citing earlier work. The paper usually credited with the idea, Heimes (2008), was not read here; its value is reported second-hand only. Practitioner session 5 runs both and shows the difference. It is a convention, chosen on this subset, not a law of engines.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the label</span>
+      <h2>The label hiding in the cycle count</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">For a training engine of life n, the row at cycle t has n minus t cycles left. Engine 1 runs 192 cycles, so its first row carries 191 and its last row carries 0. Drawn against cycle, that label is a straight line down to failure; the capped version is flat at the cap and then the same line. The inspector below decodes any row of any engine and prints both.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn chart of engine 1's label against cycle. The uncapped remaining life is a straight line from 191 at cycle 1 down to 0 at cycle 192. The capped label at 125 is flat until cycle 67 and then follows the same line; a dashed alternative at 130 is flat until cycle 62. A copper bar marks the last 30 cycles where most of the exhaust temperature rise happens. A note says the sensors cannot tell cycle 1 from cycle 60, which is the case for capping, and that the cap value is a convention.">
+        <defs>
+          <filter id="ip1bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="29" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip1bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip1bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip1bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip1bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip1bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip1bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip1bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip1bH" x="30" y="26">ENGINE 1: THE LABEL AGAINST THE CYCLE COUNT (LIFE 192)</text>
+
+        <g filter="url(#ip1bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- axes: x 80..656 = cycles 0..192 (3 px per cycle); y 260..69 = RUL 0..191 (1 px per cycle) -->
+          <path d="M80 50 L80 260 L670 260"/>
+          <!-- end-of-life band: last 30 cycles -->
+          <rect x="566" y="62" width="90" height="196" fill="url(#ip1bHc)" stroke="none"/>
+          <!-- uncapped -->
+          <path d="M83 70 L656 260" stroke="#1D2513" stroke-width="2"/>
+          <!-- capped at 125: flat to cycle 67 (x 281), then down -->
+          <path d="M83 135 L281 135 L656 260" stroke="#3F6212" stroke-width="3"/>
+          <!-- cap 130 dashed: flat to cycle 62 (x 266) -->
+          <path d="M83 130 L266 130" stroke="#93A86F" stroke-width="2" stroke-dasharray="6 5"/>
+          <!-- sensor doodle -->
+          <circle cx="760" cy="96" r="12" fill="#FFFFFF"/>
+          <path d="M760 96 L768 88"/>
+          <path d="M748 120 L772 120"/>
+        </g>
+
+        <text class="ip1bS" x="72" y="74" text-anchor="end">191</text>
+        <text class="ip1bS" x="72" y="139" text-anchor="end">125</text>
+        <text class="ip1bS" x="72" y="264" text-anchor="end">0</text>
+        <text class="ip1bS" x="83" y="280" text-anchor="middle">1</text>
+        <text class="ip1bS" x="281" y="280" text-anchor="middle">67</text>
+        <text class="ip1bS" x="566" y="280" text-anchor="middle">162</text>
+        <text class="ip1bS" x="656" y="280" text-anchor="middle">192</text>
+        <text class="ip1bA" x="370" y="298" text-anchor="middle">cycle</text>
+
+        <text class="ip1bL" x="190" y="96">uncapped: 191 down to 0</text>
+        <text class="ip1bA" x="96" y="182">capped at 125, then the same line</text>
+        <text class="ip1bS" x="96" y="200">dashed: cap 130</text>
+        <text class="ip1bB" x="560" y="54">last 30 cycles</text>
+        <text class="ip1bS" x="700" y="148">the sensors barely</text>
+        <text class="ip1bS" x="700" y="164">move before here</text>
+
+        <text class="ip1bN" x="30" y="330">A model asked to tell cycle 1 (191 left) from cycle 60 (132 left) has nothing in the sensors to go on. Capping removes</text>
+        <text class="ip1bN" x="30" y="348">that impossible part of the job; where to cap is a convention chosen on this subset, and practitioner session 5 runs two.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the black line is the truth, the green line is what most models are trained on, and the hatched band is where the sensors start to say anything.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip1-row">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Any row of any of the 100 simulated engines, decoded from the shipped sample in your browser: the 14 channels that move, with their names, plus the label computed from the cycle count.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip1-unit">Engine</label>
+        <select class="sql-code" id="ip1-unit"></select>
+        <label class="sql-label" for="ip1-cyc">Cycle: <b id="ip1-cyc-val">1</b></label>
+        <input class="sql-code" id="ip1-cyc" type="range" min="1" max="192" step="1" value="1">
+        <div id="ip1-out"></div>
+        <p class="sql-note" id="ip1-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip1-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the inspector<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Leave it on engine 1, cycle 1: remaining life 191, capped 125. Slide to the last cycle and the label reaches 0. Now watch T50 as you slide: it sits near 1400 for most of the life and climbs only in the last few dozen cycles. The capped label is a statement about that fact: early in life there is nothing in the channels to separate 191 from 132, so a model is not asked to.</p>
+        <p>The values are quantised: each channel was stored at no more than 90 levels so that all 20,631 rows fit in a page. T50 keeps a step of 0.67 degrees Rankine, the core speed Nc 2.50 rpm. Engine 1's first exhaust reading is 1400.60 in the original file and 1400.89 here. That precision is far finer than the channel's cycle-to-cycle noise, and it is stated so nobody mistakes the sample for the original.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The first model, and its first score<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The simplest honest model ignores the sensors. Take the 70 training engines of the seeded split, average their lives (200.37 cycles), and predict "200.37 minus the cycles seen so far", floored at zero. Score it on 30 held-out engines cut at 10 random points each, 300 units under test. Its root mean square error is 45.61 cycles.</p>
+        <p>That number is the floor every later model has to beat. Practitioner session 7 shows why its other score, the asymmetric one, is enormous (305,167 summed over the 300 units): two long-lived engines are already past the average at their cut points, so the baseline tells the planner they are about to fail when 140 cycles remain.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why the held-out engines, not the NASA test set<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The NASA test file and its true-RUL file would push the page's data past 300 KB, so the sample ships the 100 training engines only. A seeded split (seed 2008) sets 30 aside; each gets 10 cut points with true remaining life drawn uniformly from 10 to 150 cycles (or less for engines too short to allow it), mirroring the PHM08 test range of 10 to 150 that the paper reports.</p>
+        <p>The consequence: scores here are not comparable to published FD001 test-set results, and no page compares them. They are comparable to each other, which is what the ladder needs.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Load the fleet, count it, label it, score the floor</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the sample and the engine are already loaded). Six steps, each with the number you should see. The figure shows what happened to the file before it reached your console, so you know exactly what you are reading.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes. One: the NASA zip, data set 6. Two: train FD001, 20,631 rows by 26 columns. Three: drop the 7 flat channels and the 3 settings, keep 14. Four: quantise each channel to at most 90 levels, with the worked example T50 1400.60 becoming level 28 and decoding to 1400.89. Five: one character per value in a 298 KB file, decoded in the browser. A note says every number on the practitioner pages is computed from what box five holds.">
+        <defs>
+          <filter id="ip1cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="37" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip1cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip1cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip1cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip1cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip1cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip1cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip1cH" x="30" y="26">FROM NASA'S ZIP TO YOUR CONSOLE</text>
+
+        <g filter="url(#ip1cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="56" width="140" height="120" rx="8" transform="rotate(-0.8 100 116)" fill="#FFFFFF"/>
+          <rect x="200" y="56" width="140" height="120" rx="8" transform="rotate(0.6 270 116)" fill="url(#ip1cHc)"/>
+          <rect x="370" y="56" width="140" height="120" rx="8" transform="rotate(-0.5 440 116)" fill="#F3F7EA"/>
+          <rect x="540" y="56" width="140" height="120" rx="8" transform="rotate(0.7 610 116)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="710" y="56" width="140" height="120" rx="8" transform="rotate(-0.6 780 116)" fill="#FFFFFF"/>
+          <path d="M172 116 L196 116" marker-end="url(#ip1cAr)"/>
+          <path d="M342 116 L366 116" marker-end="url(#ip1cAr)"/>
+          <path d="M512 116 L536 116" marker-end="url(#ip1cAr)"/>
+          <path d="M682 116 L706 116" marker-end="url(#ip1cAr)"/>
+        </g>
+
+        <text class="ip1cL" x="100" y="84" text-anchor="middle">NASA zip</text>
+        <text class="ip1cS" x="100" y="104" text-anchor="middle">data set 6,</text>
+        <text class="ip1cS" x="100" y="120" text-anchor="middle">four subsets</text>
+        <text class="ip1cS" x="100" y="136" text-anchor="middle">and the paper</text>
+
+        <text class="ip1cL" x="270" y="84" text-anchor="middle">train FD001</text>
+        <text class="ip1cS" x="270" y="104" text-anchor="middle">20,631 rows</text>
+        <text class="ip1cS" x="270" y="120" text-anchor="middle">26 columns</text>
+        <text class="ip1cS" x="270" y="136" text-anchor="middle">100 engines</text>
+
+        <text class="ip1cL" x="440" y="84" text-anchor="middle">keep 14</text>
+        <text class="ip1cS" x="440" y="104" text-anchor="middle">drop 7 flat</text>
+        <text class="ip1cS" x="440" y="120" text-anchor="middle">drop 3 settings</text>
+        <text class="ip1cS" x="440" y="136" text-anchor="middle">list what went</text>
+
+        <text class="ip1cB" x="610" y="84" text-anchor="middle">quantise</text>
+        <text class="ip1cS" x="610" y="104" text-anchor="middle">at most 90 levels</text>
+        <text class="ip1cS" x="610" y="120" text-anchor="middle">T50 1400.60</text>
+        <text class="ip1cS" x="610" y="136" text-anchor="middle">level 28, 1400.89</text>
+
+        <text class="ip1cL" x="780" y="84" text-anchor="middle">298 KB</text>
+        <text class="ip1cS" x="780" y="104" text-anchor="middle">1 char per value</text>
+        <text class="ip1cS" x="780" y="120" text-anchor="middle">decoded in</text>
+        <text class="ip1cS" x="780" y="136" text-anchor="middle">your browser</text>
+
+        <text class="ip1cN" x="30" y="222">Every row of the training set survives; what changes is the precision of each value, stated per channel, and the seven</text>
+        <text class="ip1cN" x="30" y="240">silent columns, which are listed rather than shipped. A Python copy of every step must agree with the browser to the digit.</text>
+        <text class="ip1cS" x="30" y="268">step = the larger of the channel's own resolution and its range over 89; T50: 0.67 degrees Rankine.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper box is the only lossy step, and its loss is printed per channel in the sample itself.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Decode the fleet</h4>
+        <p>IOT.decode turns the sample back into numbers: one object per engine with its life n, its rows (one array of 14 channel values per cycle) and its cycle numbers. You should see 100.</p>
+        <div class="prompt-box good"><span class="label">console</span>var units = IOT.decode(IOT_SAMPLE);
+units.length</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Count the rows and the lives</h4>
+        <p>20,631 rows; the shortest life 128 (engine 39), the longest 362 (engine 69). The mean over all 100 is 206.31.</p>
+        <div class="prompt-box good"><span class="label">console</span>var lives = units.map(function (u) { return u.n; });
+[lives.reduce(function (a, b) { return a + b; }, 0), Math.min.apply(null, lives), Math.max.apply(null, lives)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>List what moves and what was dropped</h4>
+        <p>Fourteen channels in channel order, and the seven flat ones with their Table 2 symbols. Write the second list into your notes; it is a fact about this operating condition.</p>
+        <div class="prompt-box good"><span class="label">console</span>IOT_SAMPLE.channels.join(" ");
+IOT_SAMPLE.flat.map(function (f) { return f.ch + " " + f.sym; })</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read one channel's precision</h4>
+        <p>The metadata says where each channel starts and how big one step is. T50 (s4) starts at 1382.25 with a step of 0.665618; its original column held 4,051 distinct values.</p>
+        <div class="prompt-box good"><span class="label">console</span>IOT_SAMPLE.meta.s4</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Compute the label for engine 1</h4>
+        <p>Remaining life is life minus cycle. The first three rows carry 191, 190 and 189; the last carries 0. Cap it at 125 and the first rows all read 125.</p>
+        <div class="prompt-box good"><span class="label">console</span>var u = units[0];
+var rul = u.cyc.map(function (c) { return u.n - c; });
+[rul.slice(0, 3), rul[rul.length - 1], Math.min(rul[0], 125)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Score the floor</h4>
+        <p>The fleet-average model on the 300 held-out cut points, seed 2008. You should see a root mean square error of 45.61 and a training mean life of 200.37; your numbers will match for the same seed.</p>
+        <div class="prompt-box good"><span class="label">console</span>var r = IOT.ladder(IOT_SAMPLE, { only: ["mean"] });
+[r.mean.rmse.toFixed(2), r.mean.meanLife.toFixed(2), r.mean.n]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before any model, write four lines: the grain (one row per engine per cycle), the columns that never move and why, where the label comes from, and the floor a model with no sensors scores. Every claim after that is a claim against those four lines.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Where does the remaining-useful-life label for a training row come from?</p>
+      <div class="qopt">A · A target column in the training file</div>
+      <div class="qopt">B · The health index, which is included as column 26</div>
+      <div class="qopt">C · The cycle count: life minus cycle, which can be computed only because every training engine ran to failure</div>
+      <q class="qwhy">The file has no target column and the health index was never given out. The label is derived, and the derivation depends on the failure being in the file, which is exactly what the test set withholds.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">Sensor 6 (P15, bypass-duct pressure) takes only the values 21.60 and 21.61 across 20,631 FD001 rows. What is the right treatment?</p>
+      <div class="qopt">A · Drop it from FD001 models and record it as near-constant under one operating condition, without concluding anything about other subsets</div>
+      <div class="qopt">B · Keep it, since two values make it a useful binary feature</div>
+      <div class="qopt">C · Flag the probe as faulty</div>
+      <q class="qwhy">Two values a hundredth apart is resolution, not information. Nothing says the probe failed. And in the six-condition subsets the bypass pressure moves with the regime, so "flat here" must not become "drop everywhere".</q>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">The fleet-average model scores a root mean square error of 45.61 cycles on the 300 held-out cut points. What is that number for?</p>
+      <div class="qopt">A · Comparing with published FD001 test-set results</div>
+      <div class="qopt">B · A floor: any model that uses the sensors has to beat it on the same cut points, or the sensors added nothing</div>
+      <div class="qopt">C · Proving the data is too noisy to model</div>
+      <q class="qwhy">The held-out engines are a seeded stand-in for the test set, so the number is not comparable to published results. Its job is to be the score of knowing nothing about the engine but its age.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 2</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, in the console on this page.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Find the engine that looks oldest at birth</h4>
+        <p>For every engine, average T50 over its first 20 cycles. Which engine starts hottest, and how long did it live? (Engine 39 starts at 1407.14 and lives 128; check whether any engine beats it.) Write one sentence on what that says about using an absolute temperature threshold.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the four lines for a dataset you own</h4>
+        <p>Grain, silent columns, where the label comes from, and the floor. If the label is "an event that happened later", say how long you had to wait for it, which is session 2's question about clocks.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The FD001 file, column by column</span><span class="note">26 columns from the readme; 21 sensed outputs and units from Table 2 of Saxena et al. (2008), read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The column-to-symbol pairing</span><span class="note">Table 2's order, the convention the field uses. Reported: the readme does not state it.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The seven flat channels</span><span class="note">T2, P2, P15, epr, farB, Nf_dmd, PCNfR_dmd; computed on all 20,631 rows.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The grain and the fleet</span><span class="note">One row per engine per cycle; 100 engines; life 128 to 362, mean 206.31.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The label</span><span class="note">Life minus cycle in training; one true number per engine in a separate file for the test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The shipped sample</span><span class="note">Every training row, 14 channels, at most 90 levels each; T50 to 0.67 degrees, Nc to 2.50 rpm.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The floor</span><span class="note">Fleet-average model: RMSE 45.61 on 300 held-out cut points (seed 2008, 70 training engines).</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Capping the label</span><span class="note">125 and 130 both in use; named tonight, run in practitioner session 5.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The asymmetric score</span><span class="note">305,167 for the floor, explained in practitioner session 7.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Forecast backtests and error metrics</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn timeseries forecasting, builder session 8</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines</span><span class="note">Real public rows from NASA's simulation (C-MAPSS), not real engines; no figure describes a real fleet.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The file.</strong> Unit, cycle, 3 settings, 21 sensors. No header, no nulls, no target.</div>
+      <div class="cheat-item"><strong>The fleet.</strong> 100 simulated engines, 20,631 rows, life 128 to 362.</div>
+      <div class="cheat-item"><strong>The silent seven.</strong> T2, P2, P15, epr, farB, Nf_dmd, PCNfR_dmd. Flat at one operating condition.</div>
+      <div class="cheat-item"><strong>The label.</strong> Life minus cycle. Possible only because training engines ran to failure.</div>
+      <div class="cheat-item"><strong>The cap.</strong> Hold the label flat early in life. 125 or 130: a convention, not a law.</div>
+      <div class="cheat-item"><strong>The sample.</strong> 14 channels, at most 90 levels each, precision printed per channel.</div>
+      <div class="cheat-item"><strong>The floor.</strong> Fleet average minus age: RMSE 45.61 on 300 held-out cut points.</div>
+      <div class="cheat-item"><strong>The caveat.</strong> Held-out engines, not the NASA test set: compare within the bench, never with papers.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 1 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="../index.html">← All sessions</a>
+        <a href="p2-clocks-sampling-and-resampling.html">Practitioner session 2 · Clocks, sampling and resampling →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var selU = document.getElementById("ip1-unit");
+  var cyc = document.getElementById("ip1-cyc");
+  var cycVal = document.getElementById("ip1-cyc-val");
+  var out = document.getElementById("ip1-out");
+  var verdict = document.getElementById("ip1-verdict");
+  var self = document.getElementById("ip1-self");
+  var units = IOT.decode(IOT_SAMPLE);
+  var NAMES = {
+    T24: "LPC outlet temperature", T30: "HPC outlet temperature", T50: "LPT outlet temperature",
+    P30: "HPC outlet pressure", Nf: "physical fan speed", Nc: "physical core speed",
+    Ps30: "HPC outlet static pressure", phi: "fuel flow over Ps30", NRf: "corrected fan speed",
+    NRc: "corrected core speed", BPR: "bypass ratio", htBleed: "bleed enthalpy",
+    W31: "HPT coolant bleed", W32: "LPT coolant bleed"
+  };
+
+  units.forEach(function (u) {
+    var o = document.createElement("option");
+    o.value = u.u;
+    o.textContent = "Engine " + u.u + " · " + u.n + " cycles";
+    if (u.u === 1) o.selected = true;
+    selU.appendChild(o);
+  });
+
+  function dp(step) { return step >= 1 ? 0 : step >= 0.1 ? 1 : step >= 0.01 ? 2 : 4; }
+
+  function render() {
+    var u = units[Number(selU.value) - 1];
+    if (Number(cyc.max) !== u.n) { cyc.max = u.n; if (Number(cyc.value) > u.n) cyc.value = u.n; }
+    var t = Number(cyc.value) - 1;
+    cycVal.textContent = t + 1;
+    var rul = u.n - u.cyc[t];
+    var html = '<table class="sql-table"><thead><tr><th>Channel</th><th>What it reads</th><th>Value</th></tr></thead><tbody>';
+    IOT_SAMPLE.channels.forEach(function (ch, k) {
+      var m = IOT_SAMPLE.meta[ch];
+      var v = u.rows[t][k];
+      html += "<tr><td>" + ch + " · " + m.sym + "</td><td>" + (NAMES[m.sym] || "") + "</td><td><b>" + v.toFixed(dp(m.step)) + "</b></td></tr>";
+    });
+    html += '<tr><td colspan="2">Remaining useful life (life minus cycle)</td><td><b class="ip1-rul">' + rul + "</b></td></tr>";
+    html += '<tr><td colspan="2">Capped at 125</td><td><b>' + Math.min(rul, 125) + "</b></td></tr>";
+    html += "</tbody></table>";
+    out.innerHTML = html;
+    verdict.textContent = "Engine " + u.u + ", cycle " + (t + 1) + " of " + u.n + ": " + rul + " cycles left. " +
+      (rul > 125 ? "The capped label reads 125 here, because nothing in the channels yet separates this row from one further along." : "Below the cap, the capped label and the true label agree.");
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  selU.addEventListener("change", render);
+  cyc.addEventListener("input", render);
+  render();
+})();
+</script>
+<style>
+  #ip1-row .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip1-row input.sql-code { width: 100%; }
+  #ip1-row table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip1-row .ip1-rul { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

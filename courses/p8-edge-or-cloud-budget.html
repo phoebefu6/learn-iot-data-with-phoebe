@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Practitioner session 8 of 10. A bandwidth and latency budget for a constructed sensor fleet: what the raw stream costs the link, what summarising on the device saves and loses, and why a decision with a deadline lives at the edge. A calculator you can change in the page.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Edge or cloud: a bandwidth and latency budget - learn iot data with phoebe">
+<meta property="og:description" content="Practitioner session 8 of 10. 179,200 bit/s of raw readings, a 150x cut by summarising on the device, and a cloud path that makes a 500 ms deadline by 10 ms. Constructed arithmetic, not measurement.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/p8-edge-or-cloud-budget.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Edge or cloud: a bandwidth and latency budget - learn iot data with phoebe">
+<meta name="twitter:description" content="The bandwidth fits. The deadline decides. A constructed budget for where a sensor fleet's decisions should run.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Practitioner session 8 · Edge or cloud: a bandwidth and latency budget - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Practitioner session 8 of 10</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Practitioner session 8 of 10</div>
+    <h1>Edge or cloud: <span class="accent">a bandwidth and latency budget</span></h1>
+    <p class="sub">Every reading a sensor takes has to live somewhere: on the device that took it, or at the far end of a link. A warehouse team rarely asks that question, because its rows were born on a server. A sensor team asks it before the first model, with two pieces of arithmetic: how many bits a second the fleet produces against what the link can carry, and how many milliseconds a decision has against how long the round trip takes. Tonight builds both on a constructed fleet, in a calculator you can change, and ends with the short list of things any device trusted to decide must be able to do.</p>
+    <div class="chip-row">
+      <span class="chip level">🔴 Advanced</span>
+      <span class="chip audience">Data and platform engineers sizing a sensor fleet</span>
+      <span class="chip audience">Comfortable with a browser console</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:3">3-15 · The bits</span>
+      <span class="a3" style="flex:3">15-27 · The milliseconds and the device</span>
+      <span class="a4" style="flex:4">27-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane wires up its test cells</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed engine-overhaul shop, and its fleet is NASA's 100 simulated engines. This quarter it is fitting 40 constructed sensor devices around its test cells, each reading 14 channels (the same count of moving channels FD001 ships) 10 times a second. The analyst has two questions on her desk. The platform team asks whether the raw stream fits the site's uplink. The test-cell lead asks something sharper: if a run goes wrong, can a stop be ordered within 500 ms of the reading that shows it? Every parameter tonight is constructed, chosen to make the arithmetic visible, and labelled so.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> The raw-stream line for any sensor fleet (devices times channels times rate times bits) and the constructed answer it gives: 179,200 bit/s, 9.0 percent of a 2,000 kbit/s link, 1.94 GB a day. What summarising on the device saves (1,195 bit/s, a 150x cut) and what it costs (the raw readings, and every question that needed them). A latency budget added up line by line: the cloud path takes 490 ms against a 500 ms deadline, the edge path 140 ms, and why 10 ms of slack is not a plan. The device baseline from NIST IR 8259A turned into a requirement list. And a calculator you write yourself and check against the engine.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why tonight is arithmetic, not measurement<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>No real link was timed and no real device was profiled for this session. The numbers are what you get when you multiply and add a set of constructed inputs, and the engine's edgeBudget function does exactly that, out loud, so you can check every line. That is the honest shape of an edge-or-cloud decision at the planning stage: before anything is installed, the budget is arithmetic on assumptions, and the assumptions are the part to argue about.</p>
+        <p>The defaults: 40 devices, 14 channels, 10 readings a second, 32 bits a reading; a 2,000 kbit/s uplink; a summary of 224 bytes per device per minute; a 500 ms deadline; 120 ms link latency each way; 150 ms to compute in the cloud and 40 ms on the device. Change any of them in the calculator below and your numbers will differ from the prose.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Edge.</strong> The device next to the sensor, or a small computer near it. It sees every reading.</li>
+          <li><strong>Cloud.</strong> Here, simply "the far end of the link": a central place that sees what the link delivers, from every device.</li>
+          <li><strong>Uplink.</strong> The connection from the site to the far end, rated in bits a second.</li>
+          <li><strong>Raw stream.</strong> Every reading, as taken. Its rate is devices times channels times readings a second times bits a reading.</li>
+          <li><strong>Summary.</strong> A few numbers computed on the device per channel per window (tonight: four numbers a channel, each minute) and sent instead of the readings.</li>
+          <li><strong>Latency budget.</strong> The time from the reading that shows a problem to the decision that acts on it, added up step by step.</li>
+          <li><strong>Deadline and slack.</strong> The deadline is how long the decision may take; the slack is the deadline minus the budget.</li>
+          <li><strong>Device baseline.</strong> The capabilities a connected device should have by default, in the sense of NIST IR 8259A.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the bits</span>
+      <h2>Which bytes cross the link</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">Start with one device. Fourteen channels, ten readings a second each, 32 bits a reading: 4,480 bits leave it every second if every reading is shipped. Forty of them make the raw stream. The alternative keeps the readings on the device and sends four numbers per channel once a minute. The figure draws both lanes across the same link, and the copper box is what the second lane leaves behind.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 412" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn sketch of one sensor device at the edge and the link to the cloud. The device reads 14 channels 10 times a second at 32 bits, 4,480 bits a second. Inside it, a copper box holds the raw readings, 600 a channel a minute, and a green box holds the summary, four numbers a channel, 224 bytes a minute. Forty devices feed a 2,000 kbit/s link. The top lane ships every reading, 179,200 bits a second, 9.0 percent of the link and 1.94 GB a day. The bottom lane ships summaries only, 1,195 bits a second, 150 times less. At the cloud end, fleet trends, comparisons across devices and models trained later are possible, but re-reading a raw spike is struck out unless every reading was shipped.">
+        <defs>
+          <filter id="ip8aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip8aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip8aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip8aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip8aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip8aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip8aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip8aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip8aH" x="30" y="26">WHICH BYTES CROSS THE LINK (CONSTRUCTED FLEET)</text>
+
+        <g filter="url(#ip8aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- one device -->
+          <rect x="30" y="48" width="230" height="252" rx="8" transform="rotate(-0.6 145 174)" fill="#FFFFFF"/>
+          <!-- sensor doodle -->
+          <circle cx="236" cy="70" r="9" fill="#FFFFFF"/>
+          <path d="M236 70 L242 64"/>
+          <!-- raw buffer: the thing the figure is about -->
+          <rect x="44" y="130" width="202" height="72" rx="6" transform="rotate(0.5 145 166)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <!-- summary -->
+          <rect x="44" y="216" width="202" height="72" rx="6" transform="rotate(-0.5 145 252)" fill="#F3F7EA"/>
+          <!-- the link bracket -->
+          <rect x="290" y="112" width="362" height="178" rx="10" transform="rotate(0.3 471 201)" stroke="#CDD5C0" stroke-dasharray="7 6"/>
+          <!-- raw lane -->
+          <path d="M252 166 L660 166" stroke="#9B4D45" stroke-width="5" marker-end="url(#ip8aAr)"/>
+          <!-- summary lane -->
+          <path d="M252 252 L660 252" stroke-width="1.6" marker-end="url(#ip8aAr)"/>
+          <!-- cloud end -->
+          <rect x="664" y="112" width="190" height="178" rx="8" transform="rotate(0.6 759 201)" fill="#FFFFFF"/>
+          <path data-strike="1" d="M674 228 L818 228" stroke="#9B4D45" stroke-width="2"/>
+        </g>
+
+        <text class="ip8aH" x="44" y="74">ONE DEVICE (OF 40)</text>
+        <text class="ip8aS" x="44" y="98">14 channels x 10 a second</text>
+        <text class="ip8aS" x="44" y="114">x 32 bits = 4,480 bit/s</text>
+        <text class="ip8aB" x="58" y="154">raw readings</text>
+        <text class="ip8aS" x="58" y="172">600 a channel a minute,</text>
+        <text class="ip8aS" x="58" y="188">kept here or gone</text>
+        <text class="ip8aL" x="58" y="240">summary</text>
+        <text class="ip8aS" x="58" y="258">4 numbers a channel,</text>
+        <text class="ip8aS" x="58" y="274">224 bytes a minute</text>
+        <text class="ip8aS" x="145" y="322" text-anchor="middle">x 40 devices</text>
+
+        <text class="ip8aH" x="300" y="102">THE LINK: 2,000 KBIT/S UPLINK</text>
+        <text class="ip8aV" x="300" y="150">179,200 bit/s</text>
+        <text class="ip8aS" x="300" y="192">every reading: 9.0% of the link</text>
+        <text class="ip8aS" x="300" y="208">1.94 GB a day</text>
+        <text class="ip8aA" x="300" y="240">summaries only: 1,195 bit/s, 150x less</text>
+        <text class="ip8aS" x="300" y="272">0.06% of the link</text>
+
+        <text class="ip8aH" x="678" y="136">THE FAR END</text>
+        <text class="ip8aS" x="678" y="160">fleet trends</text>
+        <text class="ip8aS" x="678" y="178">40 devices compared</text>
+        <text class="ip8aS" x="678" y="196">a model trained later</text>
+        <text class="ip8aB" x="678" y="232">re-read a raw spike</text>
+        <text class="ip8aS" x="678" y="256">needs every reading</text>
+        <text class="ip8aS" x="678" y="274">shipped, or nothing</text>
+
+        <text class="ip8aN" x="30" y="356">Summarising on the device cuts the traffic 150 times. The price is the copper box: the raw readings</text>
+        <text class="ip8aN" x="30" y="374">never leave the device, so the far end can answer only the questions the summary was designed for.</text>
+        <text class="ip8aS" x="30" y="400">Constructed fleet and link: arithmetic, not measurement. Change any input and your numbers will differ.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the thick copper lane is every reading, the thin lane is four numbers a channel a minute, and the copper box is what the thin lane leaves behind.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The raw stream, one multiplication<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The whole bandwidth question is one line: 40 devices times 14 channels times 10 readings a second times 32 bits is 179,200 bits a second. Against a constructed 2,000 kbit/s uplink that is 9.0 percent of the link. Over a day it is 1.94 GB of readings, every one of which somebody will be asked to store, index and pay attention to.</p>
+        <p>Each factor is a decision someone made, often by default. Ten readings a second may be the logger's factory setting rather than what the channel needs; practitioner session 2 showed how to ask how fast a channel can actually change. Thirty-two bits may be the storage type rather than the sensor's real resolution; practitioner session 1 showed that FD001's exhaust temperature carries meaning at a step of 0.67 degrees Rankine. Halve any factor and the stream halves.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst ran the line, saw 9.0 percent, and wrote "fits, ship everything" in the platform ticket. The platform team agreed. That was the right answer to the question asked, and the test-cell lead's question was a different one: not "will the bits fit" but "will the decision be in time". A bandwidth budget can pass while the decision fails. The rest of tonight is about keeping both questions on the page.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What the summary saves, and what it costs<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The constructed summary is four numbers per channel per minute (say the minimum, the maximum, the mean and the last reading), 4 bytes each: 14 times 4 times 4 is 224 bytes per device per minute. Forty devices send 1,195 bits a second, 0.06 percent of the link. That is a 150x cut, and you can read the 150 from the device's side too: each channel takes 600 readings a minute and sends 4 numbers about them.</p>
+        <p>The cost is not on the link; it is in next year's questions. Once the minute is summarised and the readings are dropped, nobody can re-read a two-second spike, compute a feature nobody thought of when the summary was designed, check a reading that looked wrong, or retrain on the raw signal. Practitioner session 2 showed the same loss from the other side: a mean over a window is honest about the mean and silent about the shape inside it. A per-minute summary is a window; the mechanics of windows live in <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/04-windowing.html">learn streaming data, session 4</a>.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Flat 4B, the constructed household of practitioner session 9, already lives with an edge summary: its electricity meter reports average power every 15 minutes, not every reading. That choice is why session 9 can infer when the flat is occupied but cannot say which appliance ran. The summary decided, years before any analyst arrived, which questions the data could answer.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>One camp says ship every reading while the link allows it: storage is the cheap side of the trade, the questions of next year are unknown, and a summary designed today quietly decides what can be learned tomorrow. Another camp says decide what you need and summarise at the source: every raw byte shipped is a byte to secure, store, govern and eventually delete, and a fleet of 40 devices becomes a fleet of 4,000 faster than its storage plan.</p>
+        <p>The middle positions are where the arguments get interesting. Keep a rolling buffer of raw readings on the device and ship a slice only when something asks for it: but then "kept" means "kept until it is overwritten", and the buffer's length is a new decision. Ship raw for a sample of devices and summaries for the rest: but the sample has to be chosen so it still sees the rare event. Nobody has settled this in general, because the answer depends on which questions the team expects to ask, and that is exactly what nobody knows in advance. Write down which camp your design sits in, and why.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the milliseconds and the device</span>
+      <h2>The decision that must beat a deadline</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The bits fit. Now add up the time. A stop decision starts when the reading that shows the problem is taken; on average that reading is one sampling interval away, 100 ms at 10 a second. In the cloud path it then crosses the link, is computed on, and the order crosses back. In the edge path it is computed where it was taken. The figure draws both to scale against the 500 ms deadline.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 362" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn timeline to scale, from 0 to 500 milliseconds. Cloud path: wait for the next sample 100 ms, uplink 120 ms, cloud compute 150 ms, downlink 120 ms, ending at 490 ms, with a thin copper sliver of 10 ms slack before a dashed copper deadline at 500 ms. Edge path: wait for the next sample 100 ms, compute on the device 40 ms, decision made at 140 ms. A note says five more milliseconds each way uses all the slack, and the edge path never crosses the link, so it has 360 ms to spare.">
+        <defs>
+          <filter id="ip8bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="53" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip8bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip8bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip8bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip8bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip8bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ip8bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ip8bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip8bH" x="30" y="26">THE STOP DECISION, SAMPLE TO ACTION, TO SCALE (CONSTRUCTED)</text>
+        <text class="ip8bB" x="800" y="50" text-anchor="middle">deadline 500 ms</text>
+
+        <g filter="url(#ip8bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- scale: x = 150 + 1.3 px per ms -->
+          <!-- cloud path -->
+          <rect x="150" y="64" width="128" height="44" rx="5" transform="rotate(-0.4 214 86)" fill="url(#ip8bHc)"/>
+          <rect x="282" y="64" width="152" height="44" rx="5" transform="rotate(0.4 358 86)" fill="#FFFFFF"/>
+          <rect x="438" y="64" width="191" height="44" rx="5" transform="rotate(-0.3 533 86)" fill="#FFFFFF"/>
+          <rect x="633" y="64" width="150" height="44" rx="5" transform="rotate(0.4 708 86)" fill="#FFFFFF"/>
+          <rect x="787" y="64" width="10" height="44" rx="2" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- edge path -->
+          <rect x="150" y="148" width="128" height="44" rx="5" transform="rotate(0.4 214 170)" fill="url(#ip8bHc)"/>
+          <rect x="282" y="148" width="50" height="44" rx="5" transform="rotate(-0.6 307 170)" fill="#F3F7EA"/>
+          <!-- deadline -->
+          <path d="M800 58 L800 212" stroke="#9B4D45" stroke-dasharray="6 5"/>
+          <!-- axis -->
+          <path d="M150 224 L814 224"/>
+          <path d="M150 224 L150 230"/>
+          <path d="M280 224 L280 230"/>
+          <path d="M410 224 L410 230"/>
+          <path d="M540 224 L540 230"/>
+          <path d="M670 224 L670 230"/>
+          <path d="M800 224 L800 230"/>
+          <!-- stopwatch doodle -->
+          <circle cx="70" cy="234" r="13" fill="#FFFFFF"/>
+          <path d="M70 234 L78 226"/>
+          <path d="M65 216 L75 216"/>
+        </g>
+
+        <text class="ip8bH" x="30" y="82">CLOUD PATH</text>
+        <text class="ip8bV" x="30" y="104">490 ms</text>
+        <text class="ip8bL" x="214" y="84" text-anchor="middle">next sample</text>
+        <text class="ip8bS" x="214" y="100" text-anchor="middle">100 ms</text>
+        <text class="ip8bL" x="358" y="84" text-anchor="middle">uplink</text>
+        <text class="ip8bS" x="358" y="100" text-anchor="middle">120 ms</text>
+        <text class="ip8bL" x="533" y="84" text-anchor="middle">cloud compute</text>
+        <text class="ip8bS" x="533" y="100" text-anchor="middle">150 ms</text>
+        <text class="ip8bL" x="708" y="84" text-anchor="middle">downlink</text>
+        <text class="ip8bS" x="708" y="100" text-anchor="middle">120 ms</text>
+        <text class="ip8bB" x="808" y="84">10 ms</text>
+        <text class="ip8bS" x="808" y="100">spare</text>
+
+        <text class="ip8bH" x="30" y="166">EDGE PATH</text>
+        <text class="ip8bV" x="30" y="188">140 ms</text>
+        <text class="ip8bL" x="214" y="168" text-anchor="middle">next sample</text>
+        <text class="ip8bS" x="214" y="184" text-anchor="middle">100 ms</text>
+        <text class="ip8bS" x="307" y="176" text-anchor="middle">40 ms</text>
+        <text class="ip8bL" x="344" y="166">compute on the device</text>
+        <text class="ip8bA" x="344" y="184">decision made at 140 ms, 360 ms to spare</text>
+
+        <text class="ip8bS" x="150" y="246" text-anchor="middle">0</text>
+        <text class="ip8bS" x="280" y="246" text-anchor="middle">100</text>
+        <text class="ip8bS" x="410" y="246" text-anchor="middle">200</text>
+        <text class="ip8bS" x="540" y="246" text-anchor="middle">300</text>
+        <text class="ip8bS" x="670" y="246" text-anchor="middle">400</text>
+        <text class="ip8bS" x="800" y="246" text-anchor="middle">500 ms</text>
+        <text class="ip8bA" x="150" y="266">milliseconds after the problem reading is due</text>
+
+        <text class="ip8bN" x="30" y="300">The cloud path makes the deadline with 10 ms to spare. Five more milliseconds each way uses all of it,</text>
+        <text class="ip8bN" x="30" y="318">and one slow round trip misses. The edge path never crosses the link, so the round trip is not in its budget.</text>
+        <text class="ip8bS" x="30" y="346">Constructed timings, added up, not measured: one reading per 100 ms, link 120 ms each way, compute 150 or 40 ms.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper sliver before the dashed deadline is the cloud path's whole safety margin.</figcaption>
+    </figure>
+
+    <div class="wk" id="ip8-budget">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">A constructed budget, computed in this page by the engine's edgeBudget: a fleet of identical devices, 14 channels each, a 2,000 kbit/s uplink, a summary of 224 bytes per device per minute, 150 ms cloud compute, 40 ms on-device compute, a 500 ms deadline. Arithmetic, not measurement. Change any setting and your numbers will differ from the prose.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ip8-dev">Devices (sensors in the fleet): <b id="ip8-dev-val">40</b></label>
+        <input class="sql-code" id="ip8-dev" type="range" min="10" max="500" step="10" value="40">
+        <label class="sql-label" for="ip8-hz">Sample rate, readings a second per channel: <b id="ip8-hz-val">10</b></label>
+        <input class="sql-code" id="ip8-hz" type="range" min="1" max="50" step="1" value="10">
+        <label class="sql-label" for="ip8-bits">Bits a reading: <b id="ip8-bits-val">32</b></label>
+        <input class="sql-code" id="ip8-bits" type="range" min="8" max="32" step="8" value="32">
+        <label class="sql-label" for="ip8-lat">Link latency, each way, ms: <b id="ip8-lat-val">120</b></label>
+        <input class="sql-code" id="ip8-lat" type="range" min="20" max="300" step="5" value="120">
+        <label class="sql-label" for="ip8-sum">On-device summary</label>
+        <select class="sql-code" id="ip8-sum">
+          <option value="off" selected>Off: ship every reading, decide at the far end</option>
+          <option value="on">On: ship 224 bytes per device per minute, decide on the device</option>
+        </select>
+        <div id="ip8-budget-out"></div>
+        <p class="sql-note" id="ip8-budget-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ip8-budget-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Reading the calculator<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>It opens at the constructed defaults with the summary off: 179,200 bit/s of raw readings, 9.0 percent of the link, and a cloud path of 490 ms that makes the 500 ms deadline by 10 ms. Push the link latency up two steps and watch the cloud path verdict flip from meets to misses. Now turn the summary on. The traffic on the link drops 150 times, and something less obvious happens: the far end now receives one summary a device a minute, so it can no longer make a 500 ms decision at all. Turning the summary on is not only a bandwidth choice; it moves the decision onto the device.</p>
+        <p>Then try the other sliders. Push the devices up until the raw stream no longer fits the link: the bandwidth question fails long before any deadline does. Drop the bits a reading to 16: the raw stream halves, the summary does not, and the cut falls from 150x to 75x. Drop the sample rate to 1 a second: the bits shrink, but now the wait for the next reading alone is a full second, and neither path meets a 500 ms deadline. Sampling rate is a latency decision as well as a bandwidth one.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The latency budget, line by line<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Cloud path: wait for the next reading (1,000 ms over 10 readings a second, 100 ms), cross the link (120 ms), compute (150 ms), send the order back (120 ms). Total 490 ms. Edge path: wait for the next reading (100 ms), compute on the device (40 ms). Total 140 ms. The deadline is 500 ms, so on paper both paths make it.</p>
+        <p>On paper is the trap. The cloud path's slack is 10 ms, so five extra milliseconds each way uses all of it, and the engine says the last link latency that still makes the deadline is 125 ms. Every term in the budget is a typical value, and a stop decision is needed on the bad day, not the typical one. The edge path has 360 ms of slack and no link term at all. That is the rule of thumb tonight earns: a decision that must beat a deadline lives where its data is born; a decision that can wait for the week lives wherever the whole fleet's data meets.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst rewrote the ticket as two lines. The stop decision runs on each device, with the threshold and the logic shipped to it, and the device reports every stop it makes. The weekly question the planners ask in every other practitioner session, which engines to pull for maintenance, has no 500 ms deadline and needs all 40 devices side by side, so it stays at the far end and runs on summaries. Same fleet, two decisions, two homes, chosen by the deadline rather than by the bandwidth.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The device baseline as a requirement list<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Once a device makes the stop decision, it is no longer a probe; it is part of the control path, and its own behaviour becomes a requirement. NIST IR 8259A gives a core baseline of six device cybersecurity capabilities, and it is careful about its role: "a default for minimally securable devices", which "does not specify how" each capability is achieved. That makes it a good spine for a requirement list, written in your own words for your own device:</p>
+        <ul>
+          <li><strong>Device Identification.</strong> Each of the 40 devices can be told apart, logically and physically, so a stop can be traced to the device that ordered it.</li>
+          <li><strong>Device Configuration.</strong> The stop threshold and the summary settings can be changed, and only by someone allowed to change them.</li>
+          <li><strong>Data Protection.</strong> The readings, the summaries and the stop logic are protected on the device and on the link.</li>
+          <li><strong>Logical Access to Interfaces.</strong> Every way into the device, local or over the network, can be limited to who and what should use it.</li>
+          <li><strong>Software Update.</strong> The decision logic can be updated, safely, on all 40 devices, which matters more now that the logic lives on them.</li>
+          <li><strong>Cybersecurity State Awareness.</strong> The device can report its own state, so the far end knows when a device's stops should not be trusted.</li>
+        </ul>
+        <p>NIST SP 800-213 frames device requirements from the device's place in a larger system, which is the frame tonight uses: the same probe needs a shorter list when it only streams, and a longer one when it decides. Neither document tells you how to build any of this, and nothing here is legal or procurement advice.</p>
+        <p class="sql-note">Fagan, M., Megas, K., Scarfone, K., and Smith, M. (2020). "IoT Device Cybersecurity Capability Core Baseline." NIST IR 8259A. DOI 10.6028/NIST.IR.8259A. Read at source. Fagan, M., Marron, J., Brady, K., Cuthill, B., Megas, K., Herold, R., Lemire, D., and Hoehn, B. (2021). "IoT Device Cybersecurity Guidance for the Federal Government: Establishing IoT Device Cybersecurity Requirements." NIST SP 800-213. Abstract page read at source: <a href="https://csrc.nist.gov/pubs/sp/800/213/final">csrc.nist.gov/pubs/sp/800/213/final</a></p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Write the calculator, then check it against the engine</h2>
+      <span class="tag build">18 min hands on</span>
+    </div>
+    <p class="lede">Open the browser console on this page (the engine is already loaded). You will write the budget in about a dozen lines, reproduce every number in the prose, and then ask the engine the one question your own calculator should be able to answer next: how thin is the slack? Six steps, each with the number you should see at the constructed defaults.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 284" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn pipeline in five boxes. One: the constructed inputs, 40 devices, 14 channels, 10 a second, 32 bits a reading, a 2,000 kbit/s link. Two: the raw stream, 179,200 bit/s, 9.0 percent of the link, 1.94 GB a day. Three: the summary, 224 bytes a device a minute, 1,195 bit/s, 150 times less. Four: latency, cloud 490 ms as 100 plus 240 plus 150, edge 140 ms as 100 plus 40. Five, in copper: the verdict, cloud 10 ms spare, edge 360 ms spare, stop on the device, fleet questions at the far end.">
+        <defs>
+          <filter id="ip8cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ip8cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ip8cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ip8cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ip8cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ip8cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ip8cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ip8cH" x="30" y="26">THE CALCULATOR YOU BUILD, FROM INPUTS TO A VERDICT</text>
+
+        <g filter="url(#ip8cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="50" width="140" height="136" rx="8" transform="rotate(-0.8 100 118)" fill="#FFFFFF"/>
+          <rect x="200" y="50" width="140" height="136" rx="8" transform="rotate(0.6 270 118)" fill="url(#ip8cHc)"/>
+          <rect x="370" y="50" width="140" height="136" rx="8" transform="rotate(-0.5 440 118)" fill="#F3F7EA"/>
+          <rect x="540" y="50" width="140" height="136" rx="8" transform="rotate(0.7 610 118)" fill="#FFFFFF"/>
+          <rect x="710" y="50" width="140" height="136" rx="8" transform="rotate(-0.6 780 118)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M172 118 L196 118" marker-end="url(#ip8cAr)"/>
+          <path d="M342 118 L366 118" marker-end="url(#ip8cAr)"/>
+          <path d="M512 118 L536 118" marker-end="url(#ip8cAr)"/>
+          <path d="M682 118 L706 118" marker-end="url(#ip8cAr)"/>
+          <!-- gauge doodle -->
+          <circle cx="836" cy="240" r="13" fill="#FFFFFF"/>
+          <path d="M836 240 L845 233"/>
+        </g>
+
+        <text class="ip8cL" x="100" y="76" text-anchor="middle">inputs</text>
+        <text class="ip8cS" x="100" y="98" text-anchor="middle">40 devices</text>
+        <text class="ip8cS" x="100" y="114" text-anchor="middle">14 channels</text>
+        <text class="ip8cS" x="100" y="130" text-anchor="middle">10 a second</text>
+        <text class="ip8cS" x="100" y="146" text-anchor="middle">32 bits a reading</text>
+        <text class="ip8cS" x="100" y="162" text-anchor="middle">2,000 kbit/s link</text>
+
+        <text class="ip8cL" x="270" y="76" text-anchor="middle">raw stream</text>
+        <text class="ip8cS" x="270" y="98" text-anchor="middle">179,200 bit/s</text>
+        <text class="ip8cS" x="270" y="114" text-anchor="middle">9.0% of the link</text>
+        <text class="ip8cS" x="270" y="130" text-anchor="middle">1.94 GB a day</text>
+
+        <text class="ip8cL" x="440" y="76" text-anchor="middle">summary</text>
+        <text class="ip8cS" x="440" y="98" text-anchor="middle">224 B a device</text>
+        <text class="ip8cS" x="440" y="114" text-anchor="middle">each minute</text>
+        <text class="ip8cS" x="440" y="130" text-anchor="middle">1,195 bit/s</text>
+        <text class="ip8cS" x="440" y="146" text-anchor="middle">150x less</text>
+
+        <text class="ip8cL" x="610" y="76" text-anchor="middle">latency</text>
+        <text class="ip8cS" x="610" y="98" text-anchor="middle">cloud 490 ms</text>
+        <text class="ip8cS" x="610" y="114" text-anchor="middle">100 + 240 + 150</text>
+        <text class="ip8cS" x="610" y="130" text-anchor="middle">edge 140 ms</text>
+        <text class="ip8cS" x="610" y="146" text-anchor="middle">100 + 40</text>
+
+        <text class="ip8cB" x="780" y="76" text-anchor="middle">verdict</text>
+        <text class="ip8cS" x="780" y="98" text-anchor="middle">cloud: 10 ms spare</text>
+        <text class="ip8cS" x="780" y="114" text-anchor="middle">edge: 360 ms spare</text>
+        <text class="ip8cS" x="780" y="130" text-anchor="middle">stop: on the device</text>
+        <text class="ip8cS" x="780" y="146" text-anchor="middle">fleet: far end</text>
+
+        <text class="ip8cN" x="30" y="222">Each box is a few lines you type in the steps below, and the engine's edgeBudget must agree with all of</text>
+        <text class="ip8cN" x="30" y="240">them. The copper box is the only one that is a judgement: the arithmetic stops at "10 ms spare".</text>
+        <text class="ip8cS" x="30" y="268">Constructed inputs throughout; change one and every box downstream of it changes with it.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - four boxes are multiplication and addition; the copper box is the decision you write down.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Write the raw-stream line</h4>
+        <p>One function, four factors. The fleet should print 179,200 bits a second; one device on its own, 4,480.</p>
+        <div class="prompt-box good"><span class="label">console</span>function raw(p) { return p.devices * p.channels * p.hz * p.bits; }
+var fleet = { devices: 40, channels: 14, hz: 10, bits: 32 };
+[raw(fleet), raw({ devices: 1, channels: 14, hz: 10, bits: 32 })]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Hold it against the link and the day</h4>
+        <p>Divide by the uplink for the share it takes, and multiply by the seconds in a day (then divide by 8 bits a byte) for the volume. You should see "9.0" percent and "1.94" GB.</p>
+        <div class="prompt-box good"><span class="label">console</span>var link = 2000 * 1000;
+[(raw(fleet) / link * 100).toFixed(1), (raw(fleet) * 86400 / 8 / 1e9).toFixed(2)]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Summarise on the device</h4>
+        <p>Four numbers a channel, 4 bytes each, once a minute. You should see 224 bytes, "1195" bits a second for the fleet, and a cut of 150. The last number reads the same 150 from the device's side: 600 readings a channel a minute against 4 numbers.</p>
+        <div class="prompt-box good"><span class="label">console</span>var summaryBytes = 14 * 4 * 4;
+var edge = fleet.devices * summaryBytes * 8 / 60;
+[summaryBytes, edge.toFixed(0), raw(fleet) / edge, 14 * 10 * 60 * 4 / summaryBytes]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Add up the two paths</h4>
+        <p>The wait for the next reading, plus two link legs and the far-end compute for the cloud; plus only the device compute for the edge. You should see 490 and 140, with 10 and 360 ms to spare against 500.</p>
+        <div class="prompt-box good"><span class="label">console</span>function paths(hz, linkMs, cloudMs, edgeMs) {
+  var wait = 1000 / hz;
+  return { cloud: wait + 2 * linkMs + cloudMs, edge: wait + edgeMs };
+}
+var p = paths(10, 120, 150, 40);
+[p.cloud, p.edge, 500 - p.cloud, 500 - p.edge]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check your calculator against the engine</h4>
+        <p>IOT.edgeBudget with no arguments runs the same constructed defaults. Every comparison should print true, and its reduction 150. If one prints false, your calculator and the engine disagree about an assumption: find which before trusting either.</p>
+        <div class="prompt-box good"><span class="label">console</span>var b = IOT.edgeBudget();
+[b.rawBps === raw(fleet), b.edgeBps === edge, b.cloudPathMs === p.cloud, b.edgePathMs === p.edge, b.reduction]</div>
+      </div></div>
+      <div class="step"><div>
+        <h4>Find out how thin the slack is</h4>
+        <p>Raise the link latency one millisecond at a time until the cloud path stops meeting the deadline. You should see 125: the last setting that still makes it, five milliseconds each way above the default. At 126 the cloud path is 502 ms. Constructed numbers; the habit is the point.</p>
+        <div class="prompt-box good"><span class="label">console</span>var L = 120;
+while (IOT.edgeBudget({ linkLatencyMs: L + 1 }).cloudMeetsDeadline) L++;
+[L, IOT.edgeBudget({ linkLatencyMs: L + 1 }).cloudPathMs]</div>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> For every decision a sensor fleet feeds, write two budgets side by side: the bits (does the stream fit, and what does a summary throw away) and the milliseconds (what is the deadline, and how much slack is left on a bad day). Put the decision where its deadline says it must live, and write the device's requirement list the moment a device starts deciding.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">The constructed raw stream is 179,200 bit/s, 9.0 percent of a 2,000 kbit/s link. What does that number settle?</p>
+      <div class="qopt">A · That every decision should run at the far end, since the readings all fit</div>
+      <div class="qopt">B · Only that the link can carry the readings; it says nothing about whether a 500 ms decision can afford the round trip</div>
+      <div class="qopt">C · That summarising on the device is never worth doing at this size</div>
+      <q class="qwhy">Bandwidth and latency are separate budgets. The bits fit with room to spare, while the cloud path makes the deadline by only 10 ms. A design can pass the first budget and fail the second.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">Summarising on the device (four numbers a channel a minute) cuts the traffic 150 times. What does it cost?</p>
+      <div class="qopt">A · The raw readings: any later question that needs the shape inside a minute, a short spike, or a feature nobody designed for can no longer be asked</div>
+      <div class="qopt">B · Nothing, because the mean is kept</div>
+      <div class="qopt">C · Accuracy of the per-minute mean</div>
+      <q class="qwhy">The summary is exactly as accurate as it claims; it is silent about everything it did not keep. 600 readings a channel a minute become 4 numbers, and the choice of those 4 decides which questions the data can answer next year.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">The cloud path adds up to 490 ms against a 500 ms deadline. What is the right reading?</p>
+      <div class="qopt">A · It meets the deadline, so the stop decision can run in the cloud</div>
+      <div class="qopt">B · Move every decision, including the weekly maintenance plan, onto the devices</div>
+      <div class="qopt">C · It meets with 10 ms of slack that five extra milliseconds each way erases; the stop decision belongs on the device, while fleet-wide questions with no tight deadline can stay at the far end</div>
+      <q class="qwhy">A budget built from typical values has to survive the bad day. The deadline decides where a decision lives; decisions that need the whole fleet and can wait are better made where the whole fleet's data meets.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 9</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Thirty minutes, half in the console on this page and half on paper.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Budget a stream you know</h4>
+        <p>Pick a sensor or event stream you have worked with, or invent a plausible one and label it constructed. Run your raw() and paths() functions on it. Write one sentence for each budget: does it fit, and how much slack does the tightest decision have? If you do not know a decision's deadline, that is the finding; find out who does.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Name what the summary forgets</h4>
+        <p>Design a summary for that stream (which numbers, over what window) and list three questions it could not answer a year from now. Then decide, in writing, which camp from "Where serious people disagree" your design sits in.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the six-line requirement list</h4>
+        <p>For one device in your stream that makes or could make a decision, write one requirement per capability of the NIST IR 8259A core baseline, in your own words, and mark which ones get stricter if the device starts deciding. Session 9 moves the same question into a living room, where the device is a meter and the data is a household's day.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The raw-stream line</span><span class="note">Devices x channels x rate x bits: 179,200 bit/s, 9.0 percent of a 2,000 kbit/s link, 1.94 GB a day (constructed).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What a summary saves</span><span class="note">224 bytes per device per minute: 1,195 bit/s, a 150x cut (constructed).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">What a summary costs</span><span class="note">The raw readings, and every later question that needed them; the disagreement about shipping raw, taught, not resolved.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The latency budget</span><span class="note">Next reading + link + compute + link: cloud 490 ms, edge 140 ms, against a 500 ms deadline (constructed).</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Where a decision lives</span><span class="note">Chosen by its deadline, not by the bandwidth; 10 ms of slack is not a plan.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The calculator</span><span class="note">Written in the console and checked against the engine's edgeBudget at the constructed defaults.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The device baseline as requirements</span><span class="note">NIST IR 8259A's six capabilities, read at source; it says what, never how.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Device requirements in a larger system</span><span class="note">NIST SP 800-213, named from its abstract page; the full guidance is self-study.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Windows and late data</span><span class="note">A per-minute summary is a window; the mechanics live in <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/04-windowing.html">learn streaming data, session 4</a> and <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">session 5</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines and real links</span><span class="note">Tonight's fleet, link and timings are constructed arithmetic, not measurement. FD001 is real public rows from NASA's simulation (C-MAPSS), not real engines.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The raw line.</strong> Devices x channels x readings a second x bits. Constructed: 179,200 bit/s.</div>
+      <div class="cheat-item"><strong>Against the link.</strong> 9.0 percent of 2,000 kbit/s; 1.94 GB a day. Fitting is not the same as deciding in time.</div>
+      <div class="cheat-item"><strong>The summary.</strong> Four numbers a channel a minute: 224 bytes a device, 1,195 bit/s, 150x less.</div>
+      <div class="cheat-item"><strong>Its price.</strong> The raw readings. Every question the summary was not designed for is gone.</div>
+      <div class="cheat-item"><strong>The latency line.</strong> Next reading + link + compute + link. Cloud 490 ms, edge 140 ms.</div>
+      <div class="cheat-item"><strong>The slack.</strong> 10 ms against 500. Five extra milliseconds each way and it is gone.</div>
+      <div class="cheat-item"><strong>The rule.</strong> A decision with a deadline lives where its data is born; a fleet question lives where the fleet meets.</div>
+      <div class="cheat-item"><strong>The device list.</strong> Identification, configuration, data protection, interface access, software update, state awareness (NIST IR 8259A).</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Practitioner session 8 of 10 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="p7-the-asymmetric-score.html">← Practitioner session 7 · The asymmetric score</a>
+        <a href="p9-smart-home-telemetry.html">Practitioner session 9 · Smart home telemetry: occupancy and where to stop →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined") return;
+  var dev = document.getElementById("ip8-dev");
+  var hz = document.getElementById("ip8-hz");
+  var bits = document.getElementById("ip8-bits");
+  var lat = document.getElementById("ip8-lat");
+  var sum = document.getElementById("ip8-sum");
+  var out = document.getElementById("ip8-budget-out");
+  var verdict = document.getElementById("ip8-budget-verdict");
+  var self = document.getElementById("ip8-budget-self");
+  var base = IOT.edgeBudget();
+
+  function n0(x) { return Math.round(x).toLocaleString("en-US"); }
+  function pct(x, d) { return (x * 100).toFixed(d) + "%"; }
+  function times(x) { return (Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : x.toFixed(1)) + "x"; }
+
+  function render() {
+    var v = { devices: Number(dev.value), hz: Number(hz.value), bytes: Number(bits.value) / 8, linkLatencyMs: Number(lat.value) };
+    document.getElementById("ip8-dev-val").textContent = v.devices;
+    document.getElementById("ip8-hz-val").textContent = v.hz;
+    document.getElementById("ip8-bits-val").textContent = bits.value;
+    document.getElementById("ip8-lat-val").textContent = v.linkLatencyMs;
+    var r = IOT.edgeBudget(v), q = r.inputs, on = sum.value === "on";
+    var deadline = q.sampleToDecisionMs;
+    var onLink = on ? r.edgeBps : r.rawBps, onUtil = on ? r.edgeUtil : r.rawUtil;
+    var fill = Math.min(100, onUtil * 100);
+
+    var html = '<div class="ip8-meter" aria-hidden="true"><span style="width:' + fill.toFixed(1) + '%"' + (onUtil > 1 ? ' class="ip8-over"' : "") + "></span></div>";
+    html += '<table class="sql-table"><thead><tr><th>Computed by edgeBudget</th><th>Value</th></tr></thead><tbody>';
+    html += "<tr><td>Raw stream, every reading</td><td><b>" + n0(r.rawBps) + " bit/s</b></td></tr>";
+    html += "<tr><td>Raw share of the " + n0(q.linkKbps) + " kbit/s link</td><td><b>" + pct(r.rawUtil, 1) + "</b></td></tr>";
+    html += "<tr><td>Raw volume a day</td><td><b>" + r.rawGBperDay.toFixed(2) + " GB</b></td></tr>";
+    html += "<tr><td>Summary stream, " + q.summaryBytes + " bytes per device per minute</td><td><b>" + n0(r.edgeBps) + " bit/s</b> (" + pct(r.edgeUtil, 2) + ")</td></tr>";
+    html += "<tr><td>Cut from summarising on the device</td><td><b>" + times(r.reduction) + "</b></td></tr>";
+    html += '<tr><td>On the link now (summary ' + (on ? "on" : "off") + ')</td><td><b class="ip8-hot">' + n0(onLink) + " bit/s, " + pct(onUtil, on ? 2 : 1) + "</b></td></tr>";
+    html += "<tr><td>Cloud path, reading to decision</td><td>" + (on ? "<b>not available</b>: the far end only receives summaries" : "<b>" + n0(r.cloudPathMs) + " ms</b> " + (r.cloudMeetsDeadline ? "meets " : "misses ") + deadline + " ms") + "</td></tr>";
+    html += "<tr><td>Edge path, reading to decision</td><td><b>" + n0(r.edgePathMs) + " ms</b> " + (r.edgeMeetsDeadline ? "meets" : "misses") + " " + deadline + " ms</td></tr>";
+    html += "</tbody></table>";
+    out.innerHTML = html;
+
+    var msg = r.rawUtil > 1
+      ? "The raw stream needs " + pct(r.rawUtil, 1) + " of the link: it does not fit, whatever the deadline. "
+      : "The raw stream fits, using " + pct(r.rawUtil, 1) + " of the link. ";
+    if (on) {
+      msg += "With the summary on, the far end receives one summary a device a minute, so it cannot make a " + deadline + " ms decision at all; the stop decision has to run on the device, where it takes " + n0(r.edgePathMs) + " ms";
+      msg += r.edgeMeetsDeadline ? ", inside the deadline. The price is the raw readings, which never leave the device." : ", which still misses: the wait for the next reading alone is " + n0(1000 / q.hz) + " ms.";
+    } else {
+      var slack = deadline - r.cloudPathMs;
+      if (r.cloudMeetsDeadline) {
+        msg += "The cloud path makes the " + deadline + " ms deadline with " + n0(slack) + " ms to spare";
+        msg += slack < 50 ? ", a margin one slow round trip can erase." : ".";
+      } else {
+        msg += "The cloud path misses the " + deadline + " ms deadline by " + n0(-slack) + " ms.";
+      }
+      msg += " The edge path takes " + n0(r.edgePathMs) + " ms" + (r.edgeMeetsDeadline ? "." : " and misses too: the wait for the next reading alone is " + n0(1000 / q.hz) + " ms.");
+    }
+    var canon = v.devices === 40 && v.hz === 10 && v.bytes === 4 && v.linkLatencyMs === 120;
+    msg += canon ? " Constructed fleet at the settings the prose quotes." : " Constructed fleet; these are not the settings the prose quotes, so your numbers will differ from it.";
+    verdict.textContent = msg;
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  var bi = base.inputs;
+  var byHand = bi.devices * bi.channels * bi.hz * bi.bytes * 8 === base.rawBps &&
+    1000 / bi.hz + 2 * bi.linkLatencyMs + bi.cloudComputeMs === base.cloudPathMs &&
+    1000 / bi.hz + bi.edgeComputeMs === base.edgePathMs;
+  self.textContent = st.pass && byHand
+    ? "The engine's six self-checks pass in this browser, and this page re-did the budget by hand (devices times channels times rate times bits; next reading plus two link legs plus compute) and agrees with edgeBudget. Every input is constructed: arithmetic, not a measurement of any real link or device."
+    : "A check did not pass in this browser (the engine's self-check or the by-hand budget), so nothing above should be believed.";
+
+  [dev, hz, bits, lat].forEach(function (el) { el.addEventListener("input", render); });
+  sum.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ip8-budget .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ip8-budget input.sql-code { width: 100%; }
+  #ip8-budget table.sql-table { margin: .6rem 0 .2rem; font-size: .82rem; }
+  #ip8-budget .ip8-hot { color: var(--amber-ink-text); }
+  #ip8-budget .ip8-meter { height: 12px; max-width: 24rem; margin: .8rem 0 .2rem; border: 1px solid var(--faint); border-radius: 6px; background: var(--indigo-50); overflow: hidden; }
+  #ip8-budget .ip8-meter span { display: block; height: 100%; background: var(--indigo); }
+  #ip8-budget .ip8-meter span.ip8-over { background: var(--amber); }
+</style>
+</body>
+</html>

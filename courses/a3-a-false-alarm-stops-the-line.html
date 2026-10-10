@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 3 of 6. A false alarm stops the line; a missed failure breaks an engine. Harrow Lane Overhaul, a constructed shop, reads the published asymmetric score as a business choice and watches one summed number hide 300 uneven units. Real public rows from NASA's simulation.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="A false alarm stops the line - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 3 of 6. At 50 cycles off, the published score charges about 46 early and about 147 late. Six of 300 units carry 79.5 percent of the baseline's 305,167.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a3-a-false-alarm-stops-the-line.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A false alarm stops the line - learn iot data with phoebe">
+<meta name="twitter:description" content="Which mistake costs more is a decision, not a law. Set the lean before you read the model.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 3 · A false alarm stops the line - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 3 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 3 of 6</div>
+    <h1>A false alarm <span class="accent">stops the line</span></h1>
+    <p class="sub">A warehouse model is wrong in one currency: a forecast too high or too low, priced the same either way. A remaining-life estimate is wrong in two. Too early, and an engine with life left is pulled, a spare is sent and the line waits. Too late, and the engine fails in service. Tonight Harrow Lane Overhaul, a constructed engine-overhaul shop, takes apart the score published with its data, finds that it is a business choice about those two mistakes, and watches one summed number hide how unevenly 300 estimates went wrong. The rows are real public rows from NASA's simulation, not real engines.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Anyone who signs off a maintenance or reliability model</span>
+      <span class="chip audience">Operations leads who own the downtime</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-16 · Two mistakes, two prices</span>
+      <span class="a3" style="flex:4">16-28 · One number, uneven units</span>
+      <span class="a4" style="flex:4">28-45 · Build-along and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane, the morning the model review lands</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed shop, and its fleet is the 100 turbofan engines in NASA's FD001 training set: simulated engines, each run cycle by cycle until it failed, the degradation itself simulated (C-MAPSS). In leader session 2 a cleaning step pushed the shop's estimates late and one number noticed while the other barely moved. Tonight the planning lead asks the question that sat underneath: when an estimate is wrong, which way is worse, who decided, and does the number on the review slide even know?</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A clear picture of the two ways a remaining-life estimate goes wrong and what each one costs on a shop floor. A reading of the score published with this data: it punishes a late estimate more steeply than an early one, and that lean is a choice its authors made for engines, not a law. A measured case of one summed number hiding uneven units: the simplest baseline's 305,167, most of it from two long-lived engines. And a one-line review statement, written before anyone shows you a model, that says which mistake costs more and which numbers will show it.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why "the most accurate model" misfires here<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A warehouse forecast that is 50 units high and one that is 50 units low usually cost about the same, so a square-error figure that treats them alike is a fair summary. Most dashboards are built on that habit: one accuracy number, smaller is better, no direction.</p>
+        <p>A remaining-life estimate has a direction, and the two directions buy different events. An estimate that says "fails sooner than it will" triggers a pull with life left: a false alarm. An estimate that says "fails later than it will" leaves an engine in service past its end: a miss. The same number of cycles wrong can mean an idle hangar bay or a failure in service, and no directionless accuracy figure can tell you which one you bought.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed, like the shop) opens the review with "the new model is 23.64 cycles off on average, down from 45.61". The planning lead asks two things the slide does not answer: off in which direction, and on which engines? The rest of the session is those two questions.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>False alarm.</strong> An estimate that says the engine will fail sooner than it does. It leads to a pull with life left: lost life, a spare sent, a line that waits.</li>
+          <li><strong>Missed failure.</strong> An estimate that says the engine will last longer than it does. It leaves the engine in service past its end.</li>
+          <li><strong>d.</strong> The estimated remaining life minus the true remaining life, in cycles. Below zero is early; zero or above is late.</li>
+          <li><strong>Asymmetric score.</strong> The scoring rule published with this data in 2008: each unit's miss is turned into a cost that grows exponentially, and faster on the late side.</li>
+          <li><strong>Summed score.</strong> The unit costs added over every unit under test. Harrow Lane's bench sums 300 of them.</li>
+          <li><strong>Bias.</strong> The mean of d across the units. Positive means the estimates lean late.</li>
+          <li><strong>Late share.</strong> The share of units whose estimate lands late.</li>
+          <li><strong>Unit under test.</strong> One engine at one cut point. Harrow Lane's bench has 300: 10 seeded cut points on each of 30 held-out engines, not the NASA test set.</li>
+          <li><strong>Constructed.</strong> Harrow Lane is invented so that the truth is knowable. The engine rows are NASA's simulation; no figure describes a real engine or plant.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers early versus late cost and the score as a business choice</span>
+      <h2>Two mistakes, two prices</h2>
+      <span class="tag concept">13 min live</span>
+    </div>
+    <p class="lede">The cleanest way to see the asymmetry is to draw one engine's life and put the estimate on each side of its true failure. Then draw how the published score turns each side into a cost. The two halves of the figure are the same idea twice: what the mistake does on the floor, and how the score prices it.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in two panels. Top: one engine's life as a timeline, with today's cut point, the true failure, an early estimate before it and a late estimate after it. The stretch between the early estimate and the true failure is life thrown away by a false alarm; the stretch between the true failure and the late estimate, in copper, is time in service past failure. Bottom: the published score for one unit against d, the estimated minus the true remaining life. The early branch divides by 13 and reaches about 46 at 50 cycles early; the late branch, in copper, divides by 10 and reaches about 147 at 50 cycles late, about three times as much. A note says the curve follows the paper's Figure 9 and prose, and that its printed equation pairs the constants the other way.">
+        <defs>
+          <filter id="ia3aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="83" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia3aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia3aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia3aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia3aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia3aV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia3aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia3aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia3aH" x="30" y="26">WHICH SIDE OF FAILURE THE ESTIMATE LANDS, AND WHAT EACH SIDE COSTS</text>
+
+        <g filter="url(#ia3aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- one life, as a timeline -->
+          <path d="M60 130 L836 130" marker-end="url(#ia3aAr)"/>
+          <path d="M160 120 L160 140"/>
+          <circle cx="160" cy="130" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M480 112 L480 148" stroke-width="2.8"/>
+          <circle cx="360" cy="130" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="600" cy="130" r="5" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- what each side costs -->
+          <rect x="362" y="142" width="116" height="18" rx="3" transform="rotate(-0.6 420 151)" fill="url(#ia3aHc)"/>
+          <rect x="482" y="142" width="116" height="18" rx="3" transform="rotate(0.6 540 151)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <!-- the published score for one unit -->
+          <path d="M120 380 L760 380"/>
+          <path d="M440 250 L440 388"/>
+          <path d="M173 344 L173 380" stroke="#CDD5C0" stroke-dasharray="4 5"/>
+          <path d="M707 256 L707 380" stroke="#CDD5C0" stroke-dasharray="4 5"/>
+          <path d="M120 293 L173 340 L227 362 L280 372 L333 377 L387 379 L440 380" stroke="#3F6212" stroke-width="2.6"/>
+          <path d="M440 380 L493 378.5 L547 374.5 L600 363.5 L653 333.5 L680 303 L707 252" stroke="#9B4D45" stroke-width="2.6"/>
+          <circle cx="173" cy="340" r="4" fill="#3F6212" stroke="#3F6212"/>
+          <circle cx="707" cy="252" r="4" fill="#9B4D45" stroke="#9B4D45"/>
+        </g>
+
+        <text class="ia3aL" x="160" y="104" text-anchor="middle">today: the cut point</text>
+        <text class="ia3aL" x="480" y="104" text-anchor="middle">true failure</text>
+        <text class="ia3aA" x="360" y="118" text-anchor="middle">estimate, early</text>
+        <text class="ia3aB" x="600" y="118" text-anchor="middle">estimate, late</text>
+        <text class="ia3aS" x="840" y="152" text-anchor="end">cycles</text>
+
+        <text class="ia3aA" x="470" y="180" text-anchor="end">false alarm: pulled with life left</text>
+        <text class="ia3aS" x="470" y="198" text-anchor="end">the line waits for a spare; that life is thrown away</text>
+        <text class="ia3aB" x="490" y="180">missed: in service past failure</text>
+        <text class="ia3aS" x="490" y="198">the engine fails where nobody planned for it</text>
+
+        <text class="ia3aH" x="30" y="236">THE PUBLISHED SCORE FOR ONE UNIT (d = ESTIMATED MINUS TRUE REMAINING LIFE)</text>
+        <text class="ia3aS" x="448" y="262">cost</text>
+        <text class="ia3aV" x="186" y="330">about 46</text>
+        <text class="ia3aV" x="718" y="262">about 147</text>
+        <text class="ia3aS" x="718" y="280">about three times</text>
+        <text class="ia3aS" x="173" y="398" text-anchor="middle">d = -50</text>
+        <text class="ia3aS" x="440" y="398" text-anchor="middle">0</text>
+        <text class="ia3aS" x="707" y="398" text-anchor="middle">d = +50</text>
+        <text class="ia3aA" x="120" y="418">early (d below 0): divide by 13</text>
+        <text class="ia3aB" x="760" y="418" text-anchor="end">late (d at or above 0): divide by 10</text>
+
+        <text class="ia3aN" x="30" y="452">A false alarm costs the life left in the engine and a line that waits; a miss costs a failure in service.</text>
+        <text class="ia3aN" x="30" y="470">The published score prices the miss more steeply, and the gap widens with the size of the error.</text>
+        <text class="ia3aS" x="30" y="490">Curve as in the paper's Figure 9 and its prose; its printed equation pairs the constants the other way (practitioner session 7).</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - both estimates sit the same distance from the truth; the copper side is the one the published score charges more for.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>What each mistake buys on the floor<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>A false alarm stops the line.</strong> The estimate says the engine is close to its end, so the planner pulls it. The hangar bay is used, a spare engine goes out, the work queue behind it waits, and the inspection finds an engine with life left. That life is thrown away: nobody gets those cycles back by putting it on the stand early. It is a cost, but it is a planned cost, paid in a workshop.</p>
+        <p><strong>A missed failure breaks an engine.</strong> The estimate says there is plenty left, so the engine stays in service and fails there: unplanned, wherever it happens to be, with whatever follows. For an engine the paper that published this data is explicit about which it prefers: an early prediction over a late one. That preference is the whole reason its score is lopsided.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's planning lead (constructed) keeps two lists on the wall. One is every engine pulled in the last quarter that the strip-down showed had plenty of life left. The other is every engine that came in on a failure nobody planned for. The first list is longer. The second is the one the shop's customers remember, and the one the reliability engineer loses sleep over. Neither list has a number for cost on it, and neither needs one to show that they are different kinds of bad.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>How the published score prices the two<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>For each unit, take d: the estimated remaining life minus the true one. If d is below zero the estimate was early, and the unit's cost is e raised to the power of the size of d over 13, minus 1. If d is zero or above the estimate was late, and the cost is e to the power of d over 10, minus 1. Add the costs over every unit and you have the score. Smaller is better; a perfect estimate costs 0.</p>
+        <p>Two features matter to a leader. The penalty "grows exponentially with increasing error", in the paper's words, so a few large misses outweigh many small ones. And the late side divides by a smaller number, so it climbs faster: in the paper's own plot of the curve, 50 cycles early costs about 46 and 50 cycles late about 147. The authors state the intent plainly: "late predictions were more heavily penalized than early predictions".</p>
+        <p>One caution before you quote the formula anywhere. The paper's printed equation pairs the two constants the other way round from its plotted curve and its prose. Harrow Lane's bench follows the plot and the prose; <a href="p7-the-asymmetric-score.html">practitioner session 7</a> reads the equation and the figure side by side. Tonight it is enough to know the disagreement exists, so that you check which way any score you are shown actually leans.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Which way should the score lean?</strong> The same section of the same paper that punishes late harder also says that "in specific situations where failures may not pose life threatening situations", early predictions "may instead involve significant economic burden", and the preference can be tuned. So the benchmark's own authors hold both positions, for different machines. A plant where a missed failure means a slower line and a false alarm means a full stop might sensibly lean the other way.</p>
+        <p><strong>Which way does this score lean on paper?</strong> The printed equation and the plotted curve disagree, as above. Every later paper you meet may have copied either one. Practitioner session 7 is where that is read in full; it is not settled here.</p>
+        <p><strong>One number or several?</strong> The paper ranked the 2008 challenge on one summed score and, in the same text, argued for more than one number. Part 2 shows why. Harrow Lane's bench prints four and crowns none.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers one number hiding uneven units</span>
+      <h2>One number, three hundred uneven mistakes</h2>
+      <span class="tag concept">12 min live</span>
+    </div>
+    <p class="lede">The simplest model anyone could ship predicts the fleet's average life minus the cycles already run. On Harrow Lane's bench (300 cut points on 30 held-out engines, not the NASA test set) its summed score is 305,167. That one number is mostly two engines. The figure draws why the baseline gets those two so wrong, then where the sum actually comes from.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 452" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn diagram in two panels. Top: two long engine lives as bars, engine 69 at 362 cycles and engine 96 at 336. A dashed line at the fleet average life of 200.37 cycles marks where the baseline predicts every engine fails. At its cut point engine 69 has 142 cycles left and the baseline says 0; engine 96 has 150 left and the baseline says 14. Bottom: two bars of equal length showing where each summed score comes from. The baseline's 305,167: six units from engines 69 and 96 carry 79.5 percent, the single worst unit alone 18.2 percent, the other 294 units 20.5 percent. The best rung's 3,366: its three worst units carry 12.8 percent, the other 297 units 87.2 percent.">
+        <defs>
+          <filter id="ia3bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="97" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia3bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia3bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia3bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia3bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia3bV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia3bW { font: 800 12px Inter, sans-serif; fill: #FFFFFF; }
+          .ia3bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia3bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia3bH" x="30" y="26">WHY THE ALWAYS-AVERAGE BASELINE SCORES 305,167</text>
+        <text class="ia3bS" x="120" y="48">dot = today, the cut point · bar = the engine's whole life</text>
+
+        <g filter="url(#ia3bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- two long lives -->
+          <rect x="120" y="60" width="648" height="24" rx="4" transform="rotate(-0.4 444 72)" fill="url(#ia3bHc)"/>
+          <rect x="120" y="120" width="601" height="24" rx="4" transform="rotate(0.5 420 132)" fill="#F3F7EA"/>
+          <!-- the baseline's predicted failure for every engine -->
+          <path d="M478 56 L478 156" stroke="#3F6212" stroke-dasharray="6 5"/>
+          <!-- cut points -->
+          <path d="M514 54 L514 90"/>
+          <circle cx="514" cy="72" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M453 114 L453 150"/>
+          <circle cx="453" cy="132" r="5" fill="#3F6212" stroke="#3F6212"/>
+          <!-- what the baseline misses -->
+          <path d="M514 90 L514 94 L768 94 L768 90" stroke="#9B4D45"/>
+          <path d="M479 150 L479 154 L721 154 L721 150" stroke="#9B4D45"/>
+          <!-- where the sum comes from: the baseline -->
+          <rect x="120" y="236" width="556" height="36" rx="4" transform="rotate(-0.3 398 254)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="124" y="240" width="123" height="28" rx="3" fill="#9B4D45" stroke="#9B4D45"/>
+          <rect x="680" y="236" width="140" height="36" rx="4" transform="rotate(0.5 750 254)" fill="url(#ia3bHc)"/>
+          <!-- where the sum comes from: rung 3 -->
+          <rect x="120" y="316" width="89" height="36" rx="4" transform="rotate(0.6 164 334)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="213" y="316" width="607" height="36" rx="4" transform="rotate(-0.3 516 334)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ia3bL" x="30" y="76">engine 69</text>
+        <text class="ia3bL" x="30" y="136">engine 96</text>
+        <text class="ia3bS" x="776" y="76">362</text>
+        <text class="ia3bS" x="729" y="136">336</text>
+        <text class="ia3bB" x="522" y="110">today: 142 cycles left · baseline says 0</text>
+        <text class="ia3bB" x="486" y="170">today: 150 cycles left · baseline says 14</text>
+        <text class="ia3bA" x="120" y="192">dashed: the fleet average life, 200.37 cycles, where the baseline puts every engine's failure</text>
+
+        <text class="ia3bH" x="30" y="222">WHERE THE SUMMED SCORE COMES FROM, 300 UNITS UNDER TEST</text>
+        <text class="ia3bL" x="30" y="252">baseline</text>
+        <text class="ia3bV" x="30" y="272">305,167</text>
+        <text class="ia3bW" x="185" y="259" text-anchor="middle">18.2%</text>
+        <text class="ia3bB" x="262" y="259">6 units, engines 69 and 96: 79.5%</text>
+        <text class="ia3bS" x="120" y="292">copper: the single worst unit, engine 69, 142 cycles early: 55,440 alone</text>
+        <text class="ia3bS" x="820" y="292" text-anchor="end">other 294 units: 20.5%</text>
+
+        <text class="ia3bL" x="30" y="332">rung 3</text>
+        <text class="ia3bV" x="30" y="352">3,366</text>
+        <text class="ia3bB" x="165" y="339" text-anchor="middle">12.8%</text>
+        <text class="ia3bL" x="228" y="339">the other 297 units: 87.2%</text>
+        <text class="ia3bS" x="120" y="372">its three worst units: 12.8% of its sum</text>
+
+        <text class="ia3bN" x="30" y="402">A sum of exponentials is ruled by its worst few units. Six of 300, all from two long-lived engines, carry</text>
+        <text class="ia3bN" x="30" y="420">79.5 percent of the baseline's sum. The bars show shares, not size: 305,167 against 3,366.</text>
+        <text class="ia3bS" x="30" y="442">300 cut points on 30 held-out engines, not the NASA test set. Real public rows from NASA's simulation (C-MAPSS).</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the baseline puts every engine's failure at the fleet average, so the two longest-lived engines get huge false alarms, and those few units are most of the sum.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia3-sum">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">Pick a rung of Harrow Lane's bench. The page runs the whole bench in your browser at the canon settings (seed 2008), scores each of the 300 units under test, and shows how much of the summed score its worst few units carry. Real public rows from NASA's simulation; 300 cut points on 30 held-out engines, not the NASA test set.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia3-rung">Rung</label>
+        <select class="sql-code" id="ia3-rung"></select>
+        <div id="ia3-out"></div>
+        <p class="sql-note" id="ia3-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia3-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why the always-average model scores 305,167<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The baseline knows one thing: the 70 training engines lived 200.37 cycles on average. At every cut point it predicts 200.37 minus the cycles already run, and never less than zero. For an ordinary engine that is a rough but bounded guess. For an engine already past cycle 200 at its cut point it predicts zero: fails now.</p>
+        <p>Two of the 30 held-out engines are exactly that case. Engine 69 is the longest in FD001 at 362 cycles and engine 96 lives 336. At their cut points the baseline predicts 0 to 14 cycles left when 140 to 150 remain. Those are false alarms of enormous size, and the exponential charges them accordingly: the single worst unit (142 cycles early) costs 55,440 on its own, 18.2 percent of the sum, and six units from those two engines carry 79.5 percent. The other 294 units together carry the rest.</p>
+        <p>That also settles the guess leader session 1 asked you to write down. Across the 300 units the baseline lands late on 43 percent and its mean error is 12.1 cycles early. It is an early-leaning model whose worst failures are false alarms, and even on the side the score treats gently, a large enough miss dominates everything.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The ladder through two lenses<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Harrow Lane's bench climbs four rungs, each fitted on the 70 training engines and tested on the same 300 units. Read them with the square error and the summed score side by side:</p>
+        <ul>
+          <li><strong>Rung 0, the mean-life baseline.</strong> RMSE 45.61, score 305,167, mean error 12.1 cycles early, 43 percent late.</li>
+          <li><strong>Rung 1, a linear fit on 14 raw channels.</strong> RMSE 30.50, score 28,557, mean error 15.8 cycles late, 70 percent late. Better on both numbers, and it has swapped an early lean for a late one.</li>
+          <li><strong>Rung 2, a health index with a capped target.</strong> RMSE 24.00, score 3,542, mean error +0.8, 56 percent late. The cap of 125 cycles is a convention chosen on this subset; 130 is also in use.</li>
+          <li><strong>Rung 3, plus lag-free smoothing.</strong> RMSE 23.64, score 3,366, mean error +1.4, 56 percent late. The smoothing gain is small, 0.36 of RMSE, and a trailing mean over the same window lags and makes both numbers worse (24.88 and 4,171). Cap 130 instead of 125 gives 23.70 and 3,622.</li>
+        </ul>
+        <p>On the four main rungs the two lenses agree on the order. They disagree on the size of each step and on what a step was made of. RMSE says rung 1 closed most of the distance to rung 3 (30.50 against 23.64); the score says rung 1 is still more than eight times worse (28,557 against 3,366). Neither says which way the misses lean; only the bias and the late share do.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's analyst (constructed) had planned to report "score per unit" as the headline because it reads like an average: 1,017.22 for the baseline. The reliability engineer points at the widget. For the baseline, the median unit costs a small fraction of that and most units cost less than the mean, because six units carry most of the sum. An average of a sum of exponentials describes almost no unit in it.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the paper's authors asked for instead<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Saxena and colleagues, who published the data and the score, did not argue that one summed number is enough. In the same section that defines the score they argue for weighting units with a short true remaining life more heavily, and for a correlation measure beside it, because a summed score can hide uneven performance across units. Tonight's baseline is a clean example of the unevenness they meant.</p>
+        <p>For a leader the practical version is short: ask for the bias, the late share and the worst few units beside any summed score, and ask whether the worst units are early or late. Measuring a detector's precision and recall is a different job, taught in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/a5-measuring-detection.html">learn anomaly detection, measuring detection</a>; RMSE and backtesting live in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn time-series forecasting, backtesting and metrics</a>. Neither is retaught here.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Set the lean before you read the model</h2>
+      <span class="tag build">17 min hands on</span>
+    </div>
+    <p class="lede">No code. A decision exercise, on Harrow Lane's printed numbers first and then on an asset of your own: rank the two mistakes, set the lean and say who signed it, then decide which numbers the review will carry. The figure is the sheet to fill in.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 464" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn decision sheet. Three cards joined by arrows. Card one, rank the two mistakes: early means the line waits and life is lost, late means a failure in service; write which costs more and who agreed. Card two, in copper, set the lean: the published score divides late by 10 and early by 13, and the paper says early can carry a significant economic burden elsewhere, so the lean is a business choice. Card three, read four numbers for rung 3: RMSE 23.64, summed score 3,366, bias +1.4, late share 56 percent. Below, Harrow Lane's ladder of four rungs with RMSE, summed score, bias and late share: mean-life baseline 45.61, 305,167, -12.1, 43 percent; linear fit 30.50, 28,557, +15.8, 70 percent; health index capped at 125 24.00, 3,542, +0.8, 56 percent; plus lag-free smoothing 23.64, 3,366, +1.4, 56 percent.">
+        <defs>
+          <filter id="ia3cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="109" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia3cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia3cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia3cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia3cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia3cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia3cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia3cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia3cH" x="30" y="26">THE DECISION SHEET: SET THE LEAN, THEN READ THE BENCH</text>
+
+        <g filter="url(#ia3cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="30" y="48" width="250" height="160" rx="8" transform="rotate(-0.8 155 128)" fill="#FFFFFF"/>
+          <rect x="315" y="48" width="250" height="160" rx="8" transform="rotate(0.6 440 128)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <rect x="600" y="48" width="250" height="160" rx="8" transform="rotate(-0.5 725 128)" fill="#F3F7EA"/>
+          <path d="M284 128 L311 128" marker-end="url(#ia3cAr)"/>
+          <path d="M569 128 L596 128" marker-end="url(#ia3cAr)"/>
+          <!-- the gauge: which way the lean points -->
+          <path d="M516 76 A16 16 0 0 1 548 76"/>
+          <path d="M532 78 L543 65" stroke="#9B4D45"/>
+          <!-- the ladder -->
+          <rect x="30" y="274" width="820" height="22" rx="4" transform="rotate(-0.2 440 285)" fill="#FFFFFF"/>
+          <rect x="30" y="300" width="820" height="22" rx="4" transform="rotate(0.2 440 311)" fill="#FFFFFF"/>
+          <rect x="30" y="326" width="820" height="22" rx="4" transform="rotate(-0.2 440 337)" fill="#FFFFFF"/>
+          <rect x="30" y="352" width="820" height="22" rx="4" transform="rotate(0.2 440 363)" fill="#F3F7EA"/>
+        </g>
+
+        <text class="ia3cH" x="46" y="76">1 · Rank the two mistakes</text>
+        <text class="ia3cS" x="46" y="102">early: line waits, life lost</text>
+        <text class="ia3cS" x="46" y="120">late: a failure in service</text>
+        <text class="ia3cL" x="46" y="150">which costs more here?</text>
+        <text class="ia3cA" x="46" y="186">write it, and who agreed</text>
+
+        <text class="ia3cH" x="331" y="76">2 · Set the lean</text>
+        <text class="ia3cB" x="331" y="102">published: late divided by 10,</text>
+        <text class="ia3cB" x="331" y="120">early divided by 13</text>
+        <text class="ia3cS" x="331" y="148">the paper: early can carry a</text>
+        <text class="ia3cS" x="331" y="164">significant economic burden</text>
+        <text class="ia3cA" x="331" y="190">a business choice, signed</text>
+
+        <text class="ia3cH" x="616" y="76">3 · Read four numbers</text>
+        <text class="ia3cS" x="616" y="102">RMSE</text>
+        <text class="ia3cL" x="834" y="102" text-anchor="end">23.64</text>
+        <text class="ia3cS" x="616" y="124">summed score</text>
+        <text class="ia3cL" x="834" y="124" text-anchor="end">3,366</text>
+        <text class="ia3cS" x="616" y="146">bias (+ = late)</text>
+        <text class="ia3cL" x="834" y="146" text-anchor="end">+1.4</text>
+        <text class="ia3cS" x="616" y="168">late share</text>
+        <text class="ia3cL" x="834" y="168" text-anchor="end">56%</text>
+        <text class="ia3cA" x="616" y="192">rung 3, 300 units</text>
+
+        <text class="ia3cH" x="30" y="242">HARROW LANE'S LADDER, READ WITH THE LEAN IN HAND</text>
+        <text class="ia3cA" x="46" y="266">rung</text>
+        <text class="ia3cA" x="440" y="266" text-anchor="end">RMSE</text>
+        <text class="ia3cA" x="580" y="266" text-anchor="end">summed score</text>
+        <text class="ia3cA" x="690" y="266" text-anchor="end">bias</text>
+        <text class="ia3cA" x="820" y="266" text-anchor="end">late share</text>
+
+        <text class="ia3cL" x="46" y="289">0 · mean-life baseline</text>
+        <text class="ia3cL" x="440" y="289" text-anchor="end">45.61</text>
+        <text class="ia3cL" x="580" y="289" text-anchor="end">305,167</text>
+        <text class="ia3cL" x="690" y="289" text-anchor="end">-12.1</text>
+        <text class="ia3cL" x="820" y="289" text-anchor="end">43%</text>
+
+        <text class="ia3cL" x="46" y="315">1 · linear fit, 14 raw channels</text>
+        <text class="ia3cL" x="440" y="315" text-anchor="end">30.50</text>
+        <text class="ia3cL" x="580" y="315" text-anchor="end">28,557</text>
+        <text class="ia3cL" x="690" y="315" text-anchor="end">+15.8</text>
+        <text class="ia3cL" x="820" y="315" text-anchor="end">70%</text>
+
+        <text class="ia3cL" x="46" y="341">2 · health index, capped at 125</text>
+        <text class="ia3cL" x="440" y="341" text-anchor="end">24.00</text>
+        <text class="ia3cL" x="580" y="341" text-anchor="end">3,542</text>
+        <text class="ia3cL" x="690" y="341" text-anchor="end">+0.8</text>
+        <text class="ia3cL" x="820" y="341" text-anchor="end">56%</text>
+
+        <text class="ia3cL" x="46" y="367">3 · plus lag-free smoothing</text>
+        <text class="ia3cL" x="440" y="367" text-anchor="end">23.64</text>
+        <text class="ia3cL" x="580" y="367" text-anchor="end">3,366</text>
+        <text class="ia3cL" x="690" y="367" text-anchor="end">+1.4</text>
+        <text class="ia3cL" x="820" y="367" text-anchor="end">56%</text>
+
+        <text class="ia3cN" x="30" y="398">Set the lean first, then read the rows. The baseline's misses are mostly early (43 percent late) and the</text>
+        <text class="ia3cN" x="30" y="416">linear rung's mostly late (70 percent late): one lean prices those two kinds of failure very differently.</text>
+        <text class="ia3cS" x="30" y="438">300 cut points on 30 held-out engines, not the NASA test set; bias in cycles, positive = late.</text>
+        <text class="ia3cS" x="30" y="454">Beside rung 3: a lagging trailing mean gives 24.88 / 4,171; cap 130 instead of 125 gives 23.70 / 3,622.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper card is the step that is usually skipped: the lean is decided by whoever wrote the score unless someone at the table decides it first.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Rank Harrow Lane's two mistakes</h4>
+        <p>Harrow Lane overhauls engines, and a failure in service is the event its customers remember. Write one sentence: which mistake costs the shop more, a pull with life left or a failure in service, and why. Do not reach for money; rank them in the planner's words.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check the lean against the published one</h4>
+        <p>The published score divides a late miss by 10 and an early one by 13, so late costs more: about 147 against about 46 at 50 cycles. Does that match your ranking? If it does, write "we adopt the published lean". If it does not, write which way you would tilt it and say that the score you report is no longer the published one.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Read the four rungs with the lean in hand</h4>
+        <p>Use the ladder in the figure. Rung 1 improves on the baseline by every number, yet 70 percent of its estimates land late against 43 percent for the baseline. Under a lean that punishes late harder, which rung would you be willing to put in front of the planner, and what would you want to see before you did?</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask for the worst units</h4>
+        <p>In the widget, pick the baseline and then rung 3. Note how much of each sum the worst unit and the worst six carry, and whether those units are early or late. Write one line: "our score is ruled by ..." If the answer is two engines, the next question is what is unusual about them; here, they simply lived far longer than the average.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Name the numbers your review will carry</h4>
+        <p>At least the square error, the summed score, the bias and the late share, side by side, with the worst few units listed. Write down which one, if any, decides between two models, and why. The paper that published the score argued for more than one number; leading with only one is a decision too.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Write the review line for an asset of your own</h4>
+        <p>"For this asset a ... costs more than a ..., so our score leans ...; agreed by ...; we report RMSE, the summed score, the bias, the late share and the worst units." One line, signed. A blank in it is the finding to take to the next model review.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Before anyone shows you how accurate a model is, decide which way being wrong is worse and say who decided. Then ask for the direction of the misses and the worst few units, never just one summed number. A score that leans is a business choice someone already made; make sure it was yours.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Harrow Lane's planner asks the data team which number should lead the monthly model review. What is the right answer?</p>
+      <div class="qopt">A · RMSE, because it is the standard accuracy figure and treats every miss alike</div>
+      <div class="qopt">B · The summed asymmetric score, because it is the one published with the data</div>
+      <div class="qopt">C · First decide which mistake costs this shop more and who agreed; then report RMSE, the summed score, the bias and the late share side by side, with the worst units</div>
+      <q class="qwhy">RMSE has no direction, and a summed score is ruled by its worst few units. The paper that published the score argued for more than one number. The lean is a business decision that has to be made before any of the numbers can be read.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">The mean-life baseline scores 305,167 on Harrow Lane's 300 units under test. What explains most of that number?</p>
+      <div class="qopt">A · Six units from two long-lived engines, 69 and 96, where the baseline predicts 0 to 14 cycles left when 140 to 150 remain; they carry 79.5 percent of the sum</div>
+      <div class="qopt">B · Every unit being about 1,017 wrong, since that is the score per unit</div>
+      <div class="qopt">C · Late estimates on most units, since the score punishes late harder</div>
+      <q class="qwhy">The baseline puts every engine's failure at the fleet average of 200.37 cycles, so engines that outlive the average get huge false alarms. The baseline is late on only 43 percent of units. A sum of exponentials is ruled by its worst few units, so the per-unit average describes almost none of them.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">At 50 cycles off, the published score charges about 46 for an early estimate and about 147 for a late one. How should a leader read that lean?</p>
+      <div class="qopt">A · As a law of engines: late is always about three times worse than early</div>
+      <div class="qopt">B · As a choice the paper made for engines, where a failure in service is the feared event; the same paper says early can carry a significant economic burden elsewhere, so each organisation sets its own lean</div>
+      <div class="qopt">C · As a printing error, since the paper's printed equation disagrees with its figure</div>
+      <q class="qwhy">The authors state their preference and say it can be tuned. The printed equation and the figure do disagree on which constant goes with which side; practitioner session 7 reads that in full, and it is a reason to check any score you are shown, not a reason to dismiss the lean.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">Before session 4</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Twenty minutes, on the review line you wrote tonight.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Get the review line signed</h4>
+        <p>Take the line to whoever owns the decision the model feeds: the planner, the operations lead, the reliability owner. Ask them to rank the two mistakes in their own words. If their ranking differs from yours, write both down; the disagreement is the useful part.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Ask for the worst five units</h4>
+        <p>For the last model your team reported on, ask for the five units or cases with the biggest misses, and whether each was early or late. Compare them with the headline number. If the team cannot produce them, that is the finding.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Check which way your own score leans</h4>
+        <p>If your team uses any asymmetric or weighted score, find where its constants come from and which side each applies to, from the code rather than the slide. Leader session 4 moves from engines to homes, where the cost of being wrong is a person's privacy.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Early versus late cost</span><span class="note">A false alarm pulls an engine with life left and stops the line; a miss leaves it in service past failure.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The published asymmetric score</span><span class="note">Exponential in the error, late divided by 10 and early by 13; about 46 against about 147 at 50 cycles. Saxena et al. (2008), read at source.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The lean as a business choice</span><span class="note">The same paper says early can carry a significant economic burden and the preference can be tuned. Decide it, and say who decided.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Why the baseline scores 305,167</span><span class="note">Six units from engines 69 and 96 carry 79.5 percent; the single worst unit 55,440, 18.2 percent. Rung 3's three worst carry 12.8 percent.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">One number hides uneven units</span><span class="note">The paper's own case for more than one number, read at source; the bench prints RMSE, score, bias and late share and crowns none.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The ladder through two lenses</span><span class="note">RMSE 45.61, 30.50, 24.00, 23.64 against score 305,167, 28,557, 3,542, 3,366. 300 cut points on 30 held-out engines, not the NASA test set.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The review line</span><span class="note">Rank the mistakes, set the lean, name who signed, list the numbers and the worst units.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The printed equation against the figure</span><span class="note">Named tonight, not settled. <a href="p7-the-asymmetric-score.html">Practitioner session 7</a> reads both in full.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">RMSE and backtesting</span><span class="note">Used, not taught. Live in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn time-series forecasting, backtesting and metrics</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Precision and recall of a detector</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/a5-measuring-detection.html">learn anomaly detection, measuring detection</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines, plants or incidents</span><span class="note">Out of scope by design. Real public rows from NASA's simulation, not real engines; no cost of being wrong is given as a money figure.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one sentence.</strong> A remaining-life estimate is wrong in two currencies, and which is worse is a decision.</div>
+      <div class="cheat-item"><strong>The two mistakes.</strong> Early: a pull with life left, a line that waits. Late: a failure in service.</div>
+      <div class="cheat-item"><strong>The published lean.</strong> Late divided by 10, early by 13, exponential: about 147 against about 46 at 50 cycles.</div>
+      <div class="cheat-item"><strong>A choice, not a law.</strong> The same paper says early can carry a significant economic burden. Set your own lean and sign it.</div>
+      <div class="cheat-item"><strong>Read before quoting.</strong> The paper's printed equation and its figure pair the constants differently. Check which way any score leans.</div>
+      <div class="cheat-item"><strong>The baseline's 305,167.</strong> Mostly two long-lived engines: six of 300 units carry 79.5 percent.</div>
+      <div class="cheat-item"><strong>Worst few rule.</strong> A sum of exponentials is ruled by its worst few units. Ask for them, and whether they are early or late.</div>
+      <div class="cheat-item"><strong>Four numbers.</strong> RMSE, summed score, bias, late share. Rung 3: 23.64, 3,366, +1.4, 56 percent.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 3 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="a2-missing-is-never-random.html">← Leader session 2 · Missing is never random</a>
+        <a href="a4-the-home-is-a-sensor-network.html">Leader session 4 · The home is a sensor network →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-sample.js?v=1"></script>
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined" || typeof IOT_SAMPLE === "undefined") return;
+  var sel = document.getElementById("ia3-rung");
+  var out = document.getElementById("ia3-out");
+  var verdict = document.getElementById("ia3-verdict");
+  var self = document.getElementById("ia3-self");
+
+  var RUNGS = [
+    ["mean", "Rung 0 · mean-life baseline"],
+    ["linear", "Rung 1 · linear fit, 14 raw channels"],
+    ["hi", "Rung 2 · health index, cap 125"],
+    ["smooth", "Rung 3 · plus lag-free smoothing"],
+    ["trailing", "Contrast · trailing mean instead (lags)"],
+    ["cap130Smooth", "Convention check · rung 3 with cap 130"],
+    ["mnarSmooth", "Anti-lever · hot readings missing, gaps dropped"],
+    ["shuffleSmooth", "Break · cycle order shuffled"]
+  ];
+
+  /* canon settings: seed 2008 and every default */
+  var res = IOT.ladder(IOT_SAMPLE);
+
+  RUNGS.forEach(function (r) {
+    var o = document.createElement("option");
+    o.value = r[0];
+    o.textContent = r[1];
+    if (r[0] === "mean") o.selected = true;
+    sel.appendChild(o);
+  });
+
+  function pct(x) { return (100 * x).toFixed(1) + "%"; }
+  function sgn(x) { return (x >= 0 ? "+" : "") + x.toFixed(1); }
+  function int(x) { return Math.round(x).toLocaleString("en-GB"); }
+
+  function render() {
+    var key = sel.value, r = res[key], label = sel.options[sel.selectedIndex].textContent;
+    var units = res.cuts.map(function (c, i) {
+      var d = r.preds[i] - c.rul;
+      return { u: c.u, d: d, s: IOT.phmScore(d, res.opts.aEarly, res.opts.aLate) };
+    });
+    var byCost = units.slice().sort(function (a, b) { return b.s - a.s; });
+    var tot = r.score, n = units.length;
+    function topShare(k) { var s = 0; for (var i = 0; i < k; i++) s += byCost[i].s; return s / tot; }
+    var costs = units.map(function (x) { return x.s; }).sort(function (a, b) { return a - b; });
+    var median = (costs[n / 2 - 1] + costs[n / 2]) / 2;
+    var below = units.filter(function (x) { return x.s < r.scorePerUnit; }).length;
+    var lateSum = 0; units.forEach(function (x) { if (x.d >= 0) lateSum += x.s; });
+    var w = byCost[0], side = w.d < 0 ? "early" : "late";
+
+    var html = '<div class="sql-tablewrap"><table class="sql-table"><thead><tr><th>Quantity</th><th>Value</th><th>What it is</th></tr></thead><tbody>';
+    html += "<tr><td>RMSE</td><td><b>" + r.rmse.toFixed(2) + "</b></td><td>square error, in cycles, no direction</td></tr>";
+    html += "<tr><td>Summed score</td><td><b>" + int(tot) + "</b></td><td>the published score added over " + n + " units</td></tr>";
+    html += "<tr><td>Score per unit</td><td>" + r.scorePerUnit.toFixed(2) + "</td><td>the sum divided by " + n + "</td></tr>";
+    html += "<tr><td>Median unit's score</td><td>" + median.toFixed(2) + "</td><td>" + below + " of " + n + " units cost less than the per-unit figure</td></tr>";
+    html += "<tr><td>Mean error (bias)</td><td>" + sgn(r.bias) + " cycles</td><td>positive = late</td></tr>";
+    html += "<tr><td>Share predicted late</td><td>" + (100 * r.lateShare).toFixed(0) + "%</td><td>units whose estimate lands after the truth</td></tr>";
+    html += '<tr><td>Worst single unit</td><td><b class="ia3-worst">' + pct(w.s / tot) + "</b></td><td>engine " + w.u + ", " + Math.abs(w.d).toFixed(0) + " cycles " + side + ", costs " + int(w.s) + "</td></tr>";
+    html += "<tr><td>Worst 3 units</td><td>" + pct(topShare(3)) + "</td><td>of the summed score</td></tr>";
+    html += "<tr><td>Worst 6 units</td><td>" + pct(topShare(6)) + "</td><td>of the summed score</td></tr>";
+    html += "<tr><td>From late units</td><td>" + pct(lateSum / tot) + "</td><td>share of the sum from estimates at or after the truth</td></tr>";
+    html += "</tbody></table></div>";
+    out.innerHTML = html;
+
+    verdict.textContent = label + ": the worst unit (engine " + w.u + ", " + Math.abs(w.d).toFixed(0) + " cycles " + side + ") costs " + int(w.s) +
+      " on its own, " + pct(w.s / tot) + " of the summed " + int(tot) + ", and the six worst carry " + pct(topShare(6)) +
+      ". The per-unit figure is " + r.scorePerUnit.toFixed(2) + " while the median unit costs " + median.toFixed(2) +
+      ": a sum of exponentials is ruled by its worst few units. 300 cut points on 30 held-out engines, not the NASA test set.";
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, including that late costs more than early at equal size, so the figures above are what any correct run gives. Real public rows from NASA's simulation, not real engines."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia3-sum .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia3-sum table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+  #ia3-sum .ia3-worst { color: var(--amber-ink-text); }
+</style>
+</body>
+</html>

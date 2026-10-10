@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Leader session 6 of 6. A transfer map for anyone arriving from a data team: what carries over, what must be learned, and which habits to unlearn, each drawn where it lands between the device and the maintenance decision. Harrow Lane Overhaul, a constructed shop, hires three. Real public rows from NASA's simulation. Not purchasing advice.">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="From warehouse to plant floor: the transfer map - learn iot data with phoebe">
+<meta property="og:description" content="Leader session 6 of 6. Carries over, must learn, must unlearn, and a 90-day ladder of free sources with the official copies marked.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/courses/a6-from-warehouse-to-plant-floor.html">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From warehouse to plant floor: the transfer map - learn iot data with phoebe">
+<meta name="twitter:description" content="Keep your skills and your questions; drop your defaults. A personal map and ninety days of free reading.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Leader session 6 · From warehouse to plant floor: the transfer map - learn iot data with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-iot-data-with-phoebe</a> / Leader session 6 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn IoT &amp; Industrial Data with Phoebe · Leader session 6 of 6</div>
+    <h1>From warehouse to plant floor: <span class="accent">the transfer map</span></h1>
+    <p class="sub">Five sessions took a sensor dataset apart. This one turns the parts into a plan for a person. If you have shipped dashboards, pipelines or models on warehouse data, you already own skills a reliability team is short of, you are missing a handful of ideas that are routine there, and you carry a few habits that quietly hide the end of every engine's life. Tonight sorts them into three columns, draws each one at the station of a sensor-to-decision pipeline where it lands, from the device to the edge, the link, the model and the maintenance action, and ends with your own map and ninety days of free reading, with the official sources marked. Harrow Lane Overhaul, a constructed engine-overhaul shop, is hiring from data teams and needs the map too. The engine rows are real public rows from NASA's simulation, not real engines, and nothing here is purchasing advice.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Leader track</span>
+      <span class="chip audience">Anyone moving from a data team to sensor data</span>
+      <span class="chip audience">Anyone hiring data people for a plant, fleet or connected product</span>
+      <span class="chip time">45 min</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-20 · What carries over, what is new</span>
+      <span class="a3" style="flex:2">20-30 · What to unlearn</span>
+      <span class="a4" style="flex:3">30-45 · Your map and Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Harrow Lane, the week it hires from a data team</h2>
+    </div>
+    <p class="lede">Harrow Lane Overhaul is a constructed shop: a planning lead, two reliability engineers and a hangar that can take a limited number of engines a week. Its fleet, as in every session, is the 100 turbofan engines of NASA's FD001 training set, simulated with C-MAPSS and run cycle by cycle until each one failed. The shop has budget for three hires, and the strongest candidates come from conventional data teams: an analyst from a retail warehouse, a data engineer from a payments platform team, and a data scientist who built churn and demand models. The planning lead's question is not whether they are good. It is which of their habits will help on day one, what they will have to learn, and which of their reflexes will make an engine look healthier than it is. That is the transfer map, and every cell of it sits somewhere a reading travels.</p>
+
+    <div class="legend">
+      <span class="pill">Live = presented in the 45 minutes</span>
+      <span class="pill">Self-study = the full depth, after class</span>
+      <span class="pill">🔍 Every diagram zooms</span>
+    </div>
+
+    <div class="callout win">
+      <p><strong>★ What you walk out with tonight.</strong> A three-column transfer map, CARRIES OVER, MUST LEARN and MUST UNLEARN, with every item named concretely as a skill, a method, a tool class or a reading, and placed at the station of a sensor-to-decision pipeline where it does its work. The price of four of the habits to unlearn, printed by the engine in this page rather than argued. Your own filled map, in the analyst, engineer or scientist variant. And a 90-day self-study ladder of free sources, each marked official or not. Nothing here is advice on what to buy or which machine to service.</p>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Three columns, one pipeline<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A list of skills is easy to write and hard to use, because it does not say where a skill matters. So the map is drawn against the five stations every reading passes on its way to a decision: the device that takes it, the edge box that buffers and samples it, the link that carries it, the model that turns it into a remaining-life estimate, and the maintenance action a planner takes on that estimate.</p>
+        <ul>
+          <li><strong>Carries over.</strong> Skills a conventional analyst, engineer or scientist already has that are worth more here than where they were learned.</li>
+          <li><strong>Must learn.</strong> Ideas that are routine on a reliability team and rare on a data team: sensor physics and units, sampling and clocks, missing not at random, censored run-to-failure labels and the capped target, asymmetric cost, edge or cloud budgets, a device security baseline, household privacy.</li>
+          <li><strong>Must unlearn.</strong> Habits that are good practice on warehouse data and actively dangerous here, because on sensor data each one hides the end of a life or prices a mistake the wrong way round.</li>
+        </ul>
+        <p>Leader session 5 named the five contrasts that break the warehouse playbook. This session is what a person does about them.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The words that keep coming back<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <ul>
+          <li><strong>Transfer map.</strong> Three columns, carries over, must learn, must unlearn, filled for one person and one role.</li>
+          <li><strong>Station.</strong> One step a reading passes: device, edge, link, model, action. A skill is placed at the station where it does its work.</li>
+          <li><strong>Edge.</strong> Compute that sits near the device, before the link. It can sample, summarise and decide without a round trip.</li>
+          <li><strong>Censored label.</strong> A target you only know once the event happens. Before failure, every engine's remaining life is unknown, and in a truncated series it never becomes known.</li>
+          <li><strong>Capped target.</strong> Remaining life clipped at a ceiling, 125 or 130 cycles in the literature on this data, so a model is only asked to track life near the end. A convention, not a law of engines.</li>
+          <li><strong>Lean.</strong> Which side of the true failure a score punishes harder. The engine here follows the paper's figure and prose: late divides by 10, early by 13, so late costs more.</li>
+          <li><strong>Official source.</strong> The publisher's or the author's own copy, free to read: NASA's repository, NIST's own site, the PHM Society's open proceedings, an arXiv author copy. Anything else is marked not official.</li>
+          <li><strong>Constructed.</strong> Harrow Lane, its three hires and Flat 4B are invented so that the truth is knowable. The engine rows are NASA's simulation; no figure describes a real engine, plant or household.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 1 ============ -->
+  <section class="section" id="part-1">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers what carries over and what must be learned</span>
+      <h2>Skills that travel, and the ideas that are new</h2>
+      <span class="tag concept">17 min live</span>
+    </div>
+    <p class="lede">The map first, then the left two columns. Read the figure a row at a time: each row is one station a reading passes, and the three cells beside it are what a data person brings to that station, what is new there, and what to drop there. The left column is fuller than most people expect. Profiling, time-series wrangling, reproducible pipelines, feature engineering, evaluation discipline and fleet dashboards all transfer. The middle column is where the physics, the clock, the censored label and the price of being late come in. The copper box at the bottom is the decision every column is judged at.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 580" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn transfer map. Five pipeline stations run down the left, joined by arrows: 1 device, a probe in the machine; 2 edge, buffers, samples and summarises; 3 link, the uplink to the cloud; 4 model, fits and predicts remaining life; 5 action, shown in copper, where a planner pulls an engine or waits. Three columns of cells sit beside each station. Carries over: profiling and quality tests at the device, time-series SQL at the edge, reproducible pipelines at the link, feature engineering and evaluation discipline at the model, dashboards for a fleet at the action. Must learn: sensor physics and units and a device security baseline at the device, sampling and clocks and missing not at random at the edge, edge versus cloud budgets at the link, censored run-to-failure labels and the capped target at the model, asymmetric cost and household privacy at the action. Must unlearn, in red panels: a null is missing at random at the device, drop incomplete rows at the edge, more data to the cloud is free at the link, the row has an id and a trailing mean will do at the model, RMSE is the score and the user consented at the action.">
+        <defs>
+          <filter id="ia6aSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="61" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia6aHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia6aAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia6aH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6aL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6aS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia6aB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia6aA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia6aN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia6aH" x="30" y="26">THE TRANSFER MAP, DRAWN WHERE EACH SKILL LANDS: FROM THE DEVICE TO THE MAINTENANCE ACTION</text>
+        <text class="ia6aH" x="42" y="58">THE PIPELINE</text>
+        <text class="ia6aA" x="208" y="58">CARRIES OVER</text>
+        <text class="ia6aB" x="424" y="58">MUST LEARN</text>
+        <text class="ia6aH" x="648" y="58">MUST UNLEARN</text>
+
+        <g filter="url(#ia6aSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- stations -->
+          <rect x="30" y="72" width="146" height="80" rx="8" transform="rotate(-0.6 103 112)" fill="#F3F7EA"/>
+          <rect x="30" y="164" width="146" height="80" rx="8" transform="rotate(0.5 103 204)" fill="#F3F7EA"/>
+          <rect x="30" y="256" width="146" height="80" rx="8" transform="rotate(-0.4 103 296)" fill="#F3F7EA"/>
+          <rect x="30" y="348" width="146" height="80" rx="8" transform="rotate(0.6 103 388)" fill="#F3F7EA"/>
+          <rect x="30" y="440" width="146" height="80" rx="8" transform="rotate(-0.5 103 480)" fill="#FBEFEC" stroke="#9B4D45" stroke-width="2.6"/>
+          <!-- the flow between stations -->
+          <path d="M103 153 L103 162" marker-end="url(#ia6aAr)"/>
+          <path d="M103 245 L103 254" marker-end="url(#ia6aAr)"/>
+          <path d="M103 337 L103 346" marker-end="url(#ia6aAr)"/>
+          <path d="M103 429 L103 438" marker-end="url(#ia6aAr)"/>
+          <!-- the sensor doodle on the device -->
+          <path d="M150 100 L150 90"/>
+          <circle cx="150" cy="86" r="4.5" fill="#3F6212" stroke="#3F6212"/>
+          <path d="M159 80 A10 10 0 0 1 159 92" stroke="#3F6212" stroke-width="1.6"/>
+          <path d="M164 76 A16 16 0 0 1 164 96" stroke="#3F6212" stroke-width="1.6"/>
+          <!-- carries over -->
+          <rect x="196" y="72" width="204" height="80" rx="8" transform="rotate(0.4 298 112)" fill="#FFFFFF"/>
+          <rect x="196" y="164" width="204" height="80" rx="8" transform="rotate(-0.4 298 204)" fill="#FFFFFF"/>
+          <rect x="196" y="256" width="204" height="80" rx="8" transform="rotate(0.3 298 296)" fill="#FFFFFF"/>
+          <rect x="196" y="348" width="204" height="80" rx="8" transform="rotate(-0.3 298 388)" fill="#FFFFFF"/>
+          <rect x="196" y="440" width="204" height="80" rx="8" transform="rotate(0.4 298 480)" fill="#FFFFFF"/>
+          <!-- must learn -->
+          <rect x="412" y="72" width="212" height="80" rx="8" transform="rotate(-0.3 518 112)" fill="#FFFFFF"/>
+          <rect x="412" y="164" width="212" height="80" rx="8" transform="rotate(0.4 518 204)" fill="#FFFFFF"/>
+          <rect x="412" y="256" width="212" height="80" rx="8" transform="rotate(-0.4 518 296)" fill="#FFFFFF"/>
+          <rect x="412" y="348" width="212" height="80" rx="8" transform="rotate(0.3 518 388)" fill="#FFFFFF"/>
+          <rect x="412" y="440" width="212" height="80" rx="8" transform="rotate(-0.3 518 480)" fill="#FFFFFF"/>
+          <!-- must unlearn: wrong-way panels -->
+          <rect x="636" y="72" width="218" height="80" rx="8" transform="rotate(0.4 745 112)" fill="#FEF2F2" stroke="#991B1B"/>
+          <rect x="636" y="164" width="218" height="80" rx="8" transform="rotate(-0.3 745 204)" fill="#FEF2F2" stroke="#991B1B"/>
+          <rect x="636" y="256" width="218" height="80" rx="8" transform="rotate(0.3 745 296)" fill="#FEF2F2" stroke="#991B1B"/>
+          <rect x="636" y="348" width="218" height="80" rx="8" transform="rotate(-0.4 745 388)" fill="#FEF2F2" stroke="#991B1B"/>
+          <rect x="636" y="440" width="218" height="80" rx="8" transform="rotate(0.3 745 480)" fill="#FEF2F2" stroke="#991B1B"/>
+        </g>
+
+        <!-- stations -->
+        <text class="ia6aL" x="42" y="94">1 · Device</text>
+        <text class="ia6aS" x="42" y="114">probe in the machine</text>
+        <text class="ia6aS" x="42" y="130">reads each cycle</text>
+        <text class="ia6aL" x="42" y="186">2 · Edge</text>
+        <text class="ia6aS" x="42" y="206">buffers, samples</text>
+        <text class="ia6aS" x="42" y="222">and summarises</text>
+        <text class="ia6aL" x="42" y="278">3 · Link</text>
+        <text class="ia6aS" x="42" y="298">uplink to the cloud</text>
+        <text class="ia6aS" x="42" y="314">bits and delay</text>
+        <text class="ia6aL" x="42" y="370">4 · Model</text>
+        <text class="ia6aS" x="42" y="390">fits and predicts</text>
+        <text class="ia6aS" x="42" y="406">remaining life</text>
+        <text class="ia6aB" x="42" y="462">5 · Action</text>
+        <text class="ia6aS" x="42" y="482">pull the engine now</text>
+        <text class="ia6aS" x="42" y="498">or wait a week</text>
+
+        <!-- carries over -->
+        <text class="ia6aL" x="208" y="94">Profiling, quality tests</text>
+        <text class="ia6aS" x="208" y="110">flat, noisy, drifting (p3)</text>
+        <text class="ia6aL" x="208" y="186">Time-series SQL</text>
+        <text class="ia6aS" x="208" y="202">windows, lags, resampling</text>
+        <text class="ia6aL" x="208" y="278">Reproducible pipelines</text>
+        <text class="ia6aS" x="208" y="294">seeds and a reference run</text>
+        <text class="ia6aL" x="208" y="370">Feature engineering</text>
+        <text class="ia6aS" x="208" y="386">windows, gaps as features</text>
+        <text class="ia6aL" x="208" y="405">Evaluation discipline</text>
+        <text class="ia6aS" x="208" y="420">time-ordered, no leaks</text>
+        <text class="ia6aL" x="208" y="462">Dashboards for a fleet</text>
+        <text class="ia6aS" x="208" y="478">one row per engine, ranked</text>
+
+        <!-- must learn -->
+        <text class="ia6aL" x="424" y="94">Sensor physics and units</text>
+        <text class="ia6aS" x="424" y="110">Rankine, psia, rpm (p1)</text>
+        <text class="ia6aL" x="424" y="129">A device security baseline</text>
+        <text class="ia6aS" x="424" y="144">NIST's six capabilities</text>
+        <text class="ia6aL" x="424" y="186">Sampling and clocks</text>
+        <text class="ia6aS" x="424" y="202">cycle clock, wall clock (p2)</text>
+        <text class="ia6aL" x="424" y="221">Missing not at random</text>
+        <text class="ia6aS" x="424" y="236">the gap is a signal (a2, p6)</text>
+        <text class="ia6aL" x="424" y="278">Edge or cloud budgets</text>
+        <text class="ia6aS" x="424" y="294">bit/s and ms to decide (p8)</text>
+        <text class="ia6aL" x="424" y="370">Censored run-to-failure</text>
+        <text class="ia6aS" x="424" y="386">one failure, at the end (p5)</text>
+        <text class="ia6aL" x="424" y="405">The capped target</text>
+        <text class="ia6aS" x="424" y="420">125 or 130: a convention</text>
+        <text class="ia6aL" x="424" y="462">Asymmetric cost</text>
+        <text class="ia6aS" x="424" y="478">late costs more (a3, p7)</text>
+        <text class="ia6aL" x="424" y="497">Household privacy</text>
+        <text class="ia6aS" x="424" y="512">a meter prints a day (a4)</text>
+
+        <!-- must unlearn -->
+        <text class="ia6aB" x="648" y="94">"A null is missing at random"</text>
+        <text class="ia6aS" x="648" y="110">dropout follows the heat (a2)</text>
+        <text class="ia6aB" x="648" y="186">"Drop incomplete rows"</text>
+        <text class="ia6aS" x="648" y="202">erases the end of a life (p6)</text>
+        <text class="ia6aB" x="648" y="278">"More data to the cloud</text>
+        <text class="ia6aB" x="648" y="293">is free"</text>
+        <text class="ia6aS" x="648" y="312">490 of 500 ms, constructed</text>
+        <text class="ia6aB" x="648" y="370">"The row has an id"</text>
+        <text class="ia6aS" x="648" y="386">the unit is an engine (a5)</text>
+        <text class="ia6aB" x="648" y="405">"A trailing mean will do"</text>
+        <text class="ia6aS" x="648" y="420">it lags and leans late (p10)</text>
+        <text class="ia6aB" x="648" y="462">"RMSE is the score"</text>
+        <text class="ia6aS" x="648" y="478">it cannot see which side</text>
+        <text class="ia6aB" x="648" y="497">"The user consented"</text>
+        <text class="ia6aS" x="648" y="512">a home is not one user (p9)</text>
+
+        <text class="ia6aN" x="30" y="546">Read a row across: what you bring, what is new and what to drop all bite at the same station.</text>
+        <text class="ia6aN" x="30" y="564">Every column is judged at the copper box, where a planner pulls an engine or leaves it another week.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the left column is fuller than people expect; every red panel is a habit that passes review on warehouse data and hides something at the station beside it.</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Carries over: six skills worth more here<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Profiling and data-quality tests.</strong> The habit of looking at every column before modelling it is the habit a sensor feed needs most, pointed somewhere new. Instead of nulls and duplicate keys, the profile asks which channels are flat, which are noisy and which drift. In FD001, 7 of 21 channels never move under the one operating condition, and practitioner session 3 builds the triage table. Pipeline-level checks of freshness and volume are taught in <a href="https://phoebefu6.github.io/learn-data-observability-with-phoebe/courses/b5-distribution-drift.html">learn data observability, builder session 5</a>; here the drift is in the probe, not the pipeline.</p>
+        <p><strong>Time-series SQL and dataframe work.</strong> Window functions, lags, as-of joins and resampling are the daily tools of practitioner session 2. Event time, late data and watermarks are taught properly in <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/04-windowing.html">Windowing</a> and <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">Late data</a>; a warehouse engineer who has written them is ahead.</p>
+        <p><strong>Reproducible pipelines.</strong> Seeds, versioned inputs and a reference implementation that must agree to the digit. Every number in these sessions comes from a seeded engine that a second, independent implementation reproduces, and that discipline transfers whole.</p>
+        <p><strong>Feature engineering and missing-data reasoning.</strong> Rolling windows, slopes and "was this value missing" as a feature are all used here; <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">Missing data as signal</a> teaches the general method. The question Rubin set out in 1976, when the process that causes missing data can safely be ignored, carries over as a question. What changes is the answer, which is the middle column.</p>
+        <p><strong>Evaluation discipline.</strong> A holdout nobody touched, a baseline beside every model, time order kept, no later row informing an earlier prediction. Rolling-origin evaluation is taught in <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">Backtesting and metrics</a>. The bench in practitioner session 10 holds out 30 whole engines and scores 300 units under test, not the NASA test set.</p>
+        <p><strong>Dashboards for a fleet.</strong> One row per engine, ranked by how soon it needs attention, with the uncertainty visible: that is a planner's screen, and a warehouse analyst has built its cousin many times.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's first hire (constructed), the analyst from the retail warehouse, ran her usual profile on the fleet file in her first week. Every check passed. She did not stop there: she rewrote the profile as a triage, seven channels marked flat with the reason ("one operating condition, sea level"), fourteen marked moving, and one column the warehouse never needed, the cycle at which each engine's exhaust first reads in the hottest fifth. The skill was hers already. The questions were new.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Must learn: the machine, the clock and the gap<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Sensor physics basics and units.</strong> Where a probe sits decides what it can see. The 21 channels in FD001 are read between the stages of a turbofan, in degrees Rankine, psia and rpm, as Table 2 of Saxena and colleagues (2008) lists them. A reader who cannot place a channel in the machine is modelling a column, not a measurement. Leader session 1 and practitioner session 1 draw the gas path.</p>
+        <p><strong>Sampling and clocks.</strong> A sensor row has two clocks: the one the device samples on and the one the event happens on. In FD001 time is counted in operating cycles, not wall-clock seconds; in a live plant, channels sampled at different rates and stamped by drifting clocks must be resampled before they can share a row. Practitioner session 2 teaches it on constructed data.</p>
+        <p><strong>Missing not at random.</strong> On warehouse data a null is usually a form left blank. On a device, a reading goes missing when the device struggles: heat, vibration, a full buffer, a weak link, which are the conditions nearest failure. Rubin's 1976 conditions for ignoring the missingness do not hold, and leader session 2 and practitioner session 6 show what deleting the gaps does to a remaining-life estimate.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Must learn: the label, the score, the link, the device and the home<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Censored run-to-failure labels and the capped target.</strong> Each engine fails once, at the end, and until then its remaining life is unknown. A model trained on remaining life as is spends its effort on the healthy early cycles where nothing can be read; capping the target at a ceiling asks it to track life only near the end. On the bench, rung 1 to rung 2 is the move from an uncapped to a capped target, and it is the capped label and the clamp that do the work, not the combining of channels into one health index. The ceiling is 125 in some papers and 130 in others: a convention, chosen on this subset, never a law of engines. Practitioner session 5 builds both.</p>
+        <p><strong>Asymmetric cost.</strong> A false alarm pulls an engine with life left in it; a missed failure leaves it in service. The PHM08 score prices the two differently: with the lean the paper's Figure 9 and prose describe, late divides by 10 and early by 13, so a late call of the same size costs more. Leader session 3 makes it a business choice, and practitioner session 7 takes the formula apart, including the printed equation that pairs the constants the other way.</p>
+        <p><strong>Edge or cloud budgets.</strong> Every byte sent costs link capacity, and every round trip costs time between the sample and the decision. Practitioner session 8 is a constructed calculator for both.</p>
+        <p><strong>A device security baseline.</strong> NIST IR 8259A (2020) names six device cybersecurity capabilities as a core baseline: Device Identification, Device Configuration, Data Protection, Logical Access to Interfaces, Software Update and Cybersecurity State Awareness. Its role, in its own words, is "as a default for minimally securable devices", and it "does not specify how" any capability is achieved. NIST SP 800-213 (2021) frames device requirements for federal organisations from the device's place in a larger system. Neither is a checklist to buy against; both are a vocabulary for asking a supplier what the device can do.</p>
+        <p><strong>Household privacy.</strong> In a home the unit is a household, not a user, and a single electricity meter can print when people wake, leave, return and sleep. Leader session 4 and practitioner session 9 draw that line; the law lives in <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">GDPR scope</a> and <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">PDPA consent</a>, and nothing here is legal advice.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The 90-day ladder, source by source<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Free sources only. <strong>Official</strong> means the publisher's or the author's own copy: NASA's repository, NIST's own site, the PHM Society's open proceedings, an arXiv copy posted by the authors. <strong>Not official</strong> means anything else, to be checked against the published version. One rung a month, each ending in something you write.</p>
+        <p><strong>Days 1 to 30, the machine and the rows.</strong></p>
+        <ul>
+          <li>Saxena, A., and Goebel, K. (2008). "Turbofan Engine Degradation Simulation Data Set." NASA Prognostics Data Repository, NASA Ames Research Center, Moffett Field, CA. Official: data set 6 of the <a href="https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/">NASA PCoE data set repository</a>, which says "four different sets were simulated under different combinations of operational conditions and fault modes". Read the readme inside the zip.</li>
+          <li>Saxena, A., Goebel, K., Simon, D., and Eklund, N. (2008). "Damage Propagation Modeling for Aircraft Engine Run-to-Failure Simulation." PHM08, Denver, CO. Official: the PDF ships inside the same NASA zip. Read Table 2 (the channels) and section V (how the noise was added).</li>
+          <li>Practitioner sessions <a href="p1-reading-a-turbofan-run.html">1</a>, <a href="p2-clocks-sampling-and-resampling.html">2</a> and <a href="p3-channel-triage.html">3</a>, with <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/04-windowing.html">Windowing</a> and <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">Late data</a>. Official.</li>
+          <li>Write: a channel map of one feed you rely on, with the line "the readings go missing when...".</li>
+        </ul>
+        <p><strong>Days 31 to 60, the gap, the label and the score.</strong></p>
+        <ul>
+          <li>Rubin, D. B. (1976). "Inference and Missing Data." Biometrika 63(3), 581-592. Official: the abstract on the publisher's page, <a href="https://doi.org/10.1093/biomet/63.3.581">doi.org/10.1093/biomet/63.3.581</a>. The full paper is not free; the abstract carries the conditions.</li>
+          <li>Zhou, Y., Gao, Y., Huang, Y., Hefenbrock, M., Riedel, T., and Beigl, M. (2020). arXiv 2008.03961, a capped target at 130. Official: the authors' arXiv copy, <a href="https://arxiv.org/abs/2008.03961">arxiv.org/abs/2008.03961</a>.</li>
+          <li>Tsurkan, O., Konstantinova, A., Senokosov, A., Sagingalieva, A., and Melnikov, A. (2025). arXiv 2504.20823, a capped target at 125 chosen from the shortest training run. Official: <a href="https://arxiv.org/abs/2504.20823">arxiv.org/abs/2504.20823</a>.</li>
+          <li>Wang, Y., Wu, M., Li, X., Xie, L., and Chen, Z. (2024). A survey of graph neural networks for remaining useful life, arXiv 2409.19629, for how the field cites the capped target. Official: <a href="https://arxiv.org/abs/2409.19629">arxiv.org/abs/2409.19629</a>.</li>
+          <li>Practitioner sessions <a href="p4-many-channels-one-health-index.html">4</a>, <a href="p5-remaining-useful-life-as-a-target.html">5</a>, <a href="p6-missing-not-at-random-planted.html">6</a> and <a href="p7-the-asymmetric-score.html">7</a>, with <a href="https://phoebefu6.github.io/learn-feature-engineering-with-phoebe/courses/b7-missing-data.html">Missing data as signal</a> and <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">Backtesting and metrics</a>. Official.</li>
+          <li>Write: one of your own evaluations rerun with four numbers beside it: the error, an asymmetric score with its lean named, the bias and the share predicted late.</li>
+        </ul>
+        <p><strong>Days 61 to 90, the device, the link and the home.</strong></p>
+        <ul>
+          <li>Fagan, M., Megas, K., Scarfone, K., and Smith, M. (2020). "IoT Device Cybersecurity Capability Core Baseline." NIST IR 8259A. Official: <a href="https://csrc.nist.gov/pubs/ir/8259/a/final">csrc.nist.gov/pubs/ir/8259/a/final</a>.</li>
+          <li>Fagan, M., Marron, J., Brady, K., Cuthill, B., Megas, K., Herold, R., Lemire, D., and Hoehn, B. (2021). NIST SP 800-213. Official: <a href="https://csrc.nist.gov/pubs/sp/800/213/final">csrc.nist.gov/pubs/sp/800/213/final</a>.</li>
+          <li>Giaconi, G., Gunduz, D., and Poor, H. V. (2018). "Privacy-Aware Smart Metering: Progress and Challenges." Official: the authors' arXiv copy, <a href="https://arxiv.org/abs/1802.01166">arxiv.org/abs/1802.01166</a>.</li>
+          <li>The PHM Society's <a href="https://papers.phmsociety.org/index.php/phmconf">open conference proceedings</a>. Official. Pick two remaining-life papers and write down, for each, its cap, its score's lean and whether it used the NASA test set.</li>
+          <li>Practitioner sessions <a href="p8-edge-or-cloud-budget.html">8</a>, <a href="p9-smart-home-telemetry.html">9</a> and <a href="p10-the-rul-bench.html">10</a>, with <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/a5-measuring-detection.html">Measuring detection</a>. Official.</li>
+          <li>Write: your finished transfer map, and one review of a sensor-data proposal with leader session 5's five contrasts.</li>
+        </ul>
+        <p>Outside the ladder, because no free copy was read: Heimes (2008), "Recurrent Neural Networks for Remaining Useful Life Estimation", DOI 10.1109/PHM.2008.4711422, reported as the origin of the piecewise-linear target; and Molina-Markham and colleagues (2010), "Private Memoirs of a Smart Meter", DOI 10.1145/1878431.1878446, reported. The second turbofan set in the NASA repository, data set 17, generated under real flight conditions, is the natural next dataset.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2 ============ -->
+  <section class="section" id="part-2">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers what must be unlearned</span>
+      <h2>Seven habits that hide the end of a life</h2>
+      <span class="tag concept">10 min live</span>
+    </div>
+    <p class="lede">Every habit in the right column was correct where it was learned. A null in a sales table usually is a blank form; incomplete rows usually are junk; a row usually is about one customer who agreed to the terms. Here each habit moves a number the planner acts on. The figure draws five of them at the station where they bite: on one engine's last cycles, on the clock between a sample and a decision, and on what a row is about.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 528" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn three-panel figure. Top panel: one engine's life as a strip of 20 cells, the last seven hot and hatched in copper, five of them dashed because the hottest readings went missing; 3,073 of 20,631 rows vanish under the planted dropout. An arrow leads to a box: the pipeline drops the gaps and reads the last row as now, so the engine looks cooler and the forecast lands late. Beside it two rulers on the same 300 units under test: RMSE moves from 23.64 to 24.89, plus 5 percent; the score, with late divided by 10 and early by 13, moves from 3,366 to 4,656, plus 38 percent, drawn in copper. Bottom left: a constructed time budget. The cloud path is sample 100 ms, uplink 120, compute 150, downlink 120, 490 ms against a 500 ms deadline; the edge path is 140 ms; raw data is 1.94 GB a day and edge summaries are 150 times less. Bottom right: an engine row keyed by engine and cycle, with no person to ask and the cycle order as the life, where shuffling the order gives RMSE 40.41 and score 46,145; and a meter row keyed by meter and time slot, one signature for a whole household, where the constructed Flat 4B trace gives leave time within 30 minutes on 12 of 14 days.">
+        <defs>
+          <filter id="ia6bSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="67" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia6bHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#9B4D45" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia6bAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia6bH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6bL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6bS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia6bB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia6bA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia6bN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia6bH" x="30" y="26">WHERE FIVE HABITS BITE: ON ONE ENGINE'S LAST CYCLES, ON THE CLOCK, AND ON WHAT A ROW IS ABOUT</text>
+
+        <g filter="url(#ia6bSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- panel frames -->
+          <rect x="30" y="44" width="820" height="206" rx="10" transform="rotate(-0.2 440 147)" fill="#FFFFFF"/>
+          <rect x="30" y="266" width="404" height="200" rx="10" transform="rotate(0.3 232 366)" fill="#FFFFFF"/>
+          <rect x="446" y="266" width="404" height="200" rx="10" transform="rotate(-0.3 648 366)" fill="#FFFFFF"/>
+          <!-- the life strip: 13 cool cells, 7 hot, 5 of the hot ones gone -->
+          <rect x="46" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="69" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="92" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="115" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="138" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="161" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="184" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="207" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="230" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="253" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="276" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="299" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="322" y="86" width="20" height="26" rx="3" fill="#F3F7EA"/>
+          <rect x="345" y="86" width="20" height="26" rx="3" fill="url(#ia6bHc)" stroke="#9B4D45"/>
+          <rect x="368" y="86" width="20" height="26" rx="3" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="4 4"/>
+          <rect x="391" y="86" width="20" height="26" rx="3" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="4 4"/>
+          <rect x="414" y="86" width="20" height="26" rx="3" fill="url(#ia6bHc)" stroke="#9B4D45"/>
+          <rect x="437" y="86" width="20" height="26" rx="3" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="4 4"/>
+          <rect x="460" y="86" width="20" height="26" rx="3" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="4 4"/>
+          <rect x="483" y="86" width="20" height="26" rx="3" fill="#FFFFFF" stroke="#9B4D45" stroke-dasharray="4 4"/>
+          <!-- to the pipeline box -->
+          <path d="M270 152 L270 172" marker-end="url(#ia6bAr)"/>
+          <rect x="46" y="176" width="460" height="56" rx="8" transform="rotate(0.3 276 204)" fill="#F3F7EA"/>
+          <!-- two rulers -->
+          <rect x="540" y="128" width="180" height="12" rx="3" fill="#F3F7EA"/>
+          <rect x="720" y="128" width="10" height="12" rx="2" fill="url(#ia6bHc)"/>
+          <rect x="540" y="176" width="180" height="12" rx="3" fill="#F3F7EA"/>
+          <rect x="720" y="176" width="69" height="12" rx="3" fill="#9B4D45" stroke="#9B4D45"/>
+          <!-- the time budget -->
+          <rect x="50" y="342" width="68" height="24" fill="#F3F7EA"/>
+          <rect x="118" y="342" width="82" height="24" fill="#FFFFFF"/>
+          <rect x="200" y="342" width="102" height="24" fill="#F3F7EA"/>
+          <rect x="302" y="342" width="81" height="24" fill="#FFFFFF"/>
+          <rect x="50" y="414" width="95" height="20" fill="#F3F7EA"/>
+          <path d="M390 326 L390 440" stroke="#9B4D45" stroke-dasharray="6 5"/>
+          <!-- two row cards -->
+          <rect x="462" y="302" width="184" height="152" rx="8" transform="rotate(-0.6 554 378)" fill="#F3F7EA"/>
+          <rect x="656" y="302" width="184" height="152" rx="8" transform="rotate(0.6 748 378)" fill="#FFFFFF"/>
+          <!-- the meter dial doodle -->
+          <path d="M806 330 A12 12 0 0 1 830 330"/>
+          <path d="M818 330 L825 319"/>
+        </g>
+
+        <!-- panel A -->
+        <text class="ia6bH" x="46" y="70">"A NULL IS MISSING AT RANDOM", THEN "DROP INCOMPLETE ROWS"</text>
+        <text class="ia6bS" x="46" y="128">first cycle</text>
+        <text class="ia6bS" x="503" y="128" text-anchor="end">failure</text>
+        <text class="ia6bB" x="46" y="146">dashed: hottest readings gone, 3,073 of 20,631 rows (modelled)</text>
+        <text class="ia6bL" x="60" y="198">The pipeline drops the gaps and reads the last row as now</text>
+        <text class="ia6bS" x="60" y="218">the engine looks cooler and healthier, so the forecast lands late</text>
+        <text class="ia6bA" x="540" y="100">two rulers, the same 300 units under test</text>
+        <text class="ia6bL" x="540" y="120">RMSE 23.64 to 24.89</text>
+        <text class="ia6bB" x="836" y="120" text-anchor="end">+5%</text>
+        <text class="ia6bL" x="540" y="168">Score 3,366 to 4,656</text>
+        <text class="ia6bB" x="836" y="168" text-anchor="end">+38%</text>
+        <text class="ia6bS" x="540" y="210">30 held-out engines, not the NASA test set</text>
+        <text class="ia6bS" x="540" y="226">score lean: late divides by 10, early by 13</text>
+
+        <!-- panel B -->
+        <text class="ia6bH" x="46" y="290">"MORE DATA TO THE CLOUD IS FREE"</text>
+        <text class="ia6bS" x="46" y="308">constructed budget, sample to decision (p8)</text>
+        <text class="ia6bL" x="46" y="334">cloud path</text>
+        <text class="ia6bB" x="384" y="334" text-anchor="end">deadline 500 ms</text>
+        <text class="ia6bS" x="84" y="358" text-anchor="middle">sample</text>
+        <text class="ia6bS" x="159" y="358" text-anchor="middle">up 120</text>
+        <text class="ia6bS" x="251" y="358" text-anchor="middle">compute</text>
+        <text class="ia6bS" x="342" y="358" text-anchor="middle">down 120</text>
+        <text class="ia6bB" x="46" y="386">cloud 490 ms: inside 500 by 10 ms</text>
+        <text class="ia6bL" x="46" y="406">edge path</text>
+        <text class="ia6bS" x="97" y="428" text-anchor="middle">140 ms</text>
+        <text class="ia6bS" x="46" y="454">raw 1.94 GB a day; edge summaries 150x less</text>
+
+        <!-- panel C -->
+        <text class="ia6bH" x="462" y="290">"THE ROW HAS AN ID", "THE USER CONSENTED"</text>
+        <text class="ia6bL" x="474" y="326">An engine row</text>
+        <text class="ia6bS" x="474" y="344">key: engine and cycle</text>
+        <text class="ia6bS" x="474" y="360">no person to ask</text>
+        <text class="ia6bS" x="474" y="376">cycle order is the life</text>
+        <text class="ia6bB" x="474" y="400">shuffled: RMSE 40.41</text>
+        <text class="ia6bB" x="474" y="416">and score 46,145</text>
+        <text class="ia6bS" x="474" y="436">(a5, p10)</text>
+        <text class="ia6bL" x="668" y="326">A meter row</text>
+        <text class="ia6bS" x="668" y="344">key: meter and time slot</text>
+        <text class="ia6bS" x="668" y="360">one signature, and</text>
+        <text class="ia6bS" x="668" y="376">everyone home is in it</text>
+        <text class="ia6bB" x="668" y="400">Flat 4B, constructed:</text>
+        <text class="ia6bB" x="668" y="416">leave time within 30 min</text>
+        <text class="ia6bS" x="668" y="436">on 12 of 14 days (a4, p9)</text>
+
+        <text class="ia6bN" x="30" y="490">Each habit was right where it was learned. Here each one moves a number the planner acts on. The copper</text>
+        <text class="ia6bN" x="30" y="508">bar is how far a late-leaning score moves when the hottest readings go missing and the gaps are dropped.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the copper bar is the cost the error ruler barely sees; the dashed line is a deadline met with 10 ms to spare.</figcaption>
+    </figure>
+
+    <div class="wk" id="ia6-habit">
+      <div class="wk-head">
+        <b>Live</b>
+        <span class="wk-hint">The engine behind every session, running in this page. Pick a habit; the box prints what the engine says it costs. The link budget and the Flat 4B household are constructed; the score is the PHM08 formula with the lean named.</span>
+      </div>
+      <div class="wk-body">
+        <label class="sql-label" for="ia6-habit-pick">The habit to price</label>
+        <select class="sql-code" id="ia6-habit-pick">
+          <option value="cloud" selected>"More data to the cloud is free"</option>
+          <option value="consent">"The user consented"</option>
+          <option value="rmse">"RMSE is the score"</option>
+        </select>
+        <div id="ia6-habit-out"></div>
+        <p class="sql-note" id="ia6-habit-verdict">...</p>
+      </div>
+      <div class="wk-foot" id="ia6-habit-self">...</div>
+    </div>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>"A null is missing at random" and "drop incomplete rows"<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>A null is missing at random.</strong> On a device, a reading goes missing when the device struggles, and it struggles when the machine runs hot, which is at the end of its life. In FD001, 96.4 percent of readings in the last tenth of life sit in the hottest fifth, against 0.8 percent in the first tenth. A dropout driven by heat is therefore a dropout driven by the thing you are trying to predict. The replacement is a question, asked of the people who maintain the device: what does it do when it struggles, send nothing, repeat the last value, or send a default?</p>
+        <p><strong>Drop incomplete rows.</strong> The planted fault in practitioner session 6 removes the hottest readings with probability 0.7, and 3,073 of 20,631 rows (14.9 percent) vanish. A pipeline that then drops rows with gaps and reads the last surviving row as current sees each engine cooler and healthier than it is. On the 300 units under test, from 30 held-out engines rather than the NASA test set, RMSE moves from 23.64 to 24.89 and the score from 3,366 to 4,656, with the bias moving late (+1.4 to +4.7 cycles). That score move assumes the lean the paper's figure describes, late divided by 10 and early by 13; read the printed equation literally and the score no longer ranks the dropout worse. RMSE gets worse under both. The replacement is to keep the gap as a fact: flag it, count it by engine and by condition, and never let the last row stand in for now.</p>
+        <div class="callout example">
+          <span class="ex-pill">Real world</span>
+          <p>Harrow Lane's third hire (constructed), the data scientist, reviewed a pipeline change in her second week. It dropped incomplete rows "for cleanliness", and the error moved by about 5 percent, which on a churn model she would have signed off. She asked for two more numbers before signing: the late-leaning score moved 38 percent and the bias moved late. She did not call the change wrong for every machine. She wrote that it made the shop's engines look healthier exactly when they were not, and asked which mistake the planning lead would rather explain.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>"The row has an id" and "the user consented"<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>The row has an id.</strong> A warehouse row is keyed to a customer or an order that exists on its own, and rows can be sorted any way you like. A sensor row is keyed to a machine and a moment, and its order is the life. Practitioner session 10's break button shuffles the cycle order inside each engine and runs the same model: RMSE 40.41 and score 46,145 on the 300 units under test, against 23.64 and 3,366 in order. Nothing in the table changed except the order. The replacement: the unit is the engine (or the household), every split is by unit, and every feature respects time.</p>
+        <p><strong>The user consented.</strong> A meter account has one holder and one signature, and the trace it writes describes everyone who lives in the home. In the constructed Flat 4B trace, one threshold on one meter reads the household's state correctly in 93.0 percent of 15-minute slots and places the morning leave time within 30 minutes on 12 of 14 days: the schedule of an empty home. Giaconi, Gunduz and Poor (2018) list presence at home, religious beliefs, disabilities and illnesses among what meter data can reveal. The replacement is to decide where the data team stops before anyone asks it to go further; leader session 4 draws the line, and the law stays with the GDPR and PDPA sessions.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>"RMSE is the score", "a trailing mean will do" and "more data to the cloud is free"<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>RMSE is the score.</strong> A squared error is the same 20 cycles early or 20 cycles late. The planner's cost is not. The box above prints the PHM08 score for both sides: under the lean the paper's figure and prose describe, late costs more at every size. Report four numbers together, the error, the score with its lean named, the bias and the share predicted late, and crown none of them.</p>
+        <p><strong>A trailing mean will do.</strong> The default smoother on a dashboard lags, and a one-way degradation signal punishes lag: on the bench a trailing mean of the last 10 values gives RMSE 24.88 and score 4,171, worse than not smoothing (24.00 and 3,542). A lag-free local line over the same window gives 23.64 and 3,366, a small gain of 0.36 in RMSE, not a fix. Ask which way a smoother leans before it ships.</p>
+        <p><strong>More data to the cloud is free.</strong> Storage may be cheap; time is not. In practitioner session 8's constructed budget the cloud path takes 490 ms against a 500 ms deadline, 10 ms of slack that one slow round trip erases, while the edge path takes 140 ms. Arithmetic, not measurement, and your own link will differ; the habit to replace is sending everything because you can, rather than deciding which bytes need to leave the device.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Where serious people disagree<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>125 or 130?</strong> Zhou and colleagues (2020) cap the target at 130. Tsurkan and colleagues (2025) use 125, "based on the minimum run length of 128 cycles observed in the training data". A 2024 survey sets 125 citing Li, Ding and Sun (2018), and credits the piecewise-linear target to Heimes (2008), whose own cap value is reported, not read. On the bench, cap 130 gives RMSE 23.70 and score 3,622 against 23.64 and 3,366 for 125. A transfer map does not pick one; it carries both and says which was used.</p>
+        <p><strong>Which way does the score lean?</strong> The printed equation in Saxena and colleagues (2008) pairs the divisor 10 with early errors and 13 with late ones, which, read literally, punishes early harder. Their Figure 9 shows about 46 at 50 cycles early and about 147 at 50 late, and their prose says late predictions "were more heavily penalized". The figure and the prose agree with each other; the printed pairing does not. Every later paper you read may have followed either, so check before comparing.</p>
+        <p><strong>One score or several?</strong> The same paper argues for weighting short remaining lives more and for a correlation metric beside the sum, because a summed score can hide uneven performance across units. The bench prints four numbers and crowns none. Whether a single headline is ever enough is the disagreement to carry into your own reviews.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3 ============ -->
+  <section class="section" id="part-3">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · build-along</span>
+      <h2>Your own transfer map, and ninety days of reading</h2>
+      <span class="tag build">15 min hands on</span>
+    </div>
+    <p class="lede">No code. You fill the three columns for yourself, in the variant that matches the job you hold now, with evidence from your own work in every cell. Then you turn the middle column into a ladder of free reading you can actually finish. The figure is the card to copy: three role variants on top, the 90-day ladder underneath.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 488" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hand drawn build-along card. Top row, three role cards. If you are an analyst: brings time-series SQL and dashboards, learns asymmetric cost first, unlearns RMSE is the score. If you are an engineer: brings pipelines, seeds and tests, learns the link budget first, unlearns drop incomplete rows. If you are a scientist: brings features and ordered splits, learns the capped target first, unlearns missing at random. Each card ends with a line for your own evidence. Below, a three-step staircase, the 90-day ladder. Days 1 to 30, the machine: NASA PCoE data set 6, official; Saxena 2008 in the zip, official; practitioner sessions 1 to 3, official; streaming 04 and 05, official; write a channel map of one feed. Days 31 to 60, label and score: Rubin 1976 abstract, official; Zhou 2020 cap 130, official; Tsurkan 2025 cap 125, official; Wang 2024 survey, official; practitioner sessions 4 to 7, official; write one result with four numbers. Days 61 to 90, device and home: NIST IR 8259A, official; NIST SP 800-213, official; Giaconi 2018, official; PHM Society proceedings, official; practitioner sessions 8 to 10, official; write the finished map. Outside the ladder, reported and not free: Heimes 2008 and Molina-Markham 2010.">
+        <defs>
+          <filter id="ia6cSk" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="73" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/></filter>
+          <pattern id="ia6cHc" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(-38)"><line x1="0" y1="0" x2="0" y2="7" stroke="#3F6212" stroke-width="1" opacity=".5"/></pattern>
+          <marker id="ia6cAr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#1D2513" stroke-width="1.6" stroke-linecap="round"/></marker>
+        </defs>
+        <style>
+          .ia6cH { font: 800 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6cL { font: 600 12px Inter, sans-serif; fill: #1D2513; }
+          .ia6cS { font: 400 11px Inter, sans-serif; fill: #56604A; }
+          .ia6cB { font: 800 11px Inter, sans-serif; fill: #7A3730; }
+          .ia6cV { font: 800 16px Inter, sans-serif; fill: #2A410C; }
+          .ia6cA { font: 700 11px Inter, sans-serif; fill: #3F6212; }
+          .ia6cN { font: 400 12px Inter, sans-serif; fill: #56604A; }
+        </style>
+
+        <text class="ia6cH" x="30" y="26">YOUR MAP: PICK THE WAY IN, THEN CLIMB NINETY DAYS OF FREE READING</text>
+
+        <g filter="url(#ia6cSk)" fill="none" stroke="#1D2513" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three role cards -->
+          <rect x="30" y="44" width="262" height="136" rx="8" transform="rotate(-0.8 161 112)" fill="#FFFFFF"/>
+          <rect x="309" y="44" width="262" height="136" rx="8" transform="rotate(0.6 440 112)" fill="#FFFFFF"/>
+          <rect x="588" y="44" width="262" height="136" rx="8" transform="rotate(-0.5 719 112)" fill="#FFFFFF"/>
+          <!-- evidence lines -->
+          <path d="M146 159 L276 159" stroke="#93A86F" stroke-dasharray="4 5"/>
+          <path d="M425 159 L555 159" stroke="#93A86F" stroke-dasharray="4 5"/>
+          <path d="M704 159 L834 159" stroke="#93A86F" stroke-dasharray="4 5"/>
+          <!-- the staircase -->
+          <rect x="30" y="268" width="262" height="162" rx="8" transform="rotate(0.5 161 349)" fill="#F3F7EA"/>
+          <rect x="309" y="238" width="262" height="192" rx="8" transform="rotate(-0.4 440 334)" fill="#F3F7EA"/>
+          <rect x="588" y="208" width="262" height="222" rx="8" transform="rotate(0.4 719 319)" fill="#FBEFEC" stroke="#9B4D45"/>
+          <path d="M300 330 L300 262" marker-end="url(#ia6cAr)"/>
+          <path d="M579 300 L579 232" marker-end="url(#ia6cAr)"/>
+          <!-- the gauge doodle on the top rung -->
+          <path d="M820 234 A10 10 0 0 1 840 234"/>
+          <path d="M830 234 L836 224"/>
+        </g>
+
+        <!-- role cards -->
+        <text class="ia6cV" x="46" y="74">If you are an analyst</text>
+        <text class="ia6cS" x="46" y="98">brings: time-series SQL, dashboards</text>
+        <text class="ia6cS" x="46" y="116">learns first: asymmetric cost (a3)</text>
+        <text class="ia6cB" x="46" y="136">unlearns: RMSE is the score</text>
+        <text class="ia6cA" x="46" y="162">your evidence:</text>
+
+        <text class="ia6cV" x="325" y="74">If you are an engineer</text>
+        <text class="ia6cS" x="325" y="98">brings: pipelines, seeds, tests</text>
+        <text class="ia6cS" x="325" y="116">learns first: the link budget (p8)</text>
+        <text class="ia6cB" x="325" y="136">unlearns: drop incomplete rows</text>
+        <text class="ia6cA" x="325" y="162">your evidence:</text>
+
+        <text class="ia6cV" x="604" y="74">If you are a scientist</text>
+        <text class="ia6cS" x="604" y="98">brings: features, ordered splits</text>
+        <text class="ia6cS" x="604" y="116">learns first: the capped target (p5)</text>
+        <text class="ia6cB" x="604" y="136">unlearns: missing at random</text>
+        <text class="ia6cA" x="604" y="162">your evidence:</text>
+
+        <text class="ia6cH" x="30" y="226">THE 90-DAY LADDER</text>
+
+        <!-- rung 1 -->
+        <text class="ia6cL" x="42" y="290">Days 1 to 30 · the machine</text>
+        <text class="ia6cS" x="42" y="310">NASA PCoE data set 6 · official</text>
+        <text class="ia6cS" x="42" y="327">Saxena 2008, in the zip · official</text>
+        <text class="ia6cS" x="42" y="344">Practitioner p1 to p3 · official</text>
+        <text class="ia6cS" x="42" y="361">Streaming 04 and 05 · official</text>
+        <text class="ia6cB" x="42" y="384">write: a channel map of one feed</text>
+
+        <!-- rung 2 -->
+        <text class="ia6cL" x="321" y="260">Days 31 to 60 · label and score</text>
+        <text class="ia6cS" x="321" y="280">Rubin 1976, abstract · official</text>
+        <text class="ia6cS" x="321" y="297">Zhou 2020, cap 130 · official</text>
+        <text class="ia6cS" x="321" y="314">Tsurkan 2025, cap 125 · official</text>
+        <text class="ia6cS" x="321" y="331">Wang 2024 survey · official</text>
+        <text class="ia6cS" x="321" y="348">Practitioner p4 to p7 · official</text>
+        <text class="ia6cB" x="321" y="372">write: one result, four numbers</text>
+
+        <!-- rung 3 -->
+        <text class="ia6cL" x="600" y="230">Days 61 to 90 · device, home</text>
+        <text class="ia6cS" x="600" y="250">NIST IR 8259A · official</text>
+        <text class="ia6cS" x="600" y="267">NIST SP 800-213 · official</text>
+        <text class="ia6cS" x="600" y="284">Giaconi 2018, arXiv · official</text>
+        <text class="ia6cS" x="600" y="301">PHM Society proceedings · official</text>
+        <text class="ia6cS" x="600" y="318">Practitioner p8 to p10 · official</text>
+        <text class="ia6cB" x="600" y="342">write: the finished map</text>
+
+        <text class="ia6cN" x="30" y="454">Pick the card for the job you hold now, then put a date on each rung's write line. Every source is free.</text>
+        <text class="ia6cN" x="30" y="472">Outside the ladder, reported and not free: Heimes 2008 and Molina-Markham 2010.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - three ways in, one ladder up; every rung is free, every source says whether it is the official copy, and each rung ends in something you write.</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Pick your variant and copy the blank map</h4>
+        <p>Draw five rows, device, edge, link, model and action, and three columns, CARRIES OVER, MUST LEARN and MUST UNLEARN, as in the first figure. Then pick the role you hold now. An analyst usually brings time-series SQL and fleet reporting; an engineer brings pipelines, seeds and tests; a scientist brings features and time-ordered evaluation. The variant decides which cells you fill first, not which ones you may skip.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Fill CARRIES OVER with evidence, not adjectives</h4>
+        <p>For each skill you claim, write the last time you used it and on what: "profiled every column of a returns table before modelling it", "kept a seed and a reference run for a demand forecast". A skill with no example goes in the middle column instead. Aim for four to six cells, each placed at the station where it lands.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Fill MUST LEARN in the order your role needs it</h4>
+        <p>Eight ideas: sensor physics and units, sampling and clocks, missing not at random, censored labels and the capped target, asymmetric cost, edge or cloud budgets, the device security baseline, household privacy. Number them. An analyst usually starts with asymmetric cost, because a single accuracy figure is what an analyst is most often asked to report; an engineer with the link budget; a scientist with the capped target. Beside each, write the session that builds it.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Fill MUST UNLEARN with a habit you used last month</h4>
+        <p>Of the seven, a null is missing at random, drop incomplete rows, the row has an id, RMSE is the score, a trailing mean will do, more data to the cloud is free and the user consented, pick the two you actually practise. Price the ones the box above can price, and write the number beside the habit. A habit with its price written next to it is much easier to drop.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Turn the middle column into a 90-day ladder</h4>
+        <p>Copy the three rungs from the figure, keep the official markers, and put a date on each write line. Reorder the readings if your role needs it, but keep one written output per rung. For any source you find elsewhere, mark it not official and note what to check it against: for a remaining-life paper, its cap, its score's lean and whether it used the NASA test set.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Show the map to someone who will disagree</h4>
+        <p>A reliability engineer, a maintenance planner, or whoever would review your first proposal. Ask them to move one item between columns. The item they move is the one your map was most wrong about, and it goes to the top of the first rung.</p>
+      </div></div>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>The habit to keep.</strong> Arrive with your old skills and your old questions, and leave your old defaults at the door. Every habit in the right column was a good habit somewhere else, and each one, on sensor data, either hides the end of a life or prices a mistake the wrong way round. Write the price beside the habit, name the lean beside every score, and read one rung a month from sources whose copy you can trust.</p>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions</h2>
+    </div>
+
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">Harrow Lane's engineer hire proposes sending every channel at full rate to the cloud, because storage is cheap. Which column of the transfer map does that habit belong in?</p>
+      <div class="qopt">A · Carries over: more data always makes a better model, so send all of it</div>
+      <div class="qopt">B · Must unlearn: in the constructed budget the cloud path takes 490 ms against a 500 ms deadline, 10 ms of slack, while the edge path takes 140 ms; the cost was never only the bytes</div>
+      <div class="qopt">C · Must learn: the deadline does not matter once the data is stored</div>
+      <q class="qwhy">Pipeline skills carry over; "send everything" does not. Time between the sample and the decision is the budget the cloud path spends, and one slow round trip erases 10 ms. The numbers are constructed arithmetic, not a measurement of any link.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">Which warehouse skill is worth more on a sensor feed than where it was learned?</p>
+      <div class="qopt">A · Dropping incomplete rows before modelling, for a clean table</div>
+      <div class="qopt">B · Reporting one error figure as the headline</div>
+      <div class="qopt">C · Profiling every column before modelling it, turned into channel triage: flat, noisy or drifting, with the reason written down</div>
+      <q class="qwhy">Dropping rows with gaps removes the hottest, latest readings and leans the forecast late. One error figure cannot see which side of the failure a prediction lands. Profiling is the warehouse habit a sensor feed needs most, pointed at new questions.</q>
+    </div>
+
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">A scientist drafts a 90-day reading plan. Which plan matches the ladder?</p>
+      <div class="qopt">A · Free sources marked official or not: NASA's data set 6 and the paper in its zip, NIST IR 8259A and SP 800-213 from NIST's own site, arXiv author copies, the PHM Society's open proceedings; Heimes 2008 noted as reported and not free</div>
+      <div class="qopt">B · Start with whichever paper reports the lowest error on FD001, whatever its cap or its score's lean</div>
+      <div class="qopt">C · Read only summaries of the papers, since the originals say the same thing</div>
+      <q class="qwhy">The ladder is free and says which copy is official. A lowest-error league table mixes caps of 125 and 130, scores leaning either way and different test protocols, so its numbers are not comparable. A summary is not the official copy, and on this data the printed equation and the figure of the same paper disagree.</q>
+    </div>
+
+    <div class="quiz-score"></div>
+  </section>
+
+  <!-- ============ HOMEWORK ============ -->
+  <section class="section" id="homework">
+    <div class="section-kicker">
+      <span class="klabel">After the track</span>
+      <h2>Homework</h2>
+    </div>
+    <p class="lede">Twenty minutes now, then one rung a month.</p>
+    <div class="steps">
+      <div class="step"><div>
+        <h4>Finish the map and date the first rung</h4>
+        <p>Complete every cell you can support with an example, put a date on the first rung's write line, and keep the map where you will see it. Re-read it at day 30 and move anything that changed column.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Price one habit on your own work</h4>
+        <p>Take one result your team reported in the last quarter and ask which of the seven habits was in play. Write the four numbers it should have carried: the error, a score with its lean named, the bias and the share predicted late. If no habit was in play, write that down too; it is a finding.</p>
+      </div></div>
+      <div class="step"><div>
+        <h4>Review one proposal at day 90</h4>
+        <p>Use leader session 5's five contrasts, the source, the identity, the ground truth, the feedback loop and the cost of being wrong, on a real or constructed sensor-data proposal, with your transfer map beside it. The review is a judgement on a data claim, never a view on what to buy or which machine to service.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ OFFICIAL ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Covered tonight</span>
+      <h2>What this session covers</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Carries over</span><span class="note">Profiling and quality tests as channel triage, time-series SQL, reproducible pipelines, feature engineering and missing-data reasoning, evaluation discipline, fleet dashboards; each tied to a session here and a sibling track.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Must learn: the machine, the clock and the gap</span><span class="note">Sensor physics and units (Table 2 of Saxena et al. 2008), sampling and clocks, missing not at random.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Must learn: the label and the score</span><span class="note">Censored run-to-failure labels, the capped target at 125 or 130 as a convention, asymmetric cost with late divided by 10 and early by 13.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Must learn: the link, the device and the home</span><span class="note">Edge or cloud budgets (constructed); NIST IR 8259A's six capabilities, read at source; NIST SP 800-213, abstract page read at source; household privacy.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Must unlearn: seven habits</span><span class="note">A null is missing at random, drop incomplete rows, the row has an id, RMSE is the score, a trailing mean will do, more data to the cloud is free, the user consented.</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Your transfer map and the 90-day ladder</span><span class="note">Analyst, engineer and scientist variants; free sources only, each marked official: NASA PCoE data set 6, NIST CSRC, arXiv author copies, the PHM Society's open proceedings.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">The other turbofan sets</span><span class="note">FD002 to FD004 and data set 17 (real flight conditions, 2021) in the NASA repository. Named; self-study.</span></div>
+      <div class="covered-row"><span class="status pill inkpill">◐</span><span class="name">Plant network zoning</span><span class="note">ISA/IEC 62443 and the Purdue reference model, reported by name only; the standards were not read.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Detectors, forecasting metrics, streaming mechanics and law</span><span class="note">Live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/courses/b7-timeseries-anomalies.html">learn anomaly detection</a>, <a href="https://phoebefu6.github.io/learn-timeseries-forecasting-with-phoebe/courses/b8-backtesting-metrics.html">learn timeseries forecasting</a>, <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/courses/05-late-data.html">learn streaming data</a>, <a href="https://phoebefu6.github.io/learn-gdpr-with-phoebe/courses/a1-scope.html">learn GDPR</a> and <a href="https://phoebefu6.github.io/learn-pdpa-dnc-with-phoebe/courses/a4-consent-exemptions.html">learn PDPA</a>.</span></div>
+      <div class="covered-row"><span class="status pill light">○</span><span class="name">Real engines, plants, households or incidents</span><span class="note">Out of scope by design. Real public rows from NASA's simulation, not real engines; Harrow Lane and Flat 4B are constructed; nothing here is purchasing advice.</span></div>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="section" id="cheatsheet">
+    <div class="section-kicker">
+      <span class="klabel">Take this with you</span>
+      <h2>Cheat sheet</h2>
+    </div>
+    <div class="cheat">
+      <div class="cheat-item"><strong>The one line.</strong> Keep your skills and your questions; drop your defaults.</div>
+      <div class="cheat-item"><strong>The five stations.</strong> Device, edge, link, model, action. Place every skill where it lands.</div>
+      <div class="cheat-item"><strong>Carries over.</strong> Profiling as channel triage, time-series SQL, seeds and reference runs, features, time-ordered evaluation, fleet dashboards.</div>
+      <div class="cheat-item"><strong>Must learn.</strong> Physics and units, clocks, missing not at random, the capped target (125 or 130), asymmetric cost, link budgets, NIST's six device capabilities, household privacy.</div>
+      <div class="cheat-item"><strong>Drop incomplete rows.</strong> 3,073 of 20,631 rows gone: RMSE 23.64 to 24.89, score 3,366 to 4,656 with late divided by 10, early by 13. 300 units, not the NASA test set.</div>
+      <div class="cheat-item"><strong>The row has an id.</strong> Shuffle the cycle order: RMSE 40.41, score 46,145. The order is the life.</div>
+      <div class="cheat-item"><strong>The cloud is free.</strong> Constructed: 490 ms against a 500 ms deadline, edge 140 ms. Decide which bytes leave the device.</div>
+      <div class="cheat-item"><strong>The ladder.</strong> Ninety days, free sources, official copies marked: NASA, NIST, arXiv author copies, the PHM Society. One written output per rung.</div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <div class="wrap">
+      <p>Leader session 6 of 6 · learn-iot-data-with-phoebe · by Phoebe Fu</p>
+      <nav class="pagenav">
+        <a href="a5-why-the-warehouse-playbook-breaks-here.html">← Leader session 5 · Why the warehouse playbook breaks here</a>
+        <a href="../index.html">All sessions →</a>
+      </nav>
+    </div>
+  </footer>
+
+</main>
+
+<script src="../assets/iot-live.js?v=1"></script>
+<script src="../assets/app.js?v=1"></script>
+<script>
+(function () {
+  if (typeof IOT === "undefined") return;
+  var sel = document.getElementById("ia6-habit-pick");
+  var out = document.getElementById("ia6-habit-out");
+  var verdict = document.getElementById("ia6-habit-verdict");
+  var self = document.getElementById("ia6-habit-self");
+
+  function n0(x) { return Math.round(x).toLocaleString("en-US"); }
+  function table(head, rows) {
+    var h = '<table class="sql-table"><thead><tr>';
+    head.forEach(function (c) { h += "<th>" + c + "</th>"; });
+    h += "</tr></thead><tbody>";
+    rows.forEach(function (r) {
+      h += "<tr><td>" + r[0] + "</td><td><b>" + r[1] + "</b></td><td>" + r[2] + "</td></tr>";
+    });
+    return h + "</tbody></table>";
+  }
+
+  function render() {
+    var v = sel.value;
+    if (v === "cloud") {
+      var b = IOT.edgeBudget(), q = b.inputs;
+      var slack = q.sampleToDecisionMs - b.cloudPathMs;
+      out.innerHTML = table(["Quantity", "Value", "What it is"], [
+        ["Raw stream", n0(b.rawBps) + " bit/s", (b.rawUtil * 100).toFixed(1) + "% of the " + n0(q.linkKbps) + " kbit/s link"],
+        ["Raw, per day", b.rawGBperDay.toFixed(2) + " GB", q.devices + " devices x " + q.channels + " channels x " + q.hz + " Hz"],
+        ["Edge summaries", n0(b.edgeBps) + " bit/s", n0(b.reduction) + "x less than raw"],
+        ["Cloud path", b.cloudPathMs + " ms", "sample, uplink, compute, downlink; deadline " + q.sampleToDecisionMs + " ms"],
+        ["Edge path", b.edgePathMs + " ms", "sample and compute beside the device"]
+      ]);
+      verdict.textContent = "Constructed budget, at practitioner session 8's defaults. The cloud path takes " + b.cloudPathMs + " ms against a " + q.sampleToDecisionMs + " ms deadline: it 'meets' it with " + slack + " ms of slack, which one slow round trip erases. The edge path takes " + b.edgePathMs + " ms. Arithmetic, not measurement; your own link will differ.";
+    } else if (v === "consent") {
+      var h = IOT.household(909), slots = h.days * h.slotsPerDay, misses = 0, timed = 0;
+      h.leaveErrMin.forEach(function (e, d) { if (e > 30) { misses++; if (h.plan[d].timer >= 0) timed++; } });
+      out.innerHTML = table(["Quantity", "Value", "What it is"], [
+        ["Slots read correctly", (h.accuracy * 100).toFixed(1) + "%", "of " + n0(slots) + " 15-minute slots: someone awake at home, or not"],
+        ["Leave time within 30 min", h.leaveWithin30 + " of " + h.days + " days", "inferred from one threshold on one meter"],
+        ["Median leave error", h.leaveMedianErrMin + " min", "across the " + h.days + " days"],
+        ["Days missed by more than 30 min", misses + "", timed + " of them days a timed appliance ran with nobody home"]
+      ]);
+      verdict.textContent = "Constructed household, Flat 4B. One account holder signed for the meter; the trace prints when everyone in the home wakes, leaves, returns and sleeps. The leave time lands within 30 minutes on " + h.leaveWithin30 + " of " + h.days + " days: the schedule of an empty home, from one threshold.";
+    } else {
+      var ds = [-50, -20, 20, 50], rows = [];
+      ds.forEach(function (d) {
+        rows.push([(d > 0 ? d + " cycles late" : (-d) + " cycles early"), n0(d * d),
+          "score " + IOT.phmScore(d, 13, 10).toFixed(2) + " (late /10, early /13); " + IOT.phmScore(d, 10, 13).toFixed(2) + " with the printed pairing"]);
+      });
+      out.innerHTML = table(["Prediction", "Squared error", "PHM08 score for this unit"], rows);
+      verdict.textContent = "At 20 cycles either side the squared error is " + n0(ds[2] * ds[2]) + " both ways, so RMSE cannot tell early from late. Under the lean the paper's figure and prose describe, 20 late costs " + IOT.phmScore(20, 13, 10).toFixed(2) + " and 20 early costs " + IOT.phmScore(-20, 13, 10).toFixed(2) + "; read the printed equation literally and the two swap. Name the lean beside every score.";
+    }
+  }
+
+  var st = IOT.selfTestResult || IOT.selfTest();
+  self.textContent = st.pass
+    ? "The engine's six self-checks pass in this browser, so the figures above are what any correct run gives."
+    : "The engine's self-check did not pass in this browser, so nothing above should be believed.";
+
+  sel.addEventListener("change", render);
+  render();
+})();
+</script>
+<style>
+  #ia6-habit .sql-code { border: 1px solid var(--hairline); border-radius: 8px; max-width: 24rem; }
+  #ia6-habit table.sql-table { margin: .6rem 0 .2rem; font-size: .85rem; }
+</style>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- social:start -->
+<meta name="description" content="Sixteen sessions on data written by devices: sensors that drift, go flat and drop out when conditions are worst, remaining useful life as a target, the asymmetric cost of a late prediction, edge or cloud, and the smart-home meter that knows when nobody is in. Real public rows from NASA's simulation, computed in the page. Free.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Learn with Phoebe">
+<meta property="og:title" content="Learn IoT &amp; Industrial Data with Phoebe">
+<meta property="og:description" content="Drop the rows where a hot sensor went quiet and a remaining-life model's error moves 5 percent while its asymmetric score moves 38. Sixteen sessions on data no person meant to write.">
+<meta property="og:url" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/">
+<meta property="og:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Learn IoT &amp; Industrial Data with Phoebe">
+<meta name="twitter:description" content="No author, no user id, and the readings vanish exactly when the machine runs hottest.">
+<meta name="twitter:image" content="https://phoebefu6.github.io/learn-iot-data-with-phoebe/assets/og-cover.png">
+<!-- social:end -->
+<title>Learn IoT &amp; Industrial Data with Phoebe</title>
+<link rel="stylesheet" href="assets/style.css?v=2">
+<style>
+
+  .stats-row { display: flex; gap: 2.4rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .stat b { display: block; font-size: 2.1rem; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .72rem; opacity: .85; text-transform: uppercase; letter-spacing: .09em; font-weight: 600; }
+
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .course-card {
+    border: 1px solid var(--hairline);
+    border-top: 4px solid var(--diff, var(--indigo));
+    border-radius: var(--radius);
+    padding: 1.2rem 1.3rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+    color: var(--ink);
+    background: #fff;
+    transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+    position: relative;
+  }
+  .course-card:hover { border-color: var(--indigo-soft); border-top-color: var(--diff, var(--indigo)); box-shadow: 0 8px 28px rgba(63,98,18,.16); transform: translateY(-3px); }
+  .course-card .cicon { font-size: 1.7rem; line-height: 1; }
+  .course-card .cnum { font-size: .72rem; font-weight: 700; color: var(--indigo); text-transform: uppercase; letter-spacing: .1em; }
+  .course-card h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.3; }
+  .course-card p { font-size: .85rem; color: var(--muted); flex: 1; }
+  .course-card .meta { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+  .diff-legend { display: flex; gap: 1rem; margin-top: 1.6rem; font-size: .74rem; color: var(--muted); font-weight: 600; flex-wrap: wrap; }
+  .diff-legend i { display: inline-block; width: .85rem; height: .35rem; border-radius: 999px; margin-right: .35rem; vertical-align: middle; }
+
+  .paths { margin-top: 2.6rem; }
+  .paths h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .3rem; }
+  .paths .plede { color: var(--muted); font-size: .92rem; margin-bottom: .8rem; }
+  .path { display: flex; gap: .55rem; align-items: center; padding: .75rem 0; border-bottom: .5px solid var(--hairline); flex-wrap: wrap; }
+  .path:last-child { border-bottom: none; }
+  .path b { min-width: 15.5rem; font-size: .9rem; }
+  .path .pstep { background: var(--indigo-50); color: var(--indigo); border-radius: 999px; padding: .16rem .68rem; font-weight: 700; font-size: .8rem; text-decoration: none; transition: all .12s ease; }
+  .path .pstep:hover { background: var(--indigo); color: #fff; }
+  .path .parr { color: var(--muted); font-weight: 700; }
+
+  .transfer { margin-top: 2.6rem; }
+  .transfer h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .3rem; }
+  .transfer .plede { color: var(--muted); font-size: .92rem; margin-bottom: .9rem; }
+  .transfer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .transfer-col { border: 1px solid var(--hairline); border-radius: var(--radius); background: #fff; padding: 1rem 1.1rem 1rem; }
+  .transfer-col h3 { font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .6rem; padding-bottom: .5rem; border-bottom: 2px solid var(--indigo-soft); color: var(--indigo-deep); }
+  .transfer-col.keep h3 { border-bottom-color: var(--indigo); }
+  .transfer-col.learn h3 { border-bottom-color: var(--amber); color: var(--amber-ink-text); }
+  .transfer-col.unlearn h3 { border-bottom-color: var(--ink); color: var(--ink); }
+  .transfer-col ul { list-style: none; margin: 0; padding: 0; }
+  .transfer-col li { font-size: .86rem; color: var(--ink); padding: .35rem 0 .35rem 1rem; position: relative; line-height: 1.5; }
+  .transfer-col li::before { content: ""; position: absolute; left: 0; top: .85rem; width: .45rem; height: .45rem; border-radius: 999px; background: var(--indigo-mid); }
+  .transfer-col.learn li::before { background: var(--amber); }
+  .transfer-col.unlearn li::before { background: var(--ink); }
+
+  .mm-section { margin-top: 1.6rem; }
+  .mm-section h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .2rem; }
+  .mm-section .mm-lede { color: var(--muted); font-size: .92rem; margin-bottom: .4rem; }
+  .mm-wrap { border: 1px solid var(--hairline); border-radius: var(--radius); background: linear-gradient(180deg,#fff,#F3F7EA); padding: .6rem; overflow-x: auto; }
+  .mm-svg { width: 100%; height: auto; display: block; max-width: 60rem; margin: 0 auto; min-width: 34rem; }
+  .mm-link { cursor: pointer; text-decoration: none; }
+  .mm-node rect { transition: opacity .15s ease, filter .15s ease; }
+  .mm-node text { pointer-events: none; }
+  .mm-link:hover .mm-node rect { filter: brightness(1.06); }
+  .mm-edge { transition: opacity .15s ease; }
+
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn with Phoebe · Emerging Tech</div>
+    <h1>Learn <span class="accent">IoT &amp; Industrial Data</span> with Phoebe</h1>
+    <p class="sub">A warehouse row is written by a person or a system that meant it. A sensor row is written by a device that drifts, goes flat or drops out exactly when conditions are worst, and never says so. A false alarm stops a line; a missed one breaks an engine; there is no user id to ask. Smart home is the consumer face of the same data: the household is the unit, occupancy is inferred, and the privacy line moves into the living room. Every number is computed in the page from real public rows of NASA's turbofan simulation, 100 engines run to failure: a remaining-life model scores 23.64 cycles of error, and when the hottest readings vanish and the pipeline drops the gaps, its error moves 5 percent while the score built for late predictions moves 38. Six leader sessions on the decision, ten practitioner sessions on the build. Simulated engines, constructed cases, and nothing here is purchasing or investment advice.</p>
+    <div class="stats-row">
+      <div class="stat"><b data-count="16">16</b><span>sessions, two tracks</span></div>
+      <div class="stat"><b>23.64</b><span>cycles of error, the top rung</span></div>
+      <div class="stat"><b>+38%</b><span>asymmetric score when hot readings vanish</span></div>
+      <div class="stat"><b>7 of 21</b><span>channels that never move</span></div>
+      <div class="stat"><b data-count="45">45</b><span>min per session</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>Leader track 🧭 <span style="font-size:.85rem;font-weight:600;color:var(--muted)">· six sessions, no code</span></h2>
+      <p class="plede">For anyone who owns a maintenance, reliability or connected-product decision. What a sensor row is and is not, why missing readings are never random, what a false alarm and a missed failure each cost, the home as a sensor network, why the warehouse playbook breaks here, and a transfer map for anyone arriving from a data team.</p>
+    </div>
+    <div class="course-grid">
+      <a class="course-card" href="courses/a1-the-sensor-is-the-source-of-truth.html" style="--diff:#FBBF24">
+        <span class="cicon">🌡️</span>
+        <span class="cnum">Leader session 1 · start here</span>
+        <h3>The sensor is the source of truth until it drifts</h3>
+        <p>No author, no user id, no flag when it drifts. Seven of 21 channels never move; the evidence sits in the last tenth of life.</p>
+        <span class="meta"><span class="pill amber">▶ Start here</span></span>
+      </a>
+      <a class="course-card" href="courses/a2-missing-is-never-random.html" style="--diff:#FBBF24">
+        <span class="cicon">🕳️</span>
+        <span class="cnum">Leader session 2</span>
+        <h3>Missing is never random</h3>
+        <p>Devices drop out when they run hottest. Delete the gaps and the engine looks healthier than it is.</p>
+      </a>
+      <a class="course-card" href="courses/a3-a-false-alarm-stops-the-line.html" style="--diff:#FB923C">
+        <span class="cicon">🚨</span>
+        <span class="cnum">Leader session 3</span>
+        <h3>A false alarm stops the line</h3>
+        <p>Early and late are different mistakes with different costs. The score that prices them, and the sum one engine can dominate.</p>
+      </a>
+      <a class="course-card" href="courses/a4-the-home-is-a-sensor-network.html" style="--diff:#FB923C">
+        <span class="cicon">🏠</span>
+        <span class="cnum">Leader session 4</span>
+        <h3>The home is a sensor network</h3>
+        <p>The household is the unit, occupancy is inferred, and a meter reading every 15 minutes prints the schedule of an empty home.</p>
+      </a>
+      <a class="course-card" href="courses/a5-why-the-warehouse-playbook-breaks-here.html" style="--diff:#F87171">
+        <span class="cicon">🧩</span>
+        <span class="cnum">Leader session 5</span>
+        <h3>Why the warehouse playbook breaks here</h3>
+        <p>The source, the identity, the ground truth, the feedback loop and the cost of being wrong, each drawn as a mechanism.</p>
+      </a>
+      <a class="course-card" href="courses/a6-from-warehouse-to-plant-floor.html" style="--diff:#F87171">
+        <span class="cicon">🗺️</span>
+        <span class="cnum">Leader session 6</span>
+        <h3>From warehouse to plant floor: the transfer map</h3>
+        <p>What carries over, what must be learned, what must be unlearned, and a 90-day self-study ladder on official sources.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="paths" style="margin-top:0">
+      <h2>Practitioner track 🛠️ <span style="font-size:.85rem;font-weight:600;color:var(--muted)">· ten sessions, hands on</span></h2>
+      <p class="plede">For whoever has to build on sensor data and defend its numbers. Reading a run-to-failure file, clocks and resampling, channel triage, a health index, remaining useful life as a target, a planted dropout, the asymmetric score, an edge-or-cloud budget, smart-meter occupancy, and a bench with an anti-lever and a break button.</p>
+    </div>
+    <div class="course-grid">
+      <a class="course-card" href="courses/p1-reading-a-turbofan-run.html" style="--diff:#FBBF24">
+        <span class="cicon">📄</span>
+        <span class="cnum">Practitioner session 1 · start here</span>
+        <h3>Reading a turbofan run as a dataset</h3>
+        <p>26 columns, 20,631 rows, no target. The label is in the cycle count, and the first model misses by 45.61 cycles.</p>
+        <span class="meta"><span class="pill amber">▶ Start here</span></span>
+      </a>
+      <a class="course-card" href="courses/p2-clocks-sampling-and-resampling.html" style="--diff:#FBBF24">
+        <span class="cicon">⏱️</span>
+        <span class="cnum">Practitioner session 2</span>
+        <h3>Clocks, sampling and resampling</h3>
+        <p>Cycle time against wall time, channels on different clocks, and what resampling up and down does to a signal.</p>
+      </a>
+      <a class="course-card" href="courses/p3-channel-triage.html" style="--diff:#FB923C">
+        <span class="cicon">🔎</span>
+        <span class="cnum">Practitioner session 3</span>
+        <h3>Channel triage: flat, noisy and drifting</h3>
+        <p>Fourteen moving channels ranked by how they track failure and how much of their spread is noise.</p>
+      </a>
+      <a class="course-card" href="courses/p4-many-channels-one-health-index.html" style="--diff:#FB923C">
+        <span class="cicon">🧭</span>
+        <span class="cnum">Practitioner session 4</span>
+        <h3>From many channels to one health index</h3>
+        <p>Standardise, weight, sum: one number between healthy and failed, learned because the real one was withheld.</p>
+      </a>
+      <a class="course-card" href="courses/p5-remaining-useful-life-as-a-target.html" style="--diff:#FB923C">
+        <span class="cicon">⏳</span>
+        <span class="cnum">Practitioner session 5</span>
+        <h3>Remaining useful life as a target</h3>
+        <p>Uncapped against capped, 125 against 130. The cap takes the error from 30.50 to 24.00, and its value is a convention.</p>
+      </a>
+      <a class="course-card" href="courses/p6-missing-not-at-random-planted.html" style="--diff:#F87171">
+        <span class="cicon">🌡️</span>
+        <span class="cnum">Practitioner session 6</span>
+        <h3>Missing not at random, planted</h3>
+        <p>The hottest readings vanish with a declared probability; 3,073 of 20,631 rows go, and the predictions go late.</p>
+      </a>
+      <a class="course-card" href="courses/p7-the-asymmetric-score.html" style="--diff:#F87171">
+        <span class="cicon">⚖️</span>
+        <span class="cnum">Practitioner session 7</span>
+        <h3>The asymmetric score</h3>
+        <p>Late divides by 10, early by 13. Why the printed equation and the figure disagree, and why two engines make the floor's score 305,167.</p>
+      </a>
+      <a class="course-card" href="courses/p8-edge-or-cloud-budget.html" style="--diff:#F87171">
+        <span class="cicon">📡</span>
+        <span class="cnum">Practitioner session 8</span>
+        <h3>Edge or cloud: a bandwidth and latency budget</h3>
+        <p>A constructed calculator: raw streams against edge summaries, and a cloud path that meets its deadline by 10 ms.</p>
+      </a>
+      <a class="course-card" href="courses/p9-smart-home-telemetry.html" style="--diff:#F87171">
+        <span class="cicon">🔌</span>
+        <span class="cnum">Practitioner session 9</span>
+        <h3>Smart home telemetry: occupancy and where to stop</h3>
+        <p>A constructed meter trace: one threshold finds when everyone left, within 30 minutes, on 12 of 14 days. Where to stop.</p>
+      </a>
+      <a class="course-card" href="courses/p10-the-rul-bench.html" style="--diff:#EF4444">
+        <span class="cicon">🎛️</span>
+        <span class="cnum">Practitioner session 10 · capstone</span>
+        <h3>The remaining-useful-life bench</h3>
+        <p>Every rung live. Plant the dropout and watch the score move seven times as much as the error; shuffle time and watch it collapse.</p>
+      </a>
+    </div>
+    <div class="diff-legend">
+      <span><i style="background:#FBBF24"></i>Foundations</span>
+      <span><i style="background:#FB923C"></i>Working depth</span>
+      <span><i style="background:#F87171"></i>Advanced</span>
+      <span><i style="background:#EF4444"></i>Hardest</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="paths">
+      <h2>Four ways through</h2>
+      <p class="plede">Everyone starts at session 1 of their track. These are the shortest useful routes if you cannot take all sixteen.</p>
+      <div class="path"><b>I sign off maintenance decisions</b>
+        <a class="pstep" href="courses/a1-the-sensor-is-the-source-of-truth.html">The sensor</a><span class="parr">→</span>
+        <a class="pstep" href="courses/a3-a-false-alarm-stops-the-line.html">False alarms</a><span class="parr">→</span>
+        <a class="pstep" href="courses/a5-why-the-warehouse-playbook-breaks-here.html">Why it breaks</a>
+      </div>
+      <div class="path"><b>I build the remaining-life model</b>
+        <a class="pstep" href="courses/p1-reading-a-turbofan-run.html">The file</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p5-remaining-useful-life-as-a-target.html">The target</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p7-the-asymmetric-score.html">The score</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p10-the-rul-bench.html">The bench</a>
+      </div>
+      <div class="path"><b>I own the devices and the pipeline</b>
+        <a class="pstep" href="courses/p2-clocks-sampling-and-resampling.html">Clocks</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p3-channel-triage.html">Triage</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p6-missing-not-at-random-planted.html">Dropout</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p8-edge-or-cloud-budget.html">Edge or cloud</a>
+      </div>
+      <div class="path"><b>I work on connected homes</b>
+        <a class="pstep" href="courses/a4-the-home-is-a-sensor-network.html">The home</a><span class="parr">→</span>
+        <a class="pstep" href="courses/p9-smart-home-telemetry.html">Occupancy</a><span class="parr">→</span>
+        <a class="pstep" href="courses/a2-missing-is-never-random.html">Missing data</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="transfer">
+      <h2>If you come from a data team</h2>
+      <p class="plede">Leader session 6 in three columns. What a conventional analyst, engineer or scientist already has that is worth more here, what is new, and what is actively dangerous.</p>
+      <div class="transfer-grid">
+        <div class="transfer-col keep">
+          <h3>Carries over</h3>
+          <ul>
+            <li>Profiling and data-quality checks, pointed at channels: which are flat, which are noisy, which drift</li>
+            <li>Time-ordered evaluation and the leakage instinct: never let a later row inform an earlier prediction</li>
+            <li>Missing-data reasoning, with Rubin's question of when a gap can be ignored</li>
+            <li>Reproducible pipelines: seeds, and a reference implementation that must agree to the digit</li>
+          </ul>
+        </div>
+        <div class="transfer-col learn">
+          <h3>Must learn</h3>
+          <ul>
+            <li>Run-to-failure data, remaining useful life as a target, and the label cap as a convention</li>
+            <li>Asymmetric error costs: the PHM08 score, where late divides by 10 and early by 13</li>
+            <li>Sampling clocks and resampling, and edge-or-cloud bandwidth and latency budgets</li>
+            <li>Device security baselines (NIST's six core device capabilities) and household privacy</li>
+          </ul>
+        </div>
+        <div class="transfer-col unlearn">
+          <h3>Must unlearn</h3>
+          <ul>
+            <li>"No nulls means complete": a pipeline that drops gaps hides the end of every life</li>
+            <li>One user id per row: the unit is an engine or a household, never a person to ask</li>
+            <li>One error metric: under a heat-driven dropout the error moved 5 percent and the asymmetric score 38</li>
+            <li>A trailing mean as the default smoother: it lags a one-way signal and leans late</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section mm-section">
+    <h2>The whole thing on one page</h2>
+    <p class="mm-lede">Every idea and the session that owns it. Click any node to jump there.</p>
+    <div class="mm-wrap"><div id="mindmap"></div></div>
+  </section>
+
+  <section class="section">
+    <div class="paths">
+      <h2>What is real here</h2>
+      <p class="plede">Every number was computed before any page quoted it. The rows are public and simulated; the cases around them are constructed.</p>
+      <table class="pp-strip" style="width:100%;border-collapse:collapse">
+        <tr><td style="padding:.5rem 0;font-weight:700">The data</td><td style="padding:.5rem 0;color:var(--muted)">Real public rows from NASA's turbofan simulation (C-MAPSS, FD001): 100 engines run to failure, every one of 20,631 cycles, 14 moving channels, decoded in your browser. Simulated engines, not real ones</td></tr>
+        <tr><td style="padding:.5rem 0;font-weight:700">The ladder</td><td style="padding:.5rem 0;color:var(--muted)">Fleet-average floor 45.61, linear fit 30.50, capped health index 24.00, lag-free smoothing 23.64 cycles of error, on 300 held-out cut points, with the asymmetric score beside each</td></tr>
+        <tr><td style="padding:.5rem 0;font-weight:700">The anti-lever and the break</td><td style="padding:.5rem 0;color:var(--muted)">Hot readings vanish and gappy rows are dropped: 24.89 and a score up 38 percent. Cycle order shuffled: 40.41. Both modelled and declared on the widget</td></tr>
+        <tr><td style="padding:.5rem 0;font-weight:700">The engine checks itself</td><td style="padding:.5rem 0;color:var(--muted)">Six properties on every page load, each shown to fail when its fault is planted back. A Python copy reproduces every bench number with zero difference</td></tr>
+        <tr><td style="padding:.5rem 0;font-weight:700">Constructed</td><td style="padding:.5rem 0;color:var(--muted)">Harrow Lane Overhaul, the Flat 4B meter trace and the edge-or-cloud budget are invented so the truth is knowable. No real plant, household, vendor or incident; nothing here is purchasing or investment advice</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span class="meta">part of <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a> · by Phoebe Fu · not purchasing or investment advice · general anomaly detectors live in <a href="https://phoebefu6.github.io/learn-anomaly-detection-with-phoebe/">learn anomaly detection ↗</a>, event time and late data in <a href="https://phoebefu6.github.io/learn-streaming-data-with-phoebe/">learn streaming data ↗</a></span>
+  </footer>
+
+</main>
+
+<script>
+window.MINDMAP_DATA = {
+  "title": "Data no person\nmeant to write",
+  "centerColor": "#2A410C",
+  "sessions": [
+    {
+      "label": "The sensor drifts",
+      "href": "courses/a1-the-sensor-is-the-source-of-truth.html",
+      "concepts": [
+        {"label": "A run as a dataset", "href": "courses/p1-reading-a-turbofan-run.html"},
+        {"label": "Flat, noisy, drifting", "href": "courses/p3-channel-triage.html"},
+        {"label": "Clocks and resampling", "href": "courses/p2-clocks-sampling-and-resampling.html"}
+      ]
+    },
+    {
+      "label": "Missing is never random",
+      "href": "courses/a2-missing-is-never-random.html",
+      "concepts": [
+        {"label": "Dropout, planted", "href": "courses/p6-missing-not-at-random-planted.html"},
+        {"label": "Drop the gaps, go late", "href": "courses/p10-the-rul-bench.html"},
+        {"label": "Rubin's ignorability", "href": "courses/a2-missing-is-never-random.html"}
+      ]
+    },
+    {
+      "label": "False alarm or miss",
+      "href": "courses/a3-a-false-alarm-stops-the-line.html",
+      "concepts": [
+        {"label": "The asymmetric score", "href": "courses/p7-the-asymmetric-score.html"},
+        {"label": "Remaining life as a target", "href": "courses/p5-remaining-useful-life-as-a-target.html"},
+        {"label": "One health index", "href": "courses/p4-many-channels-one-health-index.html"}
+      ]
+    },
+    {
+      "label": "The home as sensors",
+      "href": "courses/a4-the-home-is-a-sensor-network.html",
+      "concepts": [
+        {"label": "Occupancy, inferred", "href": "courses/p9-smart-home-telemetry.html"},
+        {"label": "Where to stop", "href": "courses/p9-smart-home-telemetry.html"},
+        {"label": "The household as the unit", "href": "courses/a4-the-home-is-a-sensor-network.html"}
+      ]
+    },
+    {
+      "label": "Why the playbook breaks",
+      "href": "courses/a5-why-the-warehouse-playbook-breaks-here.html",
+      "concepts": [
+        {"label": "Edge or cloud", "href": "courses/p8-edge-or-cloud-budget.html"},
+        {"label": "Device baselines", "href": "courses/a5-why-the-warehouse-playbook-breaks-here.html"},
+        {"label": "Ground truth arrives once", "href": "courses/a5-why-the-warehouse-playbook-breaks-here.html"}
+      ]
+    },
+    {
+      "label": "The transfer map",
+      "href": "courses/a6-from-warehouse-to-plant-floor.html",
+      "concepts": [
+        {"label": "Carries over, learn, unlearn", "href": "courses/a6-from-warehouse-to-plant-floor.html"},
+        {"label": "The 90-day ladder", "href": "courses/a6-from-warehouse-to-plant-floor.html"},
+        {"label": "The remaining-life bench", "href": "courses/p10-the-rul-bench.html"}
+      ]
+    }
+  ]
+};
+</script>
+<script src="assets/mindmap.js?v=1"></script>
+<script src="assets/app.js?v=1"></script>
+</body>
+</html>
