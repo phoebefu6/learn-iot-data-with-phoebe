@@ -50,7 +50,7 @@ body {
   font-size: .75rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  opacity: .85;
+  opacity: 1;
   font-weight: 600;
 }
 .masthead h1 {
@@ -61,7 +61,7 @@ body {
   letter-spacing: -.02em;
 }
 .masthead h1 .accent { color: inherit; }
-.masthead .sub { font-size: 1.05rem; opacity: .92; max-width: 44rem; }
+.masthead .sub { font-size: 1.05rem; opacity: 1; max-width: 44rem; }
 
 .chip-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
 .chip {
@@ -75,7 +75,7 @@ body {
   white-space: nowrap;
 }
 .chip.level { background: #fff; color: var(--indigo); }
-.chip.audience { background: rgba(255,255,255,.16); color: #fff; border: 1px solid rgba(255,255,255,.35); }
+.chip.audience { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.35); }
 .chip.time { background: var(--ink); color: #fff; font-variant-numeric: tabular-nums; }
 
 
@@ -212,7 +212,7 @@ details.card .body h4:first-child { margin-top: 0; }
 .pill.light { background: var(--indigo-50); color: var(--indigo); }
 .pill.inkpill { background: var(--ink); color: #fff; }
 .pill.amber, .pill.peach { background: var(--amber); color: var(--amber-ink); }
-.pill.bare { color: var(--faint); }
+.pill.bare { color: var(--muted); }
 
 /* ---------- 4D grid ---------- */
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .8rem; margin: .5rem 0 1rem; }
@@ -531,7 +531,7 @@ details.card summary:hover { background: #F6F9F0; }
   margin-top: 1.1rem;
   flex-wrap: wrap;
 }
-.journey .jlabel { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; opacity: .8; margin-right: .3rem; }
+.journey .jlabel { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; opacity: 1; margin-right: .3rem; }
 .journey a {
   width: 1.7rem; height: 1.7rem;
   border-radius: 999px;
@@ -1446,3 +1446,23 @@ span.mono {
 .fx-stamp { display: inline-block; vertical-align: middle; margin: .2rem 0 0 .8rem; color: var(--amber); transform: rotate(-8deg); animation: fxStampIn .42s cubic-bezier(.2,.9,.3,1.2) both; }
 @keyframes fxStampIn { from { opacity: 0; transform: scale(1.5) rotate(-16deg); } to { opacity: 1; transform: scale(1) rotate(-8deg); } }
 @media (prefers-reduced-motion: reduce) { .fx-stamp { animation: fxFadeIn .2s ease both; } @keyframes fxFadeIn { from { opacity: 0; } to { opacity: 1; } } }
+
+/* layout-patch-3: phone-width overflow (2026-10-10) */
+.sql-bar { flex-wrap: wrap; }
+@media (max-width: 480px) {
+  .covered-row { flex-wrap: wrap; }
+  .covered-row .note { margin-left: 0; text-align: left; flex-basis: 100%; }
+  details.card summary { flex-wrap: wrap; }
+  details.card summary .mini { white-space: normal; }
+  .wk, .sqlbox, .prompt-box, pre { max-width: 100%; overflow-x: auto; }
+  .mono, code, strong, .note { overflow-wrap: anywhere; }
+  select, input[type=range], label { max-width: 100%; }
+  canvas, svg, img { max-width: 100%; height: auto; }
+  .tree-kids, .tree-node-wrap, .tree-node, .rb-night, .al-row, .gd-field, .tl-row, .sl-row { max-width: 100%; overflow-x: auto; }
+}
+/* contrast-patch-2b */
+.cheat a { color: var(--indigo-deep, var(--ink)); }
+.chip.audience { background: transparent; border-color: rgba(255,255,255,.55); }
+.masthead a, .masthead .sub a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+.prompt-box b, .prompt-box strong { color: var(--indigo-deep, var(--ink)); }
+.prompt-box span, .prompt-box em, .prompt-box i { color: inherit; }
